@@ -16,7 +16,7 @@
 <body class="flex min-h-screen flex-col bg-white font-sans text-slate-800 antialiased">
 
     {{-- Navbar --}}
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 glass">
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
         {{-- Topbar informasi --}}
         @php
             $topbarPhone = \App\Models\Setting::get('footer_phone', '+6281234567890');
@@ -229,7 +229,7 @@
         </nav>
 
         {{-- Menu mobile --}}
-        <div id="mobile-menu" class="hidden border-t border-slate-200/70 bg-white/95 backdrop-blur-xl md:hidden">
+        <div id="mobile-menu" class="hidden border-t border-slate-200 bg-white md:hidden">
             <nav class="max-h-[calc(100vh-4rem)] space-y-1 overflow-y-auto px-4 py-4 sm:px-6">
                 <a href="{{ route('home') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Beranda</a>
                 <a href="{{ route('tools.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Katalog Alat</a>
