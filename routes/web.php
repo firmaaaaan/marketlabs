@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminHealthCheckupController;
 use App\Http\Controllers\Admin\AdminHealthCheckupTypeController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\Admin\AdminLaboratoriumController;
+use App\Http\Controllers\Admin\AdminMitrasController;
 use App\Http\Controllers\Admin\AdminResearchProposalController;
 use App\Http\Controllers\Admin\AdminSampleAttributeController;
 use App\Http\Controllers\Admin\AdminSampleTestController;
@@ -212,6 +213,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
 
         Route::resource('testimonials', AdminTestimonialController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('faqs', AdminFaqController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('mitras', AdminMitrasController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::get('/footer', [AdminFooterController::class, 'index'])->name('footer.index');
         Route::put('/footer', [AdminFooterController::class, 'updateSettings'])->name('footer.settings-update');

@@ -34,8 +34,9 @@ class MenuSeeder extends Seeder
             ['label' => 'Kelola Menu', 'route_name' => 'admin.menus.index', 'sort_order' => 19, 'is_active' => true, 'min_role' => 'superadmin'],
             ['label' => 'Kelola Testimoni', 'route_name' => 'admin.testimonials.index', 'sort_order' => 20, 'is_active' => true],
             ['label' => 'Kelola FAQ', 'route_name' => 'admin.faqs.index', 'sort_order' => 21, 'is_active' => true],
-            ['label' => 'Log Aktivitas', 'route_name' => 'admin.activity-logs.index', 'sort_order' => 22, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Download Dokumen', 'route_name' => 'admin.document-downloads.index', 'sort_order' => 23, 'is_active' => true],
+            ['label' => 'Kelola Mitra', 'route_name' => 'admin.mitras.index', 'sort_order' => 22, 'is_active' => true],
+            ['label' => 'Log Aktivitas', 'route_name' => 'admin.activity-logs.index', 'sort_order' => 23, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Download Dokumen', 'route_name' => 'admin.document-downloads.index', 'sort_order' => 24, 'is_active' => true],
         ];
 
         foreach ($sidebarItems as $item) {

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ToolSeeder::class,
             SampleTestSeeder::class,
             EventSeeder::class,
+            MitraSeeder::class,
         ]);
     }
 }

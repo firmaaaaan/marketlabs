@@ -114,6 +114,65 @@
     </div>
 </section>
 
+{{-- ===== MITRA KAMI (LOGO BERJALAN) ===== --}}
+@if ($mitras->isNotEmpty())
+<section class="py-12 lg:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Mitra Kami</span>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Didukung oleh Institusi Terpercaya</h2>
+        </div>
+    </div>
+
+    <div class="relative mt-8 overflow-hidden">
+        {{-- Gradient fade kiri --}}
+        <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent lg:w-40"></div>
+        {{-- Gradient fade kanan --}}
+        <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent lg:w-40"></div>
+
+        <div class="marquee-track flex w-max gap-12 items-center">
+            {{-- Set 1 --}}
+            @foreach ($mitras as $mitra)
+                <a href="{{ $mitra->website ?? '#' }}" target="_blank" rel="noopener noreferrer"
+                   class="group flex h-20 flex-none items-center justify-center px-6 transition opacity-60 hover:opacity-100"
+                   title="{{ $mitra->name }}">
+                    @if ($mitra->logo_url)
+                        <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}" class="max-h-12 w-auto object-contain grayscale transition group-hover:grayscale-0">
+                    @else
+                        <span class="text-sm font-bold text-slate-400 group-hover:text-emerald-600 transition">{{ $mitra->name }}</span>
+                    @endif
+                </a>
+            @endforeach
+            {{-- Set 2 (duplikasi untuk seamless loop) --}}
+            @foreach ($mitras as $mitra)
+                <a href="{{ $mitra->website ?? '#' }}" target="_blank" rel="noopener noreferrer"
+                   class="group flex h-20 flex-none items-center justify-center px-6 transition opacity-60 hover:opacity-100"
+                   title="{{ $mitra->name }}">
+                    @if ($mitra->logo_url)
+                        <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}" class="max-h-12 w-auto object-contain grayscale transition group-hover:grayscale-0">
+                    @else
+                        <span class="text-sm font-bold text-slate-400 group-hover:text-emerald-600 transition">{{ $mitra->name }}</span>
+                    @endif
+                </a>
+            @endforeach
+        </div>
+    </div>
+
+    <style>
+        .marquee-track {
+            animation: marquee-scroll {{ count($mitras) * 3 }}s linear infinite;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+    </style>
+</section>
+@endif
+
 {{-- ===== KATEGORI ===== --}}
 @if ($categories->isNotEmpty())
     <section class="py-20 lg:py-28">
