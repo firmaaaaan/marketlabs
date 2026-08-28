@@ -1,0 +1,24 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "erd": "dbml-renderer -i docs/ERD.dbml -f svg -o docs/ERD.svg && node scripts/svg-to-png.mjs",
+        "use-case": "node scripts/create-use-case-svg.mjs && node scripts/convert-use-cases-to-png.mjs",
+        "flowchart": "node scripts/create-flowcharts.mjs && node scripts/convert-flowcharts-to-png.mjs"
+    },
+    "devDependencies": {
+        "@mermaid-js/mermaid-cli": "^11.16.0",
+        "@softwaretechnik/dbml-renderer": "^1.0.31",
+        "@tailwindcss/vite": "^4.0.0",
+        "axios": "^1.11.0",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^2.0.0",
+        "sharp": "^0.35.3",
+        "tailwindcss": "^4.0.0",
+        "vite": "^7.0.7",
+        "viz.js": "^2.1.2"
+    }
+}

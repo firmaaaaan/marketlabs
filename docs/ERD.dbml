@@ -1,0 +1,420 @@
+// ERD - MarketLabs Database
+
+Table users {
+  id uuid [pk]
+  name varchar
+  email varchar [unique]
+  nim_nip varchar
+  institution varchar
+  participant_code varchar [unique]
+  phone varchar
+  role varchar
+  email_verified_at timestamp
+  password varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tool_categories {
+  id uuid [pk]
+  name varchar [unique]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tools {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  category_id uuid [ref: > tool_categories.id]
+  brand varchar
+  series varchar
+  description text
+  total_stock int
+  available_stock int
+  price_per_day bigint
+  image varchar
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sample_units {
+  id uuid [pk]
+  name varchar [unique]
+  symbol varchar
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table test_parameters {
+  id uuid [pk]
+  name varchar
+  method varchar
+  unit_id uuid [ref: > sample_units.id]
+  rate int
+  description text
+  image varchar
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sample_forms {
+  id uuid [pk]
+  name varchar
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sample_types {
+  id uuid [pk]
+  name varchar
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sample_tests {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  laboran_id uuid [ref: > users.id]
+  code varchar [unique]
+  notes text
+  delivery_method varchar
+  status varchar
+  result varchar
+  result_notes varchar
+  result_file varchar
+  total_cost int
+  payment_status varchar
+  invoice_number varchar
+  processed_at timestamp
+  approved_at timestamp
+  received_at timestamp
+  tested_at timestamp
+  done_at timestamp
+  rejected_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sample_test_items {
+  id uuid [pk]
+  sample_test_id uuid [ref: > sample_tests.id]
+  parameter_id uuid [ref: > test_parameters.id]
+  sample_form_id uuid [ref: > sample_forms.id]
+  sample_type_id uuid [ref: > sample_types.id]
+  sample_name varchar
+  sample_description text
+  quantity int
+  rate int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table borrowings {
+  id uuid [pk]
+  code varchar [unique]
+  invoice_number varchar [unique]
+  user_id uuid [ref: > users.id]
+  status varchar
+  borrower_type varchar
+  nim_nip varchar
+  institution varchar
+  purpose text
+  borrow_date date
+  return_date date
+  discount int
+  penalty int
+  pickup_notes text
+  rejection_reason text
+  notes text
+  document_path varchar
+  payment_status varchar
+  processed_at timestamp
+  returned_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table borrowing_items {
+  id uuid [pk]
+  borrowing_id uuid [ref: > borrowings.id]
+  tool_id uuid [ref: > tools.id]
+  quantity int
+  price_per_day bigint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table laboratoriums {
+  id uuid [pk]
+  name varchar
+  code varchar [unique]
+  description text
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table bench_fee_rates {
+  id uuid [pk]
+  level varchar
+  type varchar
+  category varchar
+  rate int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table research_proposals {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  code varchar [unique]
+  title varchar
+  field varchar
+  description text
+  objectives text
+  institution varchar
+  customer_type varchar
+  nim_nip varchar
+  start_date date
+  end_date date
+  status varchar
+  admin_notes text
+  document_path varchar
+  letter_path varchar
+  replacement_letter_path varchar
+  bench_fee int
+  bench_fee_level varchar
+  bench_fee_type varchar
+  bench_fee_category varchar
+  needs_laboran boolean
+  laboratorium_id uuid [ref: > laboratoriums.id]
+  laboran_id uuid [ref: > users.id]
+  laboran_fee bigint
+  penalty int
+  penalty_note varchar
+  payment_status varchar
+  invoice_number varchar [unique]
+  processed_at timestamp
+  approved_at timestamp
+  ongoing_at timestamp
+  done_at timestamp
+  rejected_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table research_proposal_members {
+  id uuid [pk]
+  research_proposal_id uuid [ref: > research_proposals.id]
+  name varchar
+  role varchar
+  user_id uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table research_proposal_tools {
+  research_proposal_id uuid [ref: > research_proposals.id]
+  tool_id uuid [ref: > tools.id]
+  quantity int
+  days smallint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table research_logbooks {
+  id uuid [pk]
+  research_proposal_id uuid [ref: > research_proposals.id]
+  log_date date
+  note text
+  obstacle text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table health_test_types {
+  id uuid [pk]
+  key varchar [unique]
+  name varchar
+  description text
+  price int
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table health_checkups {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  type_id uuid [ref: > health_test_types.id]
+  examiner_id uuid [ref: > users.id]
+  code varchar [unique]
+  booking_date date
+  queue_number int
+  purpose varchar
+  status varchar
+  result varchar
+  result_notes text
+  result_file varchar
+  payment_status varchar
+  invoice_number varchar [unique]
+  processed_at timestamp
+  approved_at timestamp
+  done_at timestamp
+  rejected_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table examiner_weekly_schedules {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  month varchar
+  day_of_week tinyint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table events {
+  id uuid [pk]
+  code varchar [unique]
+  slug varchar [unique]
+  title varchar
+  description text
+  location varchar
+  starts_at timestamp
+  ends_at timestamp
+  quota int
+  fee decimal
+  discount decimal
+  registration_deadline timestamp
+  status varchar
+  mode varchar
+  image varchar
+  poster varchar
+  form_fields json
+  attendance_fields json
+  certificate_template varchar
+  certificate_template_back varchar
+  certificate_font varchar
+  certificate_layout json
+  certificate_layout_back json
+  attendance_enabled boolean
+  created_by uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table event_registrations {
+  id uuid [pk]
+  event_id uuid [ref: > events.id]
+  user_id uuid [ref: > users.id]
+  registered_by uuid [ref: > users.id]
+  status varchar
+  answers json
+  attendance_token varchar [unique]
+  attendance_answers json
+  attended_at timestamp
+  certificate_number varchar [unique]
+  certificate_path varchar
+  certificate_back_path varchar
+  certificate_generated_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table activity_logs {
+  id uuid [pk]
+  user_id uuid [ref: > users.id]
+  user_name varchar
+  role varchar
+  action varchar
+  description text
+  subject_type varchar
+  subject_id varchar
+  properties json
+  ip_address varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table contacts {
+  id uuid [pk]
+  name varchar
+  email varchar
+  message text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table settings {
+  id uuid [pk]
+  key varchar [unique]
+  value text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table testimonials {
+  id uuid [pk]
+  name varchar
+  role varchar
+  quote text
+  rating tinyint
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table faqs {
+  id uuid [pk]
+  question varchar
+  answer text
+  sort_order int
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table footer_logos {
+  id uuid [pk]
+  name varchar
+  image varchar
+  url varchar
+  sort_order int
+  is_active boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table menu_items {
+  id bigint [pk]
+  group_name varchar
+  label varchar
+  route_name varchar
+  url varchar
+  icon varchar
+  sort_order int
+  is_active boolean
+  min_role varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table landing_page_sections {
+  id bigint [pk]
+  key varchar [unique]
+  title varchar
+  description text
+  sort_order int
+  is_active boolean
+  content json
+  created_at timestamp
+  updated_at timestamp
+}

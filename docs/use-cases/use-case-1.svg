@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+  <style>
+    text { font-family: Arial, sans-serif; }
+    .title { font-size: 24px; font-weight: bold; fill: #1d71b8; }
+    .actor { font-size: 16px; fill: #333; }
+    .usecase { font-size: 14px; fill: #333; }
+    .actor-label { font-size: 14px; fill: #1d71b8; }
+  </style>
+  
+  <rect width="100%" height="100%" fill="white"/>
+  
+  <text x="600" y="35" text-anchor="middle" class="title">1. Autentikasi &amp; Profil</text>
+  <circle cx="140" cy="80" r="15" fill="none" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="140" y1="95" x2="140" y2="135" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="115" y1="110" x2="165" y2="110" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="140" y1="135" x2="120" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="140" y1="135" x2="160" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <text x="140" y="185" text-anchor="middle" class="actor-label">User</text>
+  <circle cx="320" cy="80" r="15" fill="none" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="320" y1="95" x2="320" y2="135" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="295" y1="110" x2="345" y2="110" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="320" y1="135" x2="300" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="320" y1="135" x2="340" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <text x="320" y="185" text-anchor="middle" class="actor-label">Admin</text>
+  <circle cx="500" cy="80" r="15" fill="none" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="500" y1="95" x2="500" y2="135" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="475" y1="110" x2="525" y2="110" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="500" y1="135" x2="480" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="500" y1="135" x2="520" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <text x="500" y="185" text-anchor="middle" class="actor-label">Laboran</text>
+  <circle cx="680" cy="80" r="15" fill="none" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="680" y1="95" x2="680" y2="135" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="655" y1="110" x2="705" y2="110" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="680" y1="135" x2="660" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <line x1="680" y1="135" x2="700" y2="165" stroke="#1d71b8" stroke-width="2"/>
+  <text x="680" y="185" text-anchor="middle" class="actor-label">Superadmin</text>
+  <line x1="140" y1="185" x2="1000" y2="150" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="150" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="155" text-anchor="middle" class="usecase">Login</text>
+  <line x1="140" y1="185" x2="1000" y2="200" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="200" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="205" text-anchor="middle" class="usecase">Register</text>
+  <line x1="140" y1="185" x2="1000" y2="250" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="250" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="255" text-anchor="middle" class="usecase">Lupa Password</text>
+  <line x1="140" y1="185" x2="1000" y2="300" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="300" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="305" text-anchor="middle" class="usecase">Lengkapi Profil</text>
+  <line x1="140" y1="185" x2="1000" y2="350" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="350" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="355" text-anchor="middle" class="usecase">Edit Profil</text>
+  <line x1="320" y1="185" x2="1000" y2="150" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="150" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="155" text-anchor="middle" class="usecase">Login</text>
+  <line x1="320" y1="185" x2="1000" y2="200" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="200" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="205" text-anchor="middle" class="usecase">Logout</text>
+  <line x1="320" y1="185" x2="1000" y2="250" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="250" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="255" text-anchor="middle" class="usecase">Edit Profil</text>
+  <line x1="500" y1="185" x2="1000" y2="150" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="150" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="155" text-anchor="middle" class="usecase">Login</text>
+  <line x1="500" y1="185" x2="1000" y2="200" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="200" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="205" text-anchor="middle" class="usecase">Logout</text>
+  <line x1="500" y1="185" x2="1000" y2="250" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="250" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="255" text-anchor="middle" class="usecase">Edit Profil</text>
+  <line x1="680" y1="185" x2="1000" y2="150" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="150" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="155" text-anchor="middle" class="usecase">Login</text>
+  <line x1="680" y1="185" x2="1000" y2="200" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="200" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="205" text-anchor="middle" class="usecase">Logout</text>
+  <line x1="680" y1="185" x2="1000" y2="250" stroke="#ccc" stroke-width="1"/>
+  <ellipse cx="1000" cy="250" rx="120" ry="20" fill="#e7e2dd" stroke="#1d71b8" stroke-width="2"/>
+  <text x="1000" y="255" text-anchor="middle" class="usecase">Edit Profil</text>
+</svg>

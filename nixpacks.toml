@@ -1,0 +1,32 @@
+[phases.setup]
+nixPkgs = ["php82", "composer", "nodejs_20", "npm"]
+
+[phases.install]
+cmds = [
+  "composer install --no-dev --optimize-autoloader --no-interaction",
+  "npm ci",
+  "npm run build"
+]
+
+[phases.build]
+cmds = [
+  "php artisan config:cache",
+  "php artisan route:cache",
+  "php artisan view:cache",
+  "php artisan storage:link"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
+
+[variables]
+PHP_INI = """
+memory_limit = 256M
+max_execution_time = 120
+post_max_size = 50M
+upload_max_filesize = 50M
+"""
+
+[deploy]
+healthcheckPath = "/up"
+healthcheckTimeout = 300
