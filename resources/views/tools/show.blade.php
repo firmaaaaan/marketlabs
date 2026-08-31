@@ -15,14 +15,49 @@
 
         <div class="mt-8 grid gap-10 lg:grid-cols-2">
             {{-- Gambar alat --}}
-            <div class="flex h-80 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-emerald-100 p-8">
-                @if ($tool->image)
-                    <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
-                         class="h-full w-full rounded-2xl object-cover">
+            <div>
+                @php $allImages = $tool->images->isNotEmpty() ? $tool->images : ($tool->image ? collect([(object)['path' => $tool->image]]) : collect()); @endphp
+                @if ($allImages->isNotEmpty())
+                    <div id="gallery-main" class="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-emerald-100">
+                        <div class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth scrollbar-hide">
+                            @foreach ($allImages as $img)
+                                <div class="h-80 w-full flex-none snap-center sm:h-96">
+                                    <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $tool->name }}"
+                                         class="h-full w-full object-cover">
+                                </div>
+                            @endforeach
+                        </div>
+                        @if ($allImages->count() > 1)
+                            <button type="button" id="gallery-prev"
+                                    class="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow-md transition hover:bg-white">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                </svg>
+                            </button>
+                            <button type="button" id="gallery-next"
+                                    class="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow-md transition hover:bg-white">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                </svg>
+                            </button>
+                        @endif
+                    </div>
+                    @if ($allImages->count() > 1)
+                        <div id="gallery-thumbs" class="mt-3 flex gap-2 overflow-x-auto scrollbar-hide">
+                            @foreach ($allImages as $i => $img)
+                                <button type="button" data-index="{{ $i }}"
+                                        class="gallery-thumb h-16 w-16 flex-none overflow-hidden rounded-lg border-2 transition {{ $loop->first ? 'border-emerald-600' : 'border-slate-200 hover:border-emerald-300' }}">
+                                    <img src="{{ asset('storage/' . $img->path) }}" alt="" class="h-full w-full object-cover">
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 @else
-                    <svg class="h-40 w-40 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.1" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 17l8 4m8-4l-8 4" />
-                    </svg>
+                    <div class="flex h-80 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 sm:h-96">
+                        <svg class="h-40 w-40 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.1" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 17l8 4m8-4l-8 4" />
+                        </svg>
+                    </div>
                 @endif
             </div>
 
@@ -116,6 +151,44 @@
 
 @push('scripts')
 <script>
+(function () {
+    var gallery = document.getElementById('gallery-main');
+    if (!gallery) return;
+    var scroller = gallery.querySelector('.snap-x');
+    var prevBtn = document.getElementById('gallery-prev');
+    var nextBtn = document.getElementById('gallery-next');
+    var thumbs = document.querySelectorAll('.gallery-thumb');
+
+    function currentIdx() {
+        return Math.round(scroller.scrollLeft / scroller.clientWidth);
+    }
+
+    function goTo(i) {
+        var total = scroller.children.length;
+        i = Math.max(0, Math.min(i, total - 1));
+        scroller.children[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        thumbs.forEach(function (t, idx) {
+            t.classList.toggle('border-emerald-600', idx === i);
+            t.classList.toggle('border-slate-200', idx !== i);
+        });
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(currentIdx() - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(currentIdx() + 1); });
+
+    thumbs.forEach(function (t) {
+        t.addEventListener('click', function () { goTo(parseInt(this.dataset.index)); });
+    });
+
+    scroller.addEventListener('scroll', function () {
+        var idx = currentIdx();
+        thumbs.forEach(function (t, i) {
+            t.classList.toggle('border-emerald-600', i === idx);
+            t.classList.toggle('border-slate-200', i !== idx);
+        });
+    });
+})();
+
 document.querySelectorAll('.cart-add-form').forEach(function (form) {
     form.addEventListener('submit', async function (e) {
         e.preventDefault();

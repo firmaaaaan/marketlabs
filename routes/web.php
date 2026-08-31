@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminDocumentDownloadController;
 use App\Http\Controllers\Admin\AdminEventController;
 use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminFooterController;
+use App\Http\Controllers\Admin\AdminGalleryController;
 use App\Http\Controllers\Admin\AdminHealthCheckupController;
 use App\Http\Controllers\Admin\AdminHealthCheckupTypeController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
@@ -214,6 +215,12 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::resource('testimonials', AdminTestimonialController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('faqs', AdminFaqController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('mitras', AdminMitrasController::class)->only(['index', 'store', 'update', 'destroy']);
+
+        Route::get('/gallery', [AdminGalleryController::class, 'index'])->name('gallery.index');
+        Route::post('/gallery', [AdminGalleryController::class, 'store'])->name('gallery.store');
+        Route::put('/gallery/{image}', [AdminGalleryController::class, 'update'])->name('gallery.update');
+        Route::delete('/gallery/{image}', [AdminGalleryController::class, 'destroy'])->name('gallery.destroy');
+        Route::post('/gallery/sort', [AdminGalleryController::class, 'sort'])->name('gallery.sort');
 
         Route::get('/footer', [AdminFooterController::class, 'index'])->name('footer.index');
         Route::put('/footer', [AdminFooterController::class, 'updateSettings'])->name('footer.settings-update');

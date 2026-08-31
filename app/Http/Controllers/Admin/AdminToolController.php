@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tool;
 use App\Models\ToolCategory;
+use App\Models\ToolImage;
 use App\Support\ExcelExport;
 use App\Support\ImportReadFilter;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class AdminToolController extends Controller
     {
         $validated = $this->validateTool($request);
 
-        Tool::create([
+        $tool = Tool::create([
             'code' => $this->generateCode(),
             'name' => $validated['name'],
             'category_id' => $validated['category_id'],
@@ -62,9 +63,10 @@ class AdminToolController extends Controller
             'total_stock' => $validated['total_stock'],
             'available_stock' => $validated['total_stock'],
             'price_per_day' => $validated['price_per_day'],
-            'image' => $this->storeImage($request),
             'is_active' => $request->boolean('is_active'),
         ]);
+
+        $this->syncImages($request, $tool);
 
         return redirect()->route('admin.tools.index')
             ->with('success', 'Alat berhasil ditambahkan.');
@@ -73,6 +75,7 @@ class AdminToolController extends Controller
     public function edit(Tool $tool)
     {
         $categories = ToolCategory::orderBy('name')->get();
+        $tool->load('images');
 
         return view('admin.tools.edit', compact('tool', 'categories'));
     }
@@ -94,9 +97,10 @@ class AdminToolController extends Controller
             'total_stock' => $validated['total_stock'],
             'available_stock' => max(0, $newAvailable),
             'price_per_day' => $validated['price_per_day'],
-            'image' => $this->storeImage($request, $tool),
             'is_active' => $request->boolean('is_active'),
         ]);
+
+        $this->syncImages($request, $tool);
 
         return redirect()->route('admin.tools.index')
             ->with('success', 'Alat berhasil diperbarui.');
@@ -104,6 +108,10 @@ class AdminToolController extends Controller
 
     public function destroy(Tool $tool)
     {
+        foreach ($tool->images as $image) {
+            Storage::disk('public')->delete($image->path);
+        }
+
         if ($tool->image) {
             Storage::disk('public')->delete($tool->image);
         }
@@ -439,20 +447,55 @@ class AdminToolController extends Controller
             'total_stock' => ['required', 'integer', 'min:0'],
             'price_per_day' => ['required', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
     }
 
-    protected function storeImage(Request $request, ?Tool $tool = null): ?string
+    /**
+     * Sinkronisasi gambar alat: upload baru + hapus yang ditandai + urutkan.
+     */
+    protected function syncImages(Request $request, Tool $tool): void
     {
-        if (! $request->hasFile('image')) {
-            return $tool?->image;
+        // Upload gambar baru
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $file) {
+                $path = $file->store('tools', 'public');
+                ToolImage::create([
+                    'tool_id' => $tool->id,
+                    'path' => $path,
+                    'sort_order' => $index,
+                ]);
+            }
         }
 
-        if ($tool?->image) {
-            Storage::disk('public')->delete($tool->image);
+        // Migrate single image field ke tool_images (backward compat)
+        if ($tool->image && $tool->images()->count() === 0) {
+            ToolImage::create([
+                'tool_id' => $tool->id,
+                'path' => $tool->image,
+                'sort_order' => 0,
+            ]);
         }
 
-        return $request->file('image')->store('tools', 'public');
+        // Hapus gambar yang ditandai
+        if ($request->has('delete_images')) {
+            $deleteIds = $request->input('delete_images', []);
+            $images = ToolImage::whereIn('id', $deleteIds)->where('tool_id', $tool->id)->get();
+            foreach ($images as $image) {
+                Storage::disk('public')->delete($image->path);
+                $image->delete();
+            }
+        }
+
+        // Update urutan jika ada
+        if ($request->has('image_order')) {
+            $order = $request->input('image_order', []);
+            foreach ($order as $position => $imageId) {
+                ToolImage::where('id', $imageId)->where('tool_id', $tool->id)
+                    ->update(['sort_order' => $position]);
+            }
+        }
     }
 }

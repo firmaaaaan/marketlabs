@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faq;
+use App\Models\GalleryImage;
 use App\Models\HealthTestType;
 use App\Models\Mitra;
 use App\Models\TestParameter;
@@ -52,7 +53,7 @@ class LandingPageController extends Controller
         // Alat unggulan untuk section katalog ala e-commerce di landing page.
         $featuredTools = Tool::active()
             ->available()
-            ->with('category')
+            ->with(['category', 'images'])
             ->latest()
             ->take(5)
             ->get();
@@ -83,6 +84,9 @@ class LandingPageController extends Controller
 
         // Mitra dari database (dikelola admin).
         $mitras = Mitra::active()->orderBy('sort_order')->get();
+
+        // Gallery images untuk section galeri kegiatan.
+        $galleryImages = GalleryImage::active()->orderBy('sort_order')->get();
 
         $steps = [
             [
@@ -130,6 +134,6 @@ class LandingPageController extends Controller
             ],
         ];
 
-        return view('landing.index', compact('features', 'steps', 'featuredTools', 'featuredParameters', 'categories', 'testimonials', 'healthTypes', 'faqs', 'stats', 'mitras'));
+        return view('landing.index', compact('features', 'steps', 'featuredTools', 'featuredParameters', 'categories', 'testimonials', 'healthTypes', 'faqs', 'stats', 'mitras', 'galleryImages'));
     }
 }

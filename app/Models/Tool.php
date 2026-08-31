@@ -40,9 +40,22 @@ class Tool extends Model
         return $this->belongsTo(ToolCategory::class, 'category_id');
     }
 
+    public function images()
+    {
+        return $this->hasMany(ToolImage::class)->orderBy('sort_order');
+    }
+
     public function borrowingItems()
     {
         return $this->hasMany(BorrowingItem::class);
+    }
+
+    /**
+     * Ambil gambar utama (sort_order pertama) atau null.
+     */
+    public function getPrimaryImageAttribute(): ?ToolImage
+    {
+        return $this->images->first();
     }
 
     public function scopeActive($query)

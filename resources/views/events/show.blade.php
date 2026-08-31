@@ -143,6 +143,7 @@
                         <form method="POST" action="{{ route('events.store', $event) }}" enctype="multipart/form-data" class="space-y-4">
                             @csrf
                             <div id="friend-codes-container"></div>
+                            <div id="friend-answers-container"></div>
                             <input type="hidden" name="register_for" id="register-for-field" value="self">
                             @if (! $alreadyRegistered)
                                 <label id="register-self-label" class="hidden items-center gap-2.5 text-sm font-semibold text-slate-700">
@@ -151,7 +152,9 @@
                                     Daftarkan diri saya juga
                                 </label>
                             @endif
-                            @include('events._fields', ['fields' => \App\Support\FormFields::normalize($event->form_fields)])
+                            <div id="main-form-fields">
+                                @include('events._fields', ['fields' => \App\Support\FormFields::normalize($event->form_fields)])
+                            </div>
 
                             <button type="submit"
                                     class="mt-2 w-full rounded-lg bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
@@ -186,8 +189,9 @@
 (function () {
     var searchUrl = @json(route('events.search-friend', $event));
     var MAX_FRIENDS = {{ \App\Http\Controllers\EventController::MAX_PROXY_PER_EVENT }};
+    var friendFields = @json(collect(\App\Support\FormFields::normalize($event->form_fields))->filter(fn ($f) => in_array($f['type'], ['select', 'radio']))->values());
     var friendCodes = [];
-    var friendEntries = {}; // code → { name, email, nim_nip, institution }
+    var friendEntries = {};
 
     function setMode(mode) {
         var isFriend = mode === 'friend';
@@ -207,6 +211,10 @@
             selfLabel.classList.toggle('flex', isFriend);
             selfLabel.classList.toggle('items-center', isFriend);
         }
+
+        document.querySelectorAll('#main-form-fields .per-friend-field').forEach(function (el) {
+            el.style.display = isFriend ? 'none' : '';
+        });
     }
 
     document.querySelectorAll('.reg-mode-btn').forEach(function (btn) {
@@ -225,6 +233,65 @@
         });
     }
 
+    function syncFriendAnswers() {
+        var container = document.getElementById('friend-answers-container');
+        container.innerHTML = '';
+        friendCodes.forEach(function (code) {
+            var entry = friendEntries[code] || {};
+            var answers = entry.answers || {};
+            Object.keys(answers).forEach(function (key) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'friend_answers[' + code + '][' + key + ']';
+                input.value = answers[key];
+                container.appendChild(input);
+            });
+        });
+    }
+
+    function renderFriendFields(code) {
+        if (friendFields.length === 0) return '';
+
+        var entry = friendEntries[code] || {};
+        var answers = entry.answers || {};
+        var html = '';
+
+        friendFields.forEach(function (field) {
+            var val = answers[field.key] || '';
+            var id = 'ff_' + code + '_' + field.key;
+
+            if (field.type === 'select') {
+                html += '<div class="mt-2">';
+                html += '<label for="' + id + '" class="text-xs font-semibold text-slate-600">' + field.label + '</label>';
+                html += '<select id="' + id + '" data-code="' + code + '" data-key="' + field.key + '"' +
+                    (field.required ? ' required' : '') +
+                    ' class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">';
+                html += '<option value="">-- Pilih --</option>';
+                field.options.forEach(function (opt) {
+                    html += '<option value="' + opt + '"' + (val === opt ? ' selected' : '') + '>' + opt + '</option>';
+                });
+                html += '</select></div>';
+            } else if (field.type === 'radio') {
+                html += '<div class="mt-2">';
+                html += '<p class="text-xs font-semibold text-slate-600">' + field.label + '</p>';
+                html += '<div class="mt-1 flex flex-wrap gap-3">';
+                field.options.forEach(function (opt) {
+                    var radioId = id + '_' + opt.replace(/\s+/g, '_');
+                    html += '<label for="' + radioId + '" class="flex items-center gap-1.5 text-xs text-slate-700">';
+                    html += '<input type="radio" id="' + radioId + '" name="ff_' + code + '_' + field.key + '" value="' + opt + '"' +
+                        ' data-code="' + code + '" data-key="' + field.key + '"' +
+                        (field.required ? ' required' : '') +
+                        ' class="h-3 w-3 border-slate-300 text-emerald-600 focus:ring-emerald-500">';
+                    html += opt;
+                    html += '</label>';
+                });
+                html += '</div></div>';
+            }
+        });
+
+        return html;
+    }
+
     function renderFriendList() {
         var list = document.getElementById('friend-list');
         var hint = document.getElementById('friend-empty-hint');
@@ -234,22 +301,24 @@
         friendCodes.forEach(function (code) {
             var entry = friendEntries[code] || {};
             var card = document.createElement('div');
-            card.className = 'flex items-center justify-between rounded-lg border border-emerald-200 bg-white p-3 text-sm';
+            card.className = 'rounded-lg border border-emerald-200 bg-white p-3 text-sm';
             card.innerHTML =
-                '<div class="min-w-0 flex-1">' +
-                    '<p class="font-bold text-slate-900 truncate">' + (entry.name || code) + '</p>' +
-                    '<p class="mt-0.5 text-xs text-slate-500 truncate">' +
-                        [entry.email, entry.nim_nip, entry.institution].filter(Boolean).join(' · ') +
-                    '</p>' +
+                '<div class="flex items-center justify-between">' +
+                    '<div class="min-w-0 flex-1">' +
+                        '<p class="font-bold text-slate-900 truncate">' + (entry.name || code) + '</p>' +
+                        '<p class="mt-0.5 text-xs text-slate-500 truncate">' +
+                            [entry.email, entry.nim_nip, entry.institution].filter(Boolean).join(' · ') +
+                        '</p>' +
+                    '</div>' +
+                    '<button type="button" data-remove="' + code + '"' +
+                        ' class="ml-3 shrink-0 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50">' +
+                        '✕' +
+                    '</button>' +
                 '</div>' +
-                '<button type="button" data-remove="' + code + '"' +
-                    ' class="ml-3 shrink-0 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50">' +
-                    '✕' +
-                '</button>';
+                renderFriendFields(code);
             list.appendChild(card);
         });
 
-        // Batasi input jika sudah max
         var input = document.getElementById('friend-code-input');
         var addBtn = document.getElementById('friend-search-btn');
         if (friendCodes.length >= MAX_FRIENDS) {
@@ -265,7 +334,6 @@
         }
     }
 
-    // Hapus teman via event delegation
     document.getElementById('friend-list').addEventListener('click', function (e) {
         var btn = e.target.closest('[data-remove]');
         if (!btn) return;
@@ -273,10 +341,21 @@
         friendCodes = friendCodes.filter(function (c) { return c !== code; });
         delete friendEntries[code];
         syncHiddenField();
+        syncFriendAnswers();
         renderFriendList();
     });
 
-    // Tambah teman
+    document.getElementById('friend-list').addEventListener('change', function (e) {
+        var el = e.target;
+        var code = el.dataset.code;
+        var key = el.dataset.key;
+        if (!code || !key) return;
+        if (!friendEntries[code]) friendEntries[code] = {};
+        if (!friendEntries[code].answers) friendEntries[code].answers = {};
+        friendEntries[code].answers[key] = el.value;
+        syncFriendAnswers();
+    });
+
     document.getElementById('friend-search-btn').addEventListener('click', function () {
         var input = document.getElementById('friend-code-input');
         var code = input.value.trim();
@@ -321,16 +400,17 @@
                 name: data.name,
                 email: data.email,
                 nim_nip: data.nim_nip,
-                institution: data.institution
+                institution: data.institution,
+                answers: {}
             };
 
             syncHiddenField();
+            syncFriendAnswers();
             renderFriendList();
             input.value = '';
             input.focus();
 
-            // Auto-isi field form dengan data teman terakhir ditambahkan
-            var fields = document.querySelectorAll('input[name], select[name], textarea[name]');
+            var fields = document.querySelectorAll('#main-form-fields input[name], #main-form-fields select[name], #main-form-fields textarea[name]');
             var mapping = {
                 nim: data.nim_nip, nim_nip: data.nim_nip, nip: data.nim_nip,
                 nik: data.nim_nip, nidn: data.nim_nip,
@@ -360,7 +440,6 @@
         });
     });
 
-    // Enter pada input langsung pencari
     document.getElementById('friend-code-input').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();

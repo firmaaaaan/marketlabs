@@ -86,6 +86,10 @@ class EventController extends Controller
         $codes = array_unique($validated['friend_codes']);
         $answers = FormFields::validate($request, $fields);
 
+        // Ambil field select/radio untuk validasi per-friend answers.
+        $selectRadioFields = collect($fields)->filter(fn ($f) => in_array($f['type'], ['select', 'radio']))->keyBy('key');
+        $rawFriendAnswers = $request->input('friend_answers', []);
+
         // Validasi semua kode sekaligus sebelum membuat registrasi.
         $friends = [];
         $errors = [];
@@ -114,7 +118,28 @@ class EventController extends Controller
                 continue;
             }
 
-            $friends[] = $friend;
+            // Validasi jawaban per-friend untuk field select/radio.
+            $friendAnswers = $answers;
+            $rawPerFriend = $rawFriendAnswers[$code] ?? [];
+
+            foreach ($selectRadioFields as $key => $field) {
+                $value = $rawPerFriend[$key] ?? null;
+
+                if ($field['required'] && ($value === null || $value === '')) {
+                    $errors[] = "Bidang {$field['label']} wajib diisi untuk '{$friend->name}'.";
+                    continue;
+                }
+
+                if ($value !== null && $value !== '') {
+                    if ($field['options'] && ! in_array((string) $value, $field['options'], true)) {
+                        $errors[] = "Nilai '{$value}' pada bidang {$field['label']} tidak valid untuk '{$friend->name}'.";
+                        continue;
+                    }
+                    $friendAnswers[$key] = (string) $value;
+                }
+            }
+
+            $friends[] = ['user' => $friend, 'answers' => $friendAnswers];
         }
 
         if ($alreadyRegisteredNames) {
@@ -154,13 +179,16 @@ class EventController extends Controller
 
         $registered = [];
 
-        foreach ($friends as $friend) {
+        foreach ($friends as $friendData) {
+            $friend = $friendData['user'];
+            $friendAnswers = $friendData['answers'];
+
             EventRegistration::create([
                 'event_id'         => $event->id,
                 'user_id'          => $friend->id,
                 'registered_by'    => auth()->id(),
                 'status'           => EventRegistration::STATUS_PENDING,
-                'answers'          => $answers,
+                'answers'          => $friendAnswers,
                 'attendance_token' => Str::random(32),
             ]);
 

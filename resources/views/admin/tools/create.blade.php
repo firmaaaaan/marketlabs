@@ -110,11 +110,15 @@
 
         {{-- Gambar (opsional) --}}
         <div class="mt-5">
-            <label for="image" class="block text-sm font-semibold text-slate-700">Gambar Alat <span class="font-normal text-slate-400">(opsional)</span></label>
-            <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp"
+            <label for="images" class="block text-sm font-semibold text-slate-700">Gambar Alat <span class="font-normal text-slate-400">(opsional, maks. 10)</span></label>
+            <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/webp" multiple
                    class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-            <p class="mt-1 text-xs text-slate-500">JPG, PNG, atau WEBP. Maksimal 2 MB.</p>
-            @error('image')
+            <p class="mt-1 text-xs text-slate-500">JPG, PNG, atau WEBP. Maksimal 2 MB per gambar. Gambar pertama akan menjadi gambar utama.</p>
+            <div id="image-preview" class="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5"></div>
+            @error('images')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+            @error('images.*')
                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
             @enderror
         </div>
@@ -141,3 +145,24 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('images').addEventListener('change', function (e) {
+    var preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    Array.from(e.target.files).forEach(function (file, i) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+            var div = document.createElement('div');
+            div.className = 'relative aspect-square overflow-hidden rounded-lg border border-slate-200';
+            div.innerHTML = '<img src="' + ev.target.result + '" class="h-full w-full object-cover">' +
+                (i === 0 ? '<span class="absolute top-1 left-1 rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">Utama</span>' : '') +
+                '<span class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-800/60 text-[10px] font-bold text-white">' + (i + 1) + '</span>';
+            preview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+});
+</script>
+@endpush

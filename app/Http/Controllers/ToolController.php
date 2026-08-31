@@ -36,7 +36,7 @@ class ToolController extends Controller
     {
         abort_unless($tool->is_active, 404);
 
-        $tool->load('category');
+        $tool->load(['category', 'images']);
 
         $related = Tool::active()->with('category')
             ->where('category_id', $tool->category_id)

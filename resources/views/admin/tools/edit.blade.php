@@ -110,20 +110,42 @@
 
         {{-- Gambar (opsional) --}}
         <div class="mt-5">
-            <label for="image" class="block text-sm font-semibold text-slate-700">Gambar Alat <span class="font-normal text-slate-400">(opsional)</span></label>
+            <label class="block text-sm font-semibold text-slate-700">Gambar Alat <span class="font-normal text-slate-400">(opsional, maks. 10)</span></label>
 
-            @if ($tool->image)
-                <div class="mt-2 flex items-center gap-4">
-                    <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
-                         class="h-20 w-20 rounded-lg border border-slate-200 object-cover">
-                    <p class="text-xs text-slate-500">Gambar saat ini. Upload gambar baru untuk menggantinya.</p>
+            @if ($tool->images->isNotEmpty())
+                <div id="existing-images" class="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+                    @foreach ($tool->images as $image)
+                        <div class="group relative aspect-square overflow-hidden rounded-lg border border-slate-200" data-id="{{ $image->id }}">
+                            <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $tool->name }}"
+                                 class="h-full w-full object-cover">
+                            <span class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-800/60 text-[10px] font-bold text-white">
+                                {{ $loop->index + 1 }}
+                            </span>
+                            @if ($loop->first)
+                                <span class="absolute top-1 left-1 rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">Utama</span>
+                            @endif
+                            <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-red-600/0 transition group-hover:bg-red-600/40">
+                                <input type="checkbox" name="delete_images[]" value="{{ $image->id }}"
+                                       class="hidden peer">
+                                <svg class="h-6 w-6 text-white opacity-0 transition peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="absolute bottom-1 left-1 rounded bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white opacity-0 transition group-hover:opacity-100">Hapus</span>
+                            </label>
+                        </div>
+                    @endforeach
                 </div>
+                <p class="mt-1 text-xs text-slate-500">Centang gambar yang ingin dihapus. Gambar yang dihapus tidak dapat dikembalikan.</p>
             @endif
 
-            <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp"
+            <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/webp" multiple
                    class="mt-2 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-            <p class="mt-1 text-xs text-slate-500">JPG, PNG, atau WEBP. Maksimal 2 MB. Kosongkan jika tidak ingin mengubah.</p>
-            @error('image')
+            <p class="mt-1 text-xs text-slate-500">Upload gambar baru untuk ditambahkan. JPG, PNG, atau WEBP. Maks 2 MB per gambar.</p>
+            <div id="image-preview" class="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5"></div>
+            @error('images')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+            @error('images.*')
                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
             @enderror
         </div>
@@ -150,3 +172,34 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('images').addEventListener('change', function (e) {
+    var preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    Array.from(e.target.files).forEach(function (file, i) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+            var div = document.createElement('div');
+            div.className = 'relative aspect-square overflow-hidden rounded-lg border border-slate-200';
+            div.innerHTML = '<img src="' + ev.target.result + '" class="h-full w-full object-cover">' +
+                '<span class="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-800/60 text-[10px] font-bold text-white">' + (i + 1) + '</span>';
+            preview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+});
+
+document.querySelectorAll('#existing-images label').forEach(function (label) {
+    var checkbox = label.querySelector('input[type="checkbox"]');
+    checkbox.addEventListener('change', function () {
+        if (this.checked) {
+            label.classList.add('ring-2', 'ring-red-500');
+        } else {
+            label.classList.remove('ring-2', 'ring-red-500');
+        }
+    });
+});
+</script>
+@endpush

@@ -9,7 +9,7 @@
                       class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"></textarea>
         </div>
     @elseif ($field['type'] === 'select')
-        <div>
+        <div class="per-friend-field">
             <label class="block text-sm font-semibold text-slate-700">
                 {{ $field['label'] }}
                 @if ($field['required'])<span class="text-red-500">*</span>@endif
@@ -23,7 +23,7 @@
             </select>
         </div>
     @elseif ($field['type'] === 'radio')
-        <div>
+        <div class="per-friend-field">
             <p class="text-sm font-semibold text-slate-700">
                 {{ $field['label'] }}
                 @if ($field['required'])<span class="text-red-500">*</span>@endif
