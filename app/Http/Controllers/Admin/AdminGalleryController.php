@@ -73,7 +73,7 @@ class AdminGalleryController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:gallery_images,id'],
+            'ids.*' => ['string', 'exists:gallery_images,id'],
         ]);
 
         $images = GalleryImage::whereIn('id', $validated['ids'])->get();

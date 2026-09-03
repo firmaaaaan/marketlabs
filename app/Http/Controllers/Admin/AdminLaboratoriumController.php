@@ -72,7 +72,7 @@ class AdminLaboratoriumController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:laboratoriums,id'],
+            'ids.*' => ['string', 'exists:laboratoriums,id'],
         ]);
 
         $labs = Laboratorium::whereIn('id', $validated['ids'])->get();

@@ -126,7 +126,7 @@ class AdminToolController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:tools,id'],
+            'ids.*' => ['string', 'exists:tools,id'],
         ]);
 
         $tools = Tool::whereIn('id', $validated['ids'])->get();

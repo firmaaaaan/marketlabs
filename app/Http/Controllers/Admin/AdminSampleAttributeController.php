@@ -57,7 +57,7 @@ class AdminSampleAttributeController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:sample_forms,id'],
+            'ids.*' => ['string', 'exists:sample_forms,id'],
         ]);
 
         $items = SampleForm::whereIn('id', $validated['ids'])->get();
@@ -121,7 +121,7 @@ class AdminSampleAttributeController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:sample_types,id'],
+            'ids.*' => ['string', 'exists:sample_types,id'],
         ]);
 
         $items = SampleType::whereIn('id', $validated['ids'])->get();

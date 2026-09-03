@@ -67,7 +67,7 @@ class AdminFaqController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:faqs,id'],
+            'ids.*' => ['string', 'exists:faqs,id'],
         ]);
 
         $count = Faq::whereIn('id', $validated['ids'])->delete();

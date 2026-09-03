@@ -105,7 +105,7 @@ class AdminTestParameterController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:test_parameters,id'],
+            'ids.*' => ['string', 'exists:test_parameters,id'],
         ]);
 
         $parameters = TestParameter::whereIn('id', $validated['ids'])->get();

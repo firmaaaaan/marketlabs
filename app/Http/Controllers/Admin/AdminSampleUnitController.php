@@ -68,7 +68,7 @@ class AdminSampleUnitController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:sample_units,id'],
+            'ids.*' => ['string', 'exists:sample_units,id'],
         ]);
 
         $units = SampleUnit::whereIn('id', $validated['ids'])->get();

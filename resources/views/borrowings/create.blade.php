@@ -22,38 +22,6 @@
         @endif
 
         <div class="mt-8 grid gap-8 lg:grid-cols-5">
-            {{-- Ringkasan item --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
-                <h2 class="text-lg font-bold text-slate-900">Alat yang Dipinjam</h2>
-                <ul class="mt-4 space-y-3 border-t border-slate-100 pt-4">
-                    @foreach ($items as $item)
-                        <li class="flex items-center justify-between gap-3 text-sm">
-                            <div class="min-w-0">
-                                <p class="truncate font-semibold text-slate-900">{{ $item['tool']->name }}</p>
-                                <p class="text-xs text-slate-500">{{ $item['tool']->code }} · {{ $item['tool']->formatted_price }}/hari</p>
-                            </div>
-                            <span class="flex-none rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                                {{ $item['quantity'] }} unit · Rp {{ number_format($item['subtotal_per_day'], 0, ',', '.') }}/hari
-                            </span>
-                        </li>
-                    @endforeach
-                </ul>
-                <div class="mt-4 space-y-2 border-t border-slate-100 pt-4 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-slate-600">Total unit</span>
-                        <span class="font-bold text-slate-900">{{ $totalItems }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-600">Total / hari</span>
-                        <span class="font-bold text-slate-900">Rp {{ number_format($totalPerDay, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="flex justify-between border-t border-slate-100 pt-2">
-                        <span class="font-semibold text-slate-800">Estimasi Total</span>
-                        <span id="estimasi-total" class="font-extrabold text-emerald-700">—</span>
-                    </div>
-                </div>
-            </div>
-
             {{-- Form --}}
             <form action="{{ route('borrowings.store') }}" method="POST" enctype="multipart/form-data" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
                 @csrf
@@ -187,6 +155,38 @@
                     </a>
                 </div>
             </form>
+
+            {{-- Ringkasan item --}}
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+                <h2 class="text-lg font-bold text-slate-900">Alat yang Dipinjam</h2>
+                <ul class="mt-4 space-y-3 border-t border-slate-100 pt-4">
+                    @foreach ($items as $item)
+                        <li class="flex items-center justify-between gap-3 text-sm">
+                            <div class="min-w-0">
+                                <p class="truncate font-semibold text-slate-900">{{ $item['tool']->name }}</p>
+                                <p class="text-xs text-slate-500">{{ $item['tool']->code }} · {{ $item['tool']->formatted_price }}/hari</p>
+                            </div>
+                            <span class="flex-none rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                                {{ $item['quantity'] }} unit · Rp {{ number_format($item['subtotal_per_day'], 0, ',', '.') }}/hari
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="mt-4 space-y-2 border-t border-slate-100 pt-4 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-600">Total unit</span>
+                        <span class="font-bold text-slate-900">{{ $totalItems }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600">Total / hari</span>
+                        <span class="font-bold text-slate-900">Rp {{ number_format($totalPerDay, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-slate-100 pt-2">
+                        <span class="font-semibold text-slate-800">Estimasi Total</span>
+                        <span id="estimasi-total" class="font-extrabold text-emerald-700">—</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

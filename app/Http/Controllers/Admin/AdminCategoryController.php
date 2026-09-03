@@ -56,7 +56,7 @@ class AdminCategoryController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:tool_categories,id'],
+            'ids.*' => ['string', 'exists:tool_categories,id'],
         ]);
 
         $categories = ToolCategory::whereIn('id', $validated['ids'])->get();

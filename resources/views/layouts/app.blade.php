@@ -71,6 +71,7 @@
                 <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Beranda</a>
                 <a href="{{ route('tools.index') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Katalog Alat</a>
                 <a href="{{ route('sample-tests.catalog') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Katalog Pengujian</a>
+                <a href="{{ route('lab-schedule') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Jadwal Lab</a>
                 <a href="{{ route('events.index') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Event</a>
                 <a href="{{ route('health-checkups.catalog') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Pemeriksaan Kesehatan</a>
                 @auth
@@ -234,6 +235,7 @@
                 <a href="{{ route('home') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Beranda</a>
                 <a href="{{ route('tools.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Katalog Alat</a>
                 <a href="{{ route('sample-tests.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Katalog Pengujian</a>
+                <a href="{{ route('lab-schedule') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Jadwal Lab</a>
                 <a href="{{ route('events.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Event</a>
                 <a href="{{ route('health-checkups.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Pemeriksaan Kesehatan</a>
                 @auth

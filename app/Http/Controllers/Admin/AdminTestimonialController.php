@@ -71,7 +71,7 @@ class AdminTestimonialController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:testimonials,id'],
+            'ids.*' => ['string', 'exists:testimonials,id'],
         ]);
 
         $count = Testimonial::whereIn('id', $validated['ids'])->delete();

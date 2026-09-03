@@ -123,7 +123,7 @@ class AdminUserController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:users,id'],
+            'ids.*' => ['string', 'exists:users,id'],
         ]);
 
         $users = User::whereIn('id', $validated['ids'])->get();

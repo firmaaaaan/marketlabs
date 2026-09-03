@@ -76,7 +76,7 @@ class AdminHealthCheckupTypeController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:health_test_types,id'],
+            'ids.*' => ['string', 'exists:health_test_types,id'],
         ]);
 
         $types = HealthTestType::whereIn('id', $validated['ids'])->get();

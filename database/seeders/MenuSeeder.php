@@ -26,17 +26,19 @@ class MenuSeeder extends Seeder
             ['label' => 'Pemeriksaan Kesehatan', 'route_name' => 'admin.health-checkups.index', 'sort_order' => 11, 'is_active' => true],
             ['label' => 'Tarif Pemeriksaan', 'route_name' => 'admin.health-checkup-types.index', 'sort_order' => 12, 'is_active' => true],
             ['label' => 'Jadwal Layanan', 'route_name' => 'admin.schedule.index', 'sort_order' => 13, 'is_active' => true],
-            ['label' => 'Kelola Event', 'route_name' => 'admin.events.index', 'sort_order' => 14, 'is_active' => true],
-            ['label' => 'Tarif Bench Fee', 'route_name' => 'admin.bench-fee.index', 'sort_order' => 15, 'is_active' => true],
-            ['label' => 'Pengaturan Invoice', 'route_name' => 'admin.invoice.index', 'sort_order' => 16, 'is_active' => true],
-            ['label' => 'Pengaturan WhatsApp', 'route_name' => 'admin.whatsapp.index', 'sort_order' => 17, 'is_active' => true],
-            ['label' => 'Pengaturan Footer', 'route_name' => 'admin.footer.index', 'sort_order' => 18, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Kelola Menu', 'route_name' => 'admin.menus.index', 'sort_order' => 19, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Kelola Testimoni', 'route_name' => 'admin.testimonials.index', 'sort_order' => 20, 'is_active' => true],
-            ['label' => 'Kelola FAQ', 'route_name' => 'admin.faqs.index', 'sort_order' => 21, 'is_active' => true],
-            ['label' => 'Kelola Mitra', 'route_name' => 'admin.mitras.index', 'sort_order' => 22, 'is_active' => true],
-            ['label' => 'Log Aktivitas', 'route_name' => 'admin.activity-logs.index', 'sort_order' => 23, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Download Dokumen', 'route_name' => 'admin.document-downloads.index', 'sort_order' => 24, 'is_active' => true],
+            ['label' => 'Kalender', 'route_name' => 'admin.calendar.index', 'sort_order' => 14, 'is_active' => true],
+            ['label' => 'Kelola Event', 'route_name' => 'admin.events.index', 'sort_order' => 15, 'is_active' => true],
+            ['label' => 'Tarif Bench Fee', 'route_name' => 'admin.bench-fee.index', 'sort_order' => 16, 'is_active' => true],
+            ['label' => 'Pengaturan Invoice', 'route_name' => 'admin.invoice.index', 'sort_order' => 17, 'is_active' => true],
+            ['label' => 'Pengaturan WhatsApp', 'route_name' => 'admin.whatsapp.index', 'sort_order' => 18, 'is_active' => true],
+            ['label' => 'Pengaturan Footer', 'route_name' => 'admin.footer.index', 'sort_order' => 19, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Kelola Menu', 'route_name' => 'admin.menus.index', 'sort_order' => 20, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Kelola Testimoni', 'route_name' => 'admin.testimonials.index', 'sort_order' => 21, 'is_active' => true],
+            ['label' => 'Kelola FAQ', 'route_name' => 'admin.faqs.index', 'sort_order' => 22, 'is_active' => true],
+            ['label' => 'Kelola Mitra', 'route_name' => 'admin.mitras.index', 'sort_order' => 23, 'is_active' => true],
+            ['label' => 'Log Aktivitas', 'route_name' => 'admin.activity-logs.index', 'sort_order' => 24, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Download Dokumen', 'route_name' => 'admin.document-downloads.index', 'sort_order' => 25, 'is_active' => true],
+            ['label' => 'Backup & Restore', 'route_name' => 'admin.backup.index', 'sort_order' => 26, 'is_active' => true, 'min_role' => 'superadmin'],
         ];
 
         foreach ($sidebarItems as $item) {
@@ -52,7 +54,8 @@ class MenuSeeder extends Seeder
             ['label' => 'Alat', 'route_name' => 'tools.index', 'sort_order' => 1, 'is_active' => true],
             ['label' => 'Pengujian', 'route_name' => 'sample-tests.catalog', 'sort_order' => 2, 'is_active' => true],
             ['label' => 'Pemeriksaan', 'route_name' => 'health-checkups.catalog', 'sort_order' => 3, 'is_active' => true],
-            ['label' => 'Event', 'route_name' => 'events.index', 'sort_order' => 4, 'is_active' => true],
+            ['label' => 'Jadwal Lab', 'route_name' => 'lab-schedule', 'sort_order' => 4, 'is_active' => true],
+            ['label' => 'Event', 'route_name' => 'events.index', 'sort_order' => 5, 'is_active' => true],
         ];
 
         foreach ($topbarItems as $item) {

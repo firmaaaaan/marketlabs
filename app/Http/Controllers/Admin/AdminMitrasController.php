@@ -71,7 +71,7 @@ class AdminMitrasController extends Controller
     {
         $validated = $request->validate([
             'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['integer', 'exists:mitras,id'],
+            'ids.*' => ['string', 'exists:mitras,id'],
         ]);
 
         $count = Mitra::whereIn('id', $validated['ids'])->delete();

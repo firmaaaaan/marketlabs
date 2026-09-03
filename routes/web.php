@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminActivityLogController;
 use App\Http\Controllers\Admin\AdminBenchFeeController;
 use App\Http\Controllers\Admin\AdminBorrowingController;
+use App\Http\Controllers\Admin\AdminCalendarController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminDocumentDownloadController;
@@ -25,8 +26,10 @@ use App\Http\Controllers\Admin\AdminTestParameterController;
 use App\Http\Controllers\Admin\AdminToolController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWhatsAppController;
+use App\Http\Controllers\Api\CalendarApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BorrowingController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
@@ -56,6 +59,8 @@ Route::get('/katalog-pengujian', [SampleTestController::class, 'catalog'])->name
 Route::get('/katalog-pemeriksaan', [HealthCheckupController::class, 'catalog'])->name('health-checkups.catalog');
 
 Route::get('/event', [EventController::class, 'index'])->name('events.index');
+
+Route::get('/jadwal-lab', [\App\Http\Controllers\LabScheduleController::class, 'index'])->name('lab-schedule');
 
 Route::get('/keranjang', [CartController::class, 'index'])->middleware('throttle:public')->name('cart.index');
 Route::get('/keranjang/json', [CartController::class, 'json'])->middleware('throttle:public')->name('cart.json');
@@ -151,6 +156,11 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::get('/pengujian/{test}', [SampleTestController::class, 'show'])->name('sample-tests.show');
         Route::delete('/pengujian/{test}', [SampleTestController::class, 'cancel'])->name('sample-tests.cancel');
 
+        // Calendar
+        Route::get('/kalender', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
+        Route::get('/kalender/events', [\App\Http\Controllers\Api\CalendarApiController::class, 'events'])->name('calendar.events');
+        Route::get('/kalender/export', [\App\Http\Controllers\CalendarController::class, 'export'])->name('calendar.export');
+
     }); // end profile.complete middleware
 
     // Laboran routes — tanpa syarat profil lengkap.
@@ -211,6 +221,11 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::post('/jadwal-layanan/petugas', [AdminScheduleController::class, 'storeWeekly'])->name('schedule.weekly-store');
         Route::post('/jadwal-layanan/petugas/salin', [AdminScheduleController::class, 'copyPrevious'])->name('schedule.weekly-copy');
         Route::delete('/jadwal-layanan/petugas/{schedule}', [AdminScheduleController::class, 'destroyWeekly'])->name('schedule.weekly-destroy');
+
+        // Calendar
+        Route::get('/kalender', [\App\Http\Controllers\Admin\AdminCalendarController::class, 'index'])->name('calendar.index');
+        Route::get('/kalender/events', [\App\Http\Controllers\Api\CalendarApiController::class, 'events'])->name('calendar.events');
+        Route::get('/kalender/export', [\App\Http\Controllers\Admin\AdminCalendarController::class, 'export'])->name('calendar.export');
 
         Route::resource('testimonials', AdminTestimonialController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('faqs', AdminFaqController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -325,6 +340,14 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
             Route::put('/footer/logo/{logo}', [AdminFooterController::class, 'updateLogo'])->name('footer.logo-update');
             Route::delete('/footer/logo/{logo}', [AdminFooterController::class, 'destroyLogo'])->name('footer.logo-destroy');
             Route::post('/footer/logo/{logo}/move/{direction}', [AdminFooterController::class, 'moveLogo'])->name('footer.logo-move');
+
+            // Backup & Restore
+            Route::get('/backup', [\App\Http\Controllers\Admin\AdminBackupController::class, 'index'])->name('backup.index');
+            Route::post('/backup', [\App\Http\Controllers\Admin\AdminBackupController::class, 'store'])->name('backup.store');
+            Route::post('/backup/restore', [\App\Http\Controllers\Admin\AdminBackupController::class, 'restore'])->name('backup.restore');
+            Route::get('/backup/tables', [\App\Http\Controllers\Admin\AdminBackupController::class, 'tables'])->name('backup.tables');
+            Route::get('/backup/{filename}/download', [\App\Http\Controllers\Admin\AdminBackupController::class, 'download'])->name('backup.download');
+            Route::delete('/backup/{filename}', [\App\Http\Controllers\Admin\AdminBackupController::class, 'destroy'])->name('backup.destroy');
         });
     });
 });
