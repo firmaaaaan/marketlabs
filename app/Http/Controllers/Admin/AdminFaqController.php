@@ -62,4 +62,17 @@ class AdminFaqController extends Controller
         return redirect()->route('admin.faqs.index')
             ->with('success', "FAQ '{$faq->question}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:faqs,id'],
+        ]);
+
+        $count = Faq::whereIn('id', $validated['ids'])->delete();
+
+        return redirect()->route('admin.faqs.index')
+            ->with('success', "{$count} FAQ berhasil dihapus.");
+    }
 }

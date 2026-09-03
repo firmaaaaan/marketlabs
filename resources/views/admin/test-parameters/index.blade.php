@@ -6,6 +6,21 @@
 
 @section('content')
 
+@if (auth()->user()->isSuperAdmin())
+<div id="bulk-delete-bar" class="mb-4 hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+    <div class="flex items-center justify-between">
+        <p class="text-sm font-medium text-red-700"><span id="selected-count">0</span> parameter dipilih</p>
+        <button type="button" onclick="submitBulkDelete()"
+                class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700">
+            Hapus Terpilih
+        </button>
+    </div>
+</div>
+<form id="bulk-delete-form" action="{{ route('admin.test-parameters.bulk-destroy') }}" method="POST">
+    @csrf
+</form>
+@endif
+
 <div class="flex flex-wrap items-center justify-between gap-4">
     <div>
         <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Kelola Parameter Pengujian</h1>
@@ -132,6 +147,12 @@
         <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
                 <tr>
+                    @if (auth()->user()->isSuperAdmin())
+                    <th class="w-10 px-4 py-3">
+                        <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)"
+                               class="h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                    </th>
+                    @endif
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Parameter</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Satuan</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Tarif</th>
@@ -142,6 +163,12 @@
             <tbody class="divide-y divide-slate-200">
                 @forelse ($parameters as $parameter)
                     <tr class="transition hover:bg-slate-50">
+                        @if (auth()->user()->isSuperAdmin())
+                        <td class="w-10 px-4 py-4">
+                            <input type="checkbox" name="ids[]" value="{{ $parameter->id }}" onchange="updateBulkCount()"
+                                   class="bulk-checkbox h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                        </td>
+                        @endif
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if ($parameter->image)
@@ -196,7 +223,7 @@
                         </td>
                     </tr>
                     <tr id="edit-form-{{ $parameter->id }}" class="hidden border-t border-emerald-100 bg-emerald-50/50">
-                        <td colspan="5" class="px-6 py-4">
+                        <td colspan="6" class="px-6 py-4">
                             <form action="{{ route('admin.test-parameters.update', $parameter) }}" method="POST" class="flex flex-wrap items-end gap-3">
                                 @csrf
                                 @method('PUT')
@@ -247,7 +274,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada parameter.</td>
+                        <td colspan="6" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada parameter.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -262,6 +289,31 @@
 
 @push('scripts')
 <script>
+    @if (auth()->user()->isSuperAdmin())
+    function toggleSelectAll(el) {
+        document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = el.checked);
+        updateBulkCount();
+    }
+    function updateBulkCount() {
+        const checked = document.querySelectorAll('.bulk-checkbox:checked').length;
+        document.getElementById('selected-count').textContent = checked;
+        document.getElementById('bulk-delete-bar').classList.toggle('hidden', checked === 0);
+    }
+    function submitBulkDelete() {
+        const checked = document.querySelectorAll('.bulk-checkbox:checked');
+        if (checked.length === 0) return;
+        const form = document.getElementById('bulk-delete-form');
+        form.querySelectorAll('input[name="ids[]"]').forEach(el => el.remove());
+        checked.forEach(cb => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'ids[]';
+            input.value = cb.value;
+            form.appendChild(input);
+        });
+        openBulkModal(checked.length, function () { form.submit(); });
+    }
+    @endif
     function toggleEdit(id) {
         const form = document.getElementById('edit-form-' + id);
         if (form) form.classList.toggle('hidden');

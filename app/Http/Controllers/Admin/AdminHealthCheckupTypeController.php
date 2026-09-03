@@ -71,4 +71,32 @@ class AdminHealthCheckupTypeController extends Controller
         return redirect()->route('admin.health-checkup-types.index')
             ->with('success', "Jenis pemeriksaan '{$healthCheckupType->name}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:health_test_types,id'],
+        ]);
+
+        $types = HealthTestType::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($types as $type) {
+            if ($type->checkups()->count() > 0) {
+                $skipped[] = $type->name;
+                continue;
+            }
+            $type->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} jenis pemeriksaan berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return redirect()->route('admin.health-checkup-types.index')->with('success', $message);
+    }
 }

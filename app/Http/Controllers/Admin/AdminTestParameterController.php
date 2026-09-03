@@ -101,6 +101,34 @@ class AdminTestParameterController extends Controller
             ->with('success', "Parameter '{$testParameter->name}' berhasil dihapus.");
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:test_parameters,id'],
+        ]);
+
+        $parameters = TestParameter::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($parameters as $parameter) {
+            if ($parameter->sampleTestItems()->exists()) {
+                $skipped[] = $parameter->name;
+                continue;
+            }
+            $parameter->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} parameter berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return redirect()->route('admin.test-parameters.index')->with('success', $message);
+    }
+
     protected function storeImage(Request $request, ?TestParameter $parameter = null): ?string
     {
         if (! $request->hasFile('image')) {

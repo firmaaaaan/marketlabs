@@ -66,4 +66,17 @@ class AdminTestimonialController extends Controller
         return redirect()->route('admin.testimonials.index')
             ->with('success', "Testimoni '{$testimonial->name}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:testimonials,id'],
+        ]);
+
+        $count = Testimonial::whereIn('id', $validated['ids'])->delete();
+
+        return redirect()->route('admin.testimonials.index')
+            ->with('success', "{$count} testimoni berhasil dihapus.");
+    }
 }

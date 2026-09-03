@@ -63,4 +63,32 @@ class AdminSampleUnitController extends Controller
         return redirect()->route('admin.sample-units.index')
             ->with('success', "Satuan '{$sampleUnit->name}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:sample_units,id'],
+        ]);
+
+        $units = SampleUnit::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($units as $unit) {
+            if ($unit->parameters()->count() > 0) {
+                $skipped[] = $unit->name;
+                continue;
+            }
+            $unit->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} satuan berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return redirect()->route('admin.sample-units.index')->with('success', $message);
+    }
 }

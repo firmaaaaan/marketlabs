@@ -122,6 +122,29 @@ class AdminToolController extends Controller
             ->with('success', 'Alat berhasil dihapus.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:tools,id'],
+        ]);
+
+        $tools = Tool::whereIn('id', $validated['ids'])->get();
+
+        foreach ($tools as $tool) {
+            foreach ($tool->images as $image) {
+                Storage::disk('public')->delete($image->path);
+            }
+            if ($tool->image) {
+                Storage::disk('public')->delete($tool->image);
+            }
+            $tool->delete();
+        }
+
+        return redirect()->route('admin.tools.index')
+            ->with('success', count($tools) . ' alat berhasil dihapus.');
+    }
+
     /**
      * Export daftar alat ke Excel (.xlsx) mengikuti filter yang aktif.
      */

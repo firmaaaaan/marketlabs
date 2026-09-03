@@ -6,6 +6,21 @@
 
 @section('content')
 
+@if (auth()->user()->isSuperAdmin())
+<div id="bulk-delete-bar" class="mb-4 hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+    <div class="flex items-center justify-between">
+        <p class="text-sm font-medium text-red-700"><span id="selected-count">0</span> item dipilih</p>
+        <button type="button" onclick="submitBulkDelete()"
+                class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700">
+            Hapus Terpilih
+        </button>
+    </div>
+</div>
+<form id="bulk-delete-form" action="" method="POST">
+    @csrf
+</form>
+@endif
+
 <div class="flex flex-wrap items-center justify-between gap-4">
     <div>
         <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Bentuk &amp; Jenis Sampel</h1>
@@ -58,6 +73,11 @@
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
+                        @if (auth()->user()->isSuperAdmin())
+                        <th class="w-10 px-4 py-3">
+                            <input type="checkbox" class="bulk-select-form h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500" onchange="toggleBulkType(this, 'form')">
+                        </th>
+                        @endif
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Bentuk</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Dipakai</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
@@ -67,6 +87,12 @@
                 <tbody class="divide-y divide-slate-200">
                     @forelse ($forms as $form)
                         <tr class="transition hover:bg-slate-50">
+                            @if (auth()->user()->isSuperAdmin())
+                            <td class="w-10 px-4 py-4">
+                                <input type="checkbox" name="ids[]" value="form-{{ $form->id }}" onchange="updateBulkCount()"
+                                       class="bulk-checkbox h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                            </td>
+                            @endif
                             <td class="px-6 py-4 font-medium text-slate-900">{{ $form->name }}</td>
                             <td class="px-6 py-4 text-slate-600">{{ $form->items_count }} sampel</td>
                             <td class="px-6 py-4">
@@ -93,7 +119,7 @@
                             </td>
                         </tr>
                         <tr id="edit-form-{{ $form->id }}" class="hidden border-t border-emerald-100 bg-emerald-50/50">
-                            <td colspan="4" class="px-6 py-4">
+                            <td colspan="5" class="px-6 py-4">
                                 <form action="{{ route('admin.sample-attributes.forms.update', $form) }}" method="POST" class="flex flex-wrap items-end gap-3">
                                     @csrf
                                     @method('PUT')
@@ -120,7 +146,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada bentuk sampel.</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada bentuk sampel.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -155,6 +181,11 @@
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
+                        @if (auth()->user()->isSuperAdmin())
+                        <th class="w-10 px-4 py-3">
+                            <input type="checkbox" class="bulk-select-form h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500" onchange="toggleBulkType(this, 'type')">
+                        </th>
+                        @endif
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Jenis</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Dipakai</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
@@ -164,6 +195,12 @@
                 <tbody class="divide-y divide-slate-200">
                     @forelse ($types as $type)
                         <tr class="transition hover:bg-slate-50">
+                            @if (auth()->user()->isSuperAdmin())
+                            <td class="w-10 px-4 py-4">
+                                <input type="checkbox" name="ids[]" value="type-{{ $type->id }}" onchange="updateBulkCount()"
+                                       class="bulk-checkbox h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                            </td>
+                            @endif
                             <td class="px-6 py-4 font-medium text-slate-900">{{ $type->name }}</td>
                             <td class="px-6 py-4 text-slate-600">{{ $type->items_count }} sampel</td>
                             <td class="px-6 py-4">
@@ -190,7 +227,7 @@
                             </td>
                         </tr>
                         <tr id="edit-type-{{ $type->id }}" class="hidden border-t border-emerald-100 bg-emerald-50/50">
-                            <td colspan="4" class="px-6 py-4">
+                            <td colspan="5" class="px-6 py-4">
                                 <form action="{{ route('admin.sample-attributes.types.update', $type) }}" method="POST" class="flex flex-wrap items-end gap-3">
                                     @csrf
                                     @method('PUT')
@@ -217,7 +254,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada jenis sampel.</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada jenis sampel.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -233,6 +270,65 @@
         const form = document.getElementById('edit-' + kind + '-' + id);
         if (form) form.classList.toggle('hidden');
     }
+    @if (auth()->user()->isSuperAdmin())
+    function toggleBulkType(el, type) {
+        document.querySelectorAll('.bulk-checkbox').forEach(cb => {
+            if (cb.value.startsWith(type + '-')) cb.checked = el.checked;
+        });
+        updateBulkCount();
+    }
+    function updateBulkCount() {
+        const checked = document.querySelectorAll('.bulk-checkbox:checked').length;
+        document.getElementById('selected-count').textContent = checked;
+        document.getElementById('bulk-delete-bar').classList.toggle('hidden', checked === 0);
+    }
+    function submitBulkDelete() {
+        const checked = document.querySelectorAll('.bulk-checkbox:checked');
+        if (checked.length === 0) return;
+        const form = document.getElementById('bulk-delete-form');
+        form.querySelectorAll('input[name="ids[]"]').forEach(el => el.remove());
+        const formIds = [];
+        const typeIds = [];
+        checked.forEach(cb => {
+            const [type, id] = cb.value.split('-');
+            if (type === 'form') formIds.push(id);
+            else if (type === 'type') typeIds.push(id);
+        });
+        openBulkModal(checked.length, function () {
+            if (formIds.length > 0 && typeIds.length > 0) {
+                form.action = '{{ route('admin.sample-attributes.forms.bulk-destroy') }}';
+                formIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                form.submit();
+            } else if (formIds.length > 0) {
+                form.action = '{{ route('admin.sample-attributes.forms.bulk-destroy') }}';
+                formIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                form.submit();
+            } else if (typeIds.length > 0) {
+                form.action = '{{ route('admin.sample-attributes.types.bulk-destroy') }}';
+                typeIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                form.submit();
+            }
+        });
+    }
+    @endif
 </script>
 @endpush
 

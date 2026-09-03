@@ -67,4 +67,32 @@ class AdminLaboratoriumController extends Controller
         return redirect()->route('admin.laboratoriums.index')
             ->with('success', "Laboratorium '{$laboratorium->name}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:laboratoriums,id'],
+        ]);
+
+        $labs = Laboratorium::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($labs as $lab) {
+            if ($lab->researchProposals()->count() > 0) {
+                $skipped[] = $lab->name;
+                continue;
+            }
+            $lab->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} laboratorium berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return redirect()->route('admin.laboratoriums.index')->with('success', $message);
+    }
 }

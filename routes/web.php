@@ -286,6 +286,21 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
 
         // Superadmin-only routes
         Route::middleware('superadmin')->group(function () {
+            // Bulk destroy routes — superadmin only
+            Route::post('/tools/bulk-destroy', [AdminToolController::class, 'bulkDestroy'])->name('tools.bulk-destroy');
+            Route::post('/categories/bulk-destroy', [AdminCategoryController::class, 'bulkDestroy'])->name('categories.bulk-destroy');
+            Route::post('/users/bulk-destroy', [AdminUserController::class, 'bulkDestroy'])->name('users.bulk-destroy');
+            Route::post('/testimonials/bulk-destroy', [AdminTestimonialController::class, 'bulkDestroy'])->name('testimonials.bulk-destroy');
+            Route::post('/faqs/bulk-destroy', [AdminFaqController::class, 'bulkDestroy'])->name('faqs.bulk-destroy');
+            Route::post('/mitras/bulk-destroy', [AdminMitrasController::class, 'bulkDestroy'])->name('mitras.bulk-destroy');
+            Route::post('/gallery/bulk-destroy', [AdminGalleryController::class, 'bulkDestroy'])->name('gallery.bulk-destroy');
+            Route::post('/laboratoriums/bulk-destroy', [AdminLaboratoriumController::class, 'bulkDestroy'])->name('laboratoriums.bulk-destroy');
+            Route::post('/sample-units/bulk-destroy', [AdminSampleUnitController::class, 'bulkDestroy'])->name('sample-units.bulk-destroy');
+            Route::post('/test-parameters/bulk-destroy', [AdminTestParameterController::class, 'bulkDestroy'])->name('test-parameters.bulk-destroy');
+            Route::post('/health-checkup-types/bulk-destroy', [AdminHealthCheckupTypeController::class, 'bulkDestroy'])->name('health-checkup-types.bulk-destroy');
+            Route::post('/sample-attributes/forms/bulk-destroy', [AdminSampleAttributeController::class, 'bulkDestroyForms'])->name('sample-attributes.forms.bulk-destroy');
+            Route::post('/sample-attributes/types/bulk-destroy', [AdminSampleAttributeController::class, 'bulkDestroyTypes'])->name('sample-attributes.types.bulk-destroy');
+
             Route::get('/users/export', [AdminUserController::class, 'export'])->name('users.export');
             Route::get('/users/template', [AdminUserController::class, 'template'])->name('users.template');
             Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');

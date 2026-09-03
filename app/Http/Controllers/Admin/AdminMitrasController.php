@@ -66,4 +66,17 @@ class AdminMitrasController extends Controller
         return redirect()->route('admin.mitras.index')
             ->with('success', "Mitra '{$mitra->name}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:mitras,id'],
+        ]);
+
+        $count = Mitra::whereIn('id', $validated['ids'])->delete();
+
+        return redirect()->route('admin.mitras.index')
+            ->with('success', "{$count} mitra berhasil dihapus.");
+    }
 }

@@ -71,17 +71,42 @@
             {{-- Kanan: Stats Cards --}}
             <div class="reveal hidden lg:block">
                 <div class="grid grid-cols-2 gap-4">
-                    @foreach($stats as $stat)
                     <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                         <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
                             <svg class="h-6 w-6 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $stat['icon'] }}" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 17l8 4m8-4l-8 4" />
                             </svg>
                         </div>
-                        <p class="mt-4 text-3xl font-bold text-white">{{ $stat['value'] }}{{ $stat['suffix'] }}</p>
-                        <p class="mt-1 text-sm text-emerald-200/70">{{ $stat['label'] }}</p>
+                        <p class="mt-4 text-3xl font-bold text-white">150+</p>
+                        <p class="mt-1 text-sm text-emerald-200/70">Alat Laboratorium</p>
                     </div>
-                    @endforeach
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
+                            <svg class="h-6 w-6 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <p class="mt-4 text-3xl font-bold text-white">50+</p>
+                        <p class="mt-1 text-sm text-emerald-200/70">Parameter Pengujian</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
+                            <svg class="h-6 w-6 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                            </svg>
+                        </div>
+                        <p class="mt-4 text-3xl font-bold text-white">500+</p>
+                        <p class="mt-1 text-sm text-emerald-200/70">Pengguna Aktif</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
+                            <svg class="h-6 w-6 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                            </svg>
+                        </div>
+                        <p class="mt-4 text-3xl font-bold text-white">98%</p>
+                        <p class="mt-1 text-sm text-emerald-200/70">Tingkat Kepuasan</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,65 +138,6 @@
         </div>
     </div>
 </section>
-
-{{-- ===== MITRA KAMI (LOGO BERJALAN) ===== --}}
-@if ($mitras->isNotEmpty())
-<section class="py-12 lg:py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Mitra Kami</span>
-            <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Didukung oleh Institusi Terpercaya</h2>
-        </div>
-    </div>
-
-    <div class="relative mt-8 overflow-hidden">
-        {{-- Gradient fade kiri --}}
-        <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-white to-transparent lg:w-40"></div>
-        {{-- Gradient fade kanan --}}
-        <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-white to-transparent lg:w-40"></div>
-
-        <div class="marquee-track flex w-max gap-12 items-center">
-            {{-- Set 1 --}}
-            @foreach ($mitras as $mitra)
-                <a href="{{ $mitra->website ?? '#' }}" target="_blank" rel="noopener noreferrer"
-                   class="group flex h-20 flex-none items-center justify-center px-6 transition opacity-60 hover:opacity-100"
-                   title="{{ $mitra->name }}">
-                    @if ($mitra->logo_url)
-                        <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}" class="max-h-12 w-auto object-contain grayscale transition group-hover:grayscale-0">
-                    @else
-                        <span class="text-sm font-bold text-slate-400 group-hover:text-emerald-600 transition">{{ $mitra->name }}</span>
-                    @endif
-                </a>
-            @endforeach
-            {{-- Set 2 (duplikasi untuk seamless loop) --}}
-            @foreach ($mitras as $mitra)
-                <a href="{{ $mitra->website ?? '#' }}" target="_blank" rel="noopener noreferrer"
-                   class="group flex h-20 flex-none items-center justify-center px-6 transition opacity-60 hover:opacity-100"
-                   title="{{ $mitra->name }}">
-                    @if ($mitra->logo_url)
-                        <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}" class="max-h-12 w-auto object-contain grayscale transition group-hover:grayscale-0">
-                    @else
-                        <span class="text-sm font-bold text-slate-400 group-hover:text-emerald-600 transition">{{ $mitra->name }}</span>
-                    @endif
-                </a>
-            @endforeach
-        </div>
-    </div>
-
-    <style>
-        .marquee-track {
-            animation: marquee-scroll {{ count($mitras) * 3 }}s linear infinite;
-        }
-        .marquee-track:hover {
-            animation-play-state: paused;
-        }
-        @keyframes marquee-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-    </style>
-</section>
-@endif
 
 {{-- ===== KATEGORI ===== --}}
 @if ($categories->isNotEmpty())
@@ -240,31 +206,15 @@
                 <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
                     <a href="{{ route('tools.show', $tool) }}" class="block overflow-hidden">
                         <div class="relative flex h-48 items-center justify-center bg-slate-50">
-                            @php $allImages = $tool->images->isNotEmpty() ? $tool->images : ($tool->image ? collect([(object)['path' => $tool->image]]) : collect()); @endphp
-                            @if ($allImages->isNotEmpty())
-                                <div class="tool-carousel relative h-full w-full" data-total="{{ $allImages->count() }}">
-                                    <div class="flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth scrollbar-hide">
-                                        @foreach ($allImages as $img)
-                                            <div class="h-full w-full flex-none snap-center">
-                                                <img src="{{ asset('storage/' . $img->path) }}" alt="{{ $tool->name }}"
-                                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    @if ($allImages->count() > 1)
-                                        <div class="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1">
-                                            @foreach ($allImages as $i => $img)
-                                                <span class="tool-dot h-1.5 w-1.5 rounded-full bg-white/50 transition-all {{ $loop->first ? 'w-4 bg-white' : '' }}" data-index="{{ $i }}"></span>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </div>
+                            @if ($tool->image)
+                                <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
+                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
                             @else
                                 <svg class="h-16 w-16 text-slate-200" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                                 </svg>
                             @endif
-                            <span class="absolute top-3 left-3 z-10 rounded-lg px-2.5 py-1 text-[11px] font-semibold shadow-sm
+                            <span class="absolute top-3 left-3 rounded-lg px-2.5 py-1 text-[11px] font-semibold shadow-sm
                                 {{ $tool->available_stock <= 3 ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' }}">
                                 {{ $tool->available_stock <= 3 ? 'Stok Terbatas' : 'Tersedia' }}
                             </span>
@@ -301,7 +251,7 @@
                                             Keranjang
                                         </button>
                                         <a href="{{ route('tools.show', $tool) }}"
-                                           class="rounded-xl border border-stone-200 p-2.5 text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
+                                           class="rounded-xl border border-stone-200 p-2.5 text-slate-400 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
                                            aria-label="Lihat detail {{ $tool->name }}">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -401,7 +351,7 @@
                                         Keranjang
                                     </button>
                                     <a href="{{ route('sample-tests.parameter', $parameter) }}"
-                                       class="rounded-xl border border-stone-200 p-2.5 text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
+                                       class="rounded-xl border border-stone-200 p-2.5 text-slate-400 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
                                        aria-label="Lihat detail {{ $parameter->name }}">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -690,102 +640,8 @@
                 update();
             })();
         </script>
-
-        <script>
-            document.querySelectorAll('.tool-carousel').forEach(function (carousel) {
-                var scroller = carousel.querySelector('.snap-x');
-                var dots = carousel.querySelectorAll('.tool-dot');
-                var total = parseInt(carousel.dataset.total) || 1;
-                if (total <= 1) return;
-
-                scroller.addEventListener('scroll', function () {
-                    var idx = Math.round(scroller.scrollLeft / scroller.clientWidth);
-                    dots.forEach(function (d, i) {
-                        d.classList.toggle('w-4', i === idx);
-                        d.classList.toggle('bg-white', i === idx);
-                        d.classList.toggle('w-1.5', i !== idx);
-                        d.classList.toggle('bg-white/50', i !== idx);
-                    });
-                });
-            });
-        </script>
     </div>
 </section>
-
-{{-- ===== GALERI KEGIATAN ===== --}}
-@if ($galleryImages->isNotEmpty())
-<section class="py-20 lg:py-28">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal mx-auto max-w-2xl text-center">
-            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Galeri</span>
-            <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-                Galeri Kegiatan Laboratorium
-            </h2>
-            <p class="mt-3 text-base text-slate-600">
-                Aktivitas pengujian sampel, riset penelitian, dan kegiatan laboratorium lainnya.
-            </p>
-        </div>
-
-        <div class="reveal mt-10 columns-2 gap-3 sm:columns-3 md:columns-4 lg:columns-5">
-            @foreach ($galleryImages as $image)
-                <div class="mb-3 break-inside-avoid overflow-hidden rounded-xl border border-stone-200 bg-white transition hover:shadow-lg hover:shadow-emerald-900/5 cursor-pointer"
-                     onclick="openLightbox('{{ asset('storage/' . $image->path) }}', '{{ addslashes($image->title ?? '') }}', '{{ addslashes($image->caption ?? '') }}')">
-                    <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $image->title ?? 'Gallery' }}" loading="lazy"
-                         class="w-full object-cover transition duration-300 hover:scale-105">
-                    @if ($image->title || $image->caption)
-                        <div class="px-3 py-2.5">
-                            @if ($image->title)
-                                <p class="text-xs font-semibold text-slate-900 line-clamp-1">{{ $image->title }}</p>
-                            @endif
-                            @if ($image->caption)
-                                <p class="mt-0.5 text-[11px] text-slate-500 line-clamp-2">{{ $image->caption }}</p>
-                            @endif
-                        </div>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- Lightbox --}}
-<div id="gallery-lightbox" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="closeLightbox()">
-    <button type="button" onclick="closeLightbox()" class="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20" aria-label="Tutup">
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
-    <div class="max-h-[85vh] max-w-[90vw]" onclick="event.stopPropagation()">
-        <img id="lightbox-img" src="" alt="" class="max-h-[85vh] max-w-[90vw] rounded-lg object-contain shadow-2xl">
-        <div id="lightbox-caption" class="mt-3 text-center">
-            <p id="lightbox-title" class="text-sm font-semibold text-white"></p>
-            <p id="lightbox-desc" class="mt-0.5 text-xs text-white/70"></p>
-        </div>
-    </div>
-</div>
-<script>
-function openLightbox(src, title, desc) {
-    var lb = document.getElementById('gallery-lightbox');
-    document.getElementById('lightbox-img').src = src;
-    document.getElementById('lightbox-title').textContent = title;
-    document.getElementById('lightbox-desc').textContent = desc;
-    document.getElementById('lightbox-title').style.display = title ? 'block' : 'none';
-    document.getElementById('lightbox-desc').style.display = desc ? 'block' : 'none';
-    lb.classList.remove('hidden');
-    lb.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-    var lb = document.getElementById('gallery-lightbox');
-    lb.classList.add('hidden');
-    lb.classList.remove('flex');
-    document.body.style.overflow = '';
-}
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeLightbox();
-});
-</script>
-@endif
 
 {{-- ===== FITUR ===== --}}
 <section id="fitur" class="py-20 lg:py-28">

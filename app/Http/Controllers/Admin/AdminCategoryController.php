@@ -51,4 +51,32 @@ class AdminCategoryController extends Controller
         return redirect()->route('admin.categories.index')
             ->with('success', "Kategori '{$category->name}' berhasil dihapus.");
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:tool_categories,id'],
+        ]);
+
+        $categories = ToolCategory::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($categories as $category) {
+            if ($category->tools()->count() > 0) {
+                $skipped[] = $category->name;
+                continue;
+            }
+            $category->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} kategori berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' kategori dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return redirect()->route('admin.categories.index')->with('success', $message);
+    }
 }

@@ -119,6 +119,38 @@ class AdminUserController extends Controller
             ->with('success', "User '{$user->name}' berhasil dihapus.");
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:users,id'],
+        ]);
+
+        $users = User::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($users as $user) {
+            if ($user->id === auth()->id()) {
+                $skipped[] = $user->name . ' (akun sendiri)';
+                continue;
+            }
+            if ($user->isAdmin()) {
+                $skipped[] = $user->name . ' (admin)';
+                continue;
+            }
+            $user->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} user berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' user dilewati: ' . implode(', ', $skipped) . '.';
+        }
+
+        return redirect()->route('admin.users.index')->with('success', $message);
+    }
+
     /**
      * Export daftar user ke Excel (.xlsx).
      */

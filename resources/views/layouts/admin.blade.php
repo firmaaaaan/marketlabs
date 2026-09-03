@@ -291,6 +291,53 @@
 
     @include('partials.confirm-modal')
 
+    {{-- Modal Konfirmasi Bulk Delete --}}
+    <div id="bulk-confirm-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeBulkModal()"></div>
+        <div class="relative w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h3 class="mt-4 text-center text-lg font-bold text-slate-900">Hapus Terpilih?</h3>
+            <p id="bulk-confirm-message" class="mt-2 text-center text-sm leading-relaxed text-slate-600"></p>
+            <div class="mt-6 flex justify-center gap-3">
+                <button type="button" onclick="closeBulkModal()"
+                        class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
+                    Batal
+                </button>
+                <button type="button" id="bulk-confirm-accept"
+                        class="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-700">
+                    Ya, Hapus Semua
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+    function openBulkModal(count, callback) {
+        var modal = document.getElementById('bulk-confirm-modal');
+        var msg = document.getElementById('bulk-confirm-message');
+        var accept = document.getElementById('bulk-confirm-accept');
+        msg.textContent = count + ' item akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+        var handler = function () {
+            accept.removeEventListener('click', handler);
+            closeBulkModal();
+            callback();
+        };
+        accept.addEventListener('click', handler);
+    }
+    function closeBulkModal() {
+        var modal = document.getElementById('bulk-confirm-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    }
+    </script>
+
     @stack('scripts')
 
 </body>

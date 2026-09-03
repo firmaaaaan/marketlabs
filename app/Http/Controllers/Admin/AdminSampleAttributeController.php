@@ -53,6 +53,34 @@ class AdminSampleAttributeController extends Controller
         return back()->with('success', "Bentuk sampel '{$sampleForm->name}' berhasil dihapus.");
     }
 
+    public function bulkDestroyForms(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:sample_forms,id'],
+        ]);
+
+        $items = SampleForm::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($items as $item) {
+            if ($item->items()->exists()) {
+                $skipped[] = $item->name;
+                continue;
+            }
+            $item->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} bentuk sampel berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return back()->with('success', $message);
+    }
+
     public function storeType(Request $request)
     {
         $validated = $request->validate([
@@ -87,5 +115,33 @@ class AdminSampleAttributeController extends Controller
         $sampleType->delete();
 
         return back()->with('success', "Jenis sampel '{$sampleType->name}' berhasil dihapus.");
+    }
+
+    public function bulkDestroyTypes(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:sample_types,id'],
+        ]);
+
+        $items = SampleType::whereIn('id', $validated['ids'])->get();
+        $deleted = 0;
+        $skipped = [];
+
+        foreach ($items as $item) {
+            if ($item->items()->exists()) {
+                $skipped[] = $item->name;
+                continue;
+            }
+            $item->delete();
+            $deleted++;
+        }
+
+        $message = "{$deleted} jenis sampel berhasil dihapus.";
+        if (! empty($skipped)) {
+            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+        }
+
+        return back()->with('success', $message);
     }
 }

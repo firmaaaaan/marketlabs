@@ -69,6 +69,24 @@ class AdminGalleryController extends Controller
             ->with('success', 'Gambar berhasil dihapus.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:gallery_images,id'],
+        ]);
+
+        $images = GalleryImage::whereIn('id', $validated['ids'])->get();
+
+        foreach ($images as $image) {
+            Storage::disk('public')->delete($image->path);
+            $image->delete();
+        }
+
+        return redirect()->route('admin.gallery.index')
+            ->with('success', count($images) . ' gambar berhasil dihapus.');
+    }
+
     public function sort(Request $request)
     {
         $order = $request->input('order', []);
