@@ -76,22 +76,32 @@
 
     {{-- Event Detail Modal --}}
     <div id="event-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-        <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
-            <div class="flex items-start justify-between">
-                <h3 id="modal-title" class="text-lg font-bold text-slate-900"></h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+        <div class="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div id="modal-header" class="flex items-center gap-3 px-6 py-4">
+                <span id="modal-icon" class="flex h-10 w-10 items-center justify-center rounded-xl text-white"></span>
+                <div class="min-w-0 flex-1">
+                    <p id="modal-type" class="text-xs font-semibold uppercase tracking-wider text-white/80"></p>
+                    <h3 id="modal-title" class="truncate text-base font-bold text-white"></h3>
+                </div>
+                <button onclick="closeModal()" class="flex h-8 w-8 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/10 hover:text-white">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
-            <div id="modal-content" class="mt-4 space-y-3 text-sm text-slate-600"></div>
-            <div class="mt-6 flex justify-end gap-3">
-                <button onclick="closeModal()" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+
+            <div id="modal-content" class="px-6 py-4"></div>
+
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-3">
+                <button onclick="closeModal()" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
                     Tutup
                 </button>
-                <a id="modal-link" href="#" target="_blank" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                <a id="modal-link" href="#" target="_blank"
+                   class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
                     Lihat Detail
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
                 </a>
             </div>
         </div>
