@@ -41,7 +41,7 @@
                 $itemRoute = $item->route_name ? route($item->route_name) : ($item->url ?? '#');
                 $isActive = request()->routeIs($item->route_name . '*');
                 $group = match(true) {
-                    str_contains($item->route_name ?? '', 'dashboard') || str_contains($item->route_name ?? '', 'notif') => 'Umum',
+                    str_contains($item->route_name ?? '', 'dashboard') || str_contains($item->route_name ?? '', 'notif') || str_contains($item->route_name ?? '', 'calendar') => 'Umum',
                     str_contains($item->route_name ?? '', 'tool') || str_contains($item->route_name ?? '', 'categor') || str_contains($item->route_name ?? '', 'sample-unit') || str_contains($item->route_name ?? '', 'sample-attr') || str_contains($item->route_name ?? '', 'laboratorium') || str_contains($item->route_name ?? '', 'user') => 'Master Data',
                     str_contains($item->route_name ?? '', 'borrow') || str_contains($item->route_name ?? '', 'research') || str_contains($item->route_name ?? '', 'sample-test') => 'Layanan',
                     str_contains($item->route_name ?? '', 'health') || str_contains($item->route_name ?? '', 'schedule') => 'Pemeriksaan Kesehatan',
