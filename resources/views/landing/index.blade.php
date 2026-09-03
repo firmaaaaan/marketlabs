@@ -760,6 +760,44 @@
     </div>
 </section>
 
+{{-- ===== MITRA KAMI ===== --}}
+<section class="bg-stone-50 py-20 lg:py-28">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="reveal text-center">
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Mitra Kami</span>
+            <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                Dipercaya oleh Berbagai Institusi
+            </h2>
+            <p class="mt-3 text-base text-slate-600">
+                Kami berkolaborasi dengan universitas, lembaga riset, dan instansi pemerintah untuk mendukung penelitian di Indonesia.
+            </p>
+        </div>
+
+        @if ($mitras->count() > 0)
+            <div class="reveal relative mt-12 overflow-hidden">
+                <div class="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-stone-50 to-transparent"></div>
+                <div class="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-stone-50 to-transparent"></div>
+
+                <div class="flex w-max animate-marquee gap-12">
+                    @foreach ($mitras->merge($mitras) as $mitra)
+                        <a href="{{ $mitra->website }}" target="_blank" rel="noopener noreferrer"
+                           class="flex h-20 w-40 flex-none items-center justify-center rounded-xl border border-stone-200 bg-white px-6 transition-all hover:shadow-md hover:border-emerald-200">
+                            @if ($mitra->logo_url)
+                                <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}"
+                                     class="max-h-12 w-auto object-contain grayscale opacity-70 transition-all hover:grayscale-0 hover:opacity-100">
+                            @else
+                                <span class="text-sm font-bold text-slate-400">{{ $mitra->name }}</span>
+                            @endif
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <p class="mt-10 text-center text-sm text-slate-500">Belum ada mitra yang terdaftar.</p>
+        @endif
+    </div>
+</section>
+
 {{-- ===== CTA ===== --}}
 <section class="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-700 py-20 lg:py-28">
     <div class="pointer-events-none absolute inset-0 opacity-[0.04]"
