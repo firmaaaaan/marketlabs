@@ -784,7 +784,7 @@
                            class="flex flex-none items-center justify-center transition-all hover:scale-105">
                             @if ($mitra->logo_url)
                                 <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}"
-                                     class="h-20 w-auto object-contain grayscale opacity-60 transition-all hover:grayscale-0 hover:opacity-100 lg:h-28">
+                                     class="h-12 w-auto object-contain grayscale opacity-60 transition-all hover:grayscale-0 hover:opacity-100 lg:h-16">
                             @else
                                 <span class="text-xl font-bold text-slate-400">{{ $mitra->name }}</span>
                             @endif
