@@ -778,15 +778,15 @@
                 <div class="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-stone-50 to-transparent"></div>
                 <div class="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-stone-50 to-transparent"></div>
 
-                <div class="flex w-max animate-marquee gap-12">
+                <div class="flex w-max animate-marquee items-center gap-16">
                     @foreach ($mitras->merge($mitras) as $mitra)
                         <a href="{{ $mitra->website }}" target="_blank" rel="noopener noreferrer"
-                           class="flex h-20 w-40 flex-none items-center justify-center rounded-xl border border-stone-200 bg-white px-6 transition-all hover:shadow-md hover:border-emerald-200">
+                           class="flex flex-none items-center justify-center transition-all hover:scale-105">
                             @if ($mitra->logo_url)
                                 <img src="{{ $mitra->logo_url }}" alt="{{ $mitra->name }}"
-                                     class="max-h-12 w-auto object-contain grayscale opacity-70 transition-all hover:grayscale-0 hover:opacity-100">
+                                     class="h-20 w-auto object-contain grayscale opacity-60 transition-all hover:grayscale-0 hover:opacity-100 lg:h-28">
                             @else
-                                <span class="text-sm font-bold text-slate-400">{{ $mitra->name }}</span>
+                                <span class="text-xl font-bold text-slate-400">{{ $mitra->name }}</span>
                             @endif
                         </a>
                     @endforeach
