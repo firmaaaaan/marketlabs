@@ -73,7 +73,7 @@
 
     {{-- Calendar --}}
     <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div id="calendar" data-events-url="{{ route('calendar.events') }}" data-my-only="1"></div>
+        <div id="calendar" data-events-url="{{ route('calendar.events') }}"></div>
     </div>
 
     {{-- Event Detail Modal --}}

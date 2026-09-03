@@ -25,11 +25,9 @@ function initCalendar(calendarEl, options = {}) {
             url.searchParams.set('start', info.startStr);
             url.searchParams.set('end', info.endStr);
 
-            if (options.myOnly) {
-                const myOnlyEl = document.getElementById('filter-my-only');
-                if (myOnlyEl && myOnlyEl.checked) {
-                    url.searchParams.set('my_only', '1');
-                }
+            const myOnlyEl = document.getElementById('filter-my-only');
+            if (myOnlyEl && myOnlyEl.checked) {
+                url.searchParams.set('my_only', '1');
             }
 
             fetch(url)
@@ -93,6 +91,11 @@ function initCalendar(calendarEl, options = {}) {
         el.addEventListener('change', () => calendar.refetchEvents());
     });
 
+    const myOnlyEl = document.getElementById('filter-my-only');
+    if (myOnlyEl) {
+        myOnlyEl.addEventListener('change', () => calendar.refetchEvents());
+    }
+
     return calendar;
 }
 
@@ -108,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initCalendar(calendarEl, {
         eventsUrl: calendarEl.dataset.eventsUrl,
-        myOnly: calendarEl.dataset.myOnly === '1',
     });
 
     const modal = document.getElementById('event-modal');
