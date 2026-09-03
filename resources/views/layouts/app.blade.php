@@ -67,16 +67,16 @@
                 </a>
             </div>
 
-            <div class="hidden items-center gap-8 md:flex">
-                <a href="{{ route('home') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Beranda</a>
-                <a href="{{ route('tools.index') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Katalog Alat</a>
-                <a href="{{ route('sample-tests.catalog') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Katalog Pengujian</a>
-                <a href="{{ route('lab-schedule') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Jadwal Lab</a>
-                <a href="{{ route('events.index') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Event</a>
-                <a href="{{ route('health-checkups.catalog') }}" class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">Pemeriksaan Kesehatan</a>
+            <div class="hidden items-center gap-6 md:flex">
+                <a href="{{ route('home') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Beranda</a>
+                <a href="{{ route('tools.index') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Alat</a>
+                <a href="{{ route('sample-tests.catalog') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Pengujian</a>
+                <a href="{{ route('lab-schedule') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Jadwal Lab</a>
+                <a href="{{ route('events.index') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Event</a>
+                <a href="{{ route('health-checkups.catalog') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Kesehatan</a>
                 @auth
                     <a href="{{ route('research.create') }}"
-                       class="text-sm font-medium text-slate-600 transition-all hover:text-emerald-600 hover:scale-105">
+                       class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">
                         Riset &amp; Penelitian
                     </a>
                 @endauth
@@ -233,11 +233,11 @@
         <div id="mobile-menu" class="hidden border-t border-slate-200 bg-white md:hidden">
             <nav class="max-h-[calc(100vh-4rem)] space-y-1 overflow-y-auto px-4 py-4 sm:px-6">
                 <a href="{{ route('home') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Beranda</a>
-                <a href="{{ route('tools.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Katalog Alat</a>
-                <a href="{{ route('sample-tests.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Katalog Pengujian</a>
+                <a href="{{ route('tools.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Alat</a>
+                <a href="{{ route('sample-tests.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Pengujian</a>
                 <a href="{{ route('lab-schedule') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Jadwal Lab</a>
                 <a href="{{ route('events.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Event</a>
-                <a href="{{ route('health-checkups.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Pemeriksaan Kesehatan</a>
+                <a href="{{ route('health-checkups.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Kesehatan</a>
                 @auth
                     <a href="{{ route('research.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Riset &amp; Penelitian</a>
                     @if (Auth::user()->isLaboran())
