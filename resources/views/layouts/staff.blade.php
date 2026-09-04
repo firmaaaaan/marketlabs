@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Staff') — MarketLabs</title>
-    <meta name="description" content="Sistem Informasi MarketLabs - platform manajemen laboratorium yang modern, cepat, dan terintegrasi.">
+    <meta name="description" content="MarketLabs - Staff.">
 
     @php $faviconPath = \App\Models\Setting::get('site_favicon'); @endphp
     <link rel="icon" href="{{ $faviconPath ? asset('storage/' . $faviconPath) : asset('favicon.ico') }}">
@@ -41,7 +41,7 @@
                 </a>
                 <button type="button" id="sidebar-close"
                         class="rounded-lg p-2 text-emerald-100 transition hover:bg-white/10 hover:text-white lg:hidden"
-                        aria-label="Tutup menu">
+                        aria-label="Batal">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -49,7 +49,7 @@
             </div>
 
             <nav class="mt-4 flex-1 space-y-1 overflow-y-auto px-3">
-                <p class="mt-2 mb-1 px-4 text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Menu</p>
+                <p class="mt-2 mb-1 px-4 text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Notifikasi</p>
 
                 <a href="{{ route('notifications.all') }}"
                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-white/10 hover:text-white {{ request()->routeIs('notifications.all') ? 'bg-white/10 font-semibold text-white' : '' }}">
@@ -74,7 +74,7 @@
                     </a>
                 @endif
 
-                <p class="mt-6 mb-1 px-4 text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Akun</p>
+                <p class="mt-6 mb-1 px-4 text-[10px] font-bold uppercase tracking-wider text-emerald-300/70">Profil</p>
                 <a href="{{ route('profile.show') }}"
                    class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-white/10 hover:text-white">
                     <svg class="h-5 w-5 flex-none" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
@@ -108,7 +108,7 @@
         {{-- Konten --}}
         <div class="flex min-w-0 flex-1 flex-col">
             {{-- Topbar --}}
-            <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+            <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur/90">
                 <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                     <div class="flex min-w-0 items-center gap-3">
                         <button type="button" id="sidebar-open"
@@ -148,7 +148,7 @@
                                     <p class="text-sm font-bold text-slate-900">Notifikasi</p>
                                     <span id="staff-notif-chip"
                                           class="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold text-red-600 {{ $staffUnreadCount > 0 ? '' : 'hidden' }}">
-                                        {{ $staffUnreadCount }} belum dibaca
+                                        {{ $staffUnreadCount }} baru
                                     </span>
                                 </div>
 
@@ -172,8 +172,8 @@
                                         </a>
                                     @empty
                                         <div class="px-5 py-10 text-center">
-                                            <p class="text-sm font-semibold text-slate-700">Tidak ada notifikasi</p>
-                                            <p class="mt-1 text-xs text-slate-500">Notifikasi untuk Anda akan muncul di sini.</p>
+                                            <p class="text-sm font-semibold text-slate-700">Belum ada notifikasi</p>
+                                            <p class="mt-1 text-xs text-slate-500">Perubahan status peminjaman Anda akan muncul di sini.</p>
                                         </div>
                                     @endforelse
                                 </div>
@@ -196,7 +196,7 @@
 
                         <a href="{{ route('home') }}"
                            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
-                            Lihat Beranda
+                            Beranda
                         </a>
                     </div>
                 </div>

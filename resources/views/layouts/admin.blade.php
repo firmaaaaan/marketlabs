@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Admin') — MarketLabs</title>
-    <meta name="description" content="Sistem Informasi MarketLabs - platform manajemen laboratorium yang modern, cepat, dan terintegrasi.">
+    <meta name="description" content="MarketLabs - Admin.">
 
     @php $faviconPath = \App\Models\Setting::get('site_favicon'); @endphp
     <link rel="icon" href="{{ $faviconPath ? asset('storage/' . $faviconPath) : asset('favicon.ico') }}">
@@ -26,7 +26,7 @@
         {{-- Konten --}}
         <div class="flex min-w-0 flex-1 flex-col">
             {{-- Topbar --}}
-            <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+            <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur/90">
                 <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                     <div class="flex min-w-0 items-center gap-3">
                         <button type="button" id="sidebar-open"
@@ -66,7 +66,7 @@
                                     <p class="text-sm font-bold text-slate-900">Notifikasi</p>
                                     <span id="notif-count-chip"
                                           class="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold text-red-600 {{ $adminUnreadCount > 0 ? '' : 'hidden' }}">
-                                        {{ $adminUnreadCount }} belum dibaca
+                                        {{ $adminUnreadCount }} baru
                                     </span>
                                 </div>
 
@@ -90,8 +90,8 @@
                                         </a>
                                     @empty
                                         <div class="px-5 py-10 text-center">
-                                            <p class="text-sm font-semibold text-slate-700">Tidak ada notifikasi</p>
-                                            <p class="mt-1 text-xs text-slate-500">Notifikasi untuk Anda akan muncul di sini.</p>
+                                            <p class="text-sm font-semibold text-slate-700">Belum ada notifikasi</p>
+                                            <p class="mt-1 text-xs text-slate-500">Perubahan status peminjaman Anda akan muncul di sini.</p>
                                         </div>
                                     @endforelse
                                 </div>
@@ -114,7 +114,7 @@
 
                         <a href="{{ route('home') }}"
                            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
-                            Lihat Beranda
+                            Beranda
                         </a>
                     </div>
                 </div>

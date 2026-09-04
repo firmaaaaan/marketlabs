@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Autentikasi') — MarketLabs</title>
-    <meta name="description" content="Sistem Informasi MarketLabs - platform manajemen laboratorium yang modern, cepat, dan terintegrasi.">
+    <meta name="description" content="MarketLabs.">
 
     @php $faviconPath = \App\Models\Setting::get('site_favicon'); @endphp
     <link rel="icon" href="{{ $faviconPath ? asset('storage/' . $faviconPath) : asset('favicon.ico') }}">
@@ -114,7 +114,7 @@
                 </div>
 
                 <p class="mt-6 text-center text-sm text-slate-400 lg:hidden">
-                    &copy; {{ date('Y') }} Sistem Informasi MarketLabs
+                    &copy; {{ date('Y') }} MarketLabs
                 </p>
             </div>
         </div>

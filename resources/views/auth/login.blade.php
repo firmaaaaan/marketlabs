@@ -6,10 +6,6 @@
     <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Masuk</h1>
     <p class="mt-1 text-sm text-slate-600">Selamat datang kembali! Masuk untuk melanjutkan.</p>
 
-    <div class="mt-4 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
-        <span class="font-semibold">ℹ️ Informasi:</span> Untuk civitas UNISA, silakan login menggunakan <strong>NIM/NIP</strong> yang terdaftar beserta kata sandi Anda.
-    </div>
-
     @if (session('status'))
         <div class="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
             {{ session('status') }}
@@ -20,11 +16,11 @@
         @csrf
 
         <div>
-            <label for="nim_nip" class="block text-sm font-semibold text-slate-700">NIM / NIK / NIP <span class="text-red-500">*</span></label>
-            <input type="text" id="nim_nip" name="nim_nip" value="{{ old('nim_nip') }}" required autofocus autocomplete="username"
-                   placeholder="Masukkan NIM, NIK, atau NIP"
+            <label for="username" class="block text-sm font-semibold text-slate-700">Username <span class="text-red-500">*</span></label>
+            <input type="text" id="username" name="username" value="{{ old('username') }}" required autofocus autocomplete="username"
+                   placeholder="Masukkan username Anda"
                    class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-            @error('nim_nip')
+            @error('username')
                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
             @enderror
         </div>

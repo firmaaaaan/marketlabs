@@ -62,7 +62,7 @@
 {{-- Filter --}}
 <form action="{{ route('admin.users.index') }}" method="GET" class="mt-6 flex flex-wrap gap-3">
     <input type="text" name="search" value="{{ request('search') }}"
-           placeholder="Cari nama atau email..."
+           placeholder="Cari nama, username, atau email..."
            class="w-full max-w-xs rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
     <select name="role"
             class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
@@ -88,6 +88,7 @@
                                class="h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Username</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Role</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Kode Partisipan</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">NIM/NIP</th>
@@ -106,6 +107,7 @@
                             <p class="text-sm font-medium text-slate-900">{{ $user->name }}</p>
                             <p class="text-xs text-slate-500">{{ $user->email }}</p>
                         </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ $user->username ?? '-' }}</td>
                         <td class="px-6 py-4">
                             <span class="rounded-full px-3 py-1 text-xs font-semibold {{ match ($user->role) {
                                 'admin' => 'bg-emerald-50 text-emerald-700',
@@ -148,7 +150,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada user.</td>
+                        <td colspan="7" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada user.</td>
                     </tr>
                 @endforelse
             </tbody>

@@ -6,14 +6,34 @@
 
     <section class="py-16">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <a href="{{ route('research.index') }}"
+            <a href="{{ auth()->check() ? route('research.index') : route('home') }}"
                 class="text-sm font-semibold text-emerald-600 transition hover:text-emerald-700">
-                ← Kembali ke Riwayat Riset
+                ← Kembali
             </a>
             <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">Ajukan Permohonan Riset &amp; Penelitian
             </h1>
             <p class="mt-2 text-slate-600">Lengkapi informasi berikut untuk mengajukan permohonan riset &amp; penelitian di
                 laboratorium.</p>
+
+            @guest
+                <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-6">
+                    <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-lg font-bold text-slate-900">Login Diperlukan</h2>
+                            <p class="mt-1 text-sm text-slate-600">Anda perlu masuk ke akun Anda untuk mengajukan permohonan riset &amp; penelitian. Silakan login atau daftar terlebih dahulu.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <a href="{{ route('login') }}" class="shrink-0 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">Masuk</a>
+                            <a href="{{ route('register') }}" class="shrink-0 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">Daftar</a>
+                        </div>
+                    </div>
+                </div>
+            @endguest
 
             @if ($errors->any())
                 <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
@@ -27,6 +47,7 @@
             @endif
 
             <div class="mt-8 items-start md:grid md:grid-cols-3 md:gap-6 xl:gap-8">
+                @auth
                 <div class="md:col-span-2">
                     <form action="{{ route('research.store') }}" method="POST" enctype="multipart/form-data"
                         class="space-y-6">
@@ -520,6 +541,31 @@
                         </div>
                     </aside>
                 </div>
+                @endauth
+
+                @guest
+                <div class="md:col-span-3">
+                    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                        <svg class="mx-auto h-16 w-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        <h2 class="mt-4 text-xl font-bold text-slate-900">Formulir Permohonan Riset</h2>
+                        <p class="mt-2 text-sm text-slate-500 max-w-lg mx-auto">
+                            Untuk mengajukan permohonan riset &amp; penelitian, Anda perlu masuk ke akun Anda terlebih dahulu.
+                            Setelah login, Anda dapat mengisi formulir lengkap meliputi informasi pemohon, detail riset,
+                            estimasi biaya, alat yang dibutuhkan, anggota penelitian, dan surat permohonan.
+                        </p>
+                        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                            <a href="{{ route('login') }}" class="rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
+                                Masuk untuk Mengajukan
+                            </a>
+                            <a href="{{ route('register') }}" class="rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
+                                Belum Punya Akun? Daftar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endguest
         </div>
     </section>
 

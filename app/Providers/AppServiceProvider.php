@@ -28,10 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Paksa locale Indonesia agar pesan validasi, waktu relatif, dan format tanggal (translatedFormat) berbahasa Indonesia.
-        App::setLocale('id');
-        Carbon::setLocale('id');
-
         View::composer('layouts.admin', AdminNotificationsComposer::class);
         View::composer('layouts.app', ClientNotificationsComposer::class);
         View::composer('layouts.staff', StaffNotificationsComposer::class);

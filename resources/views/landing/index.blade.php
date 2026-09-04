@@ -19,14 +19,6 @@
         <div class="grid items-center gap-12 lg:grid-cols-2">
             {{-- Kiri: Teks --}}
             <div class="reveal">
-                <span class="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-1.5 text-xs font-medium text-emerald-200 backdrop-blur-sm">
-                    <span class="relative flex h-2 w-2">
-                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-                    </span>
-                    UPT Laboratorium Terpadu
-                </span>
-
                 <h1 class="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
                     Sewa Alat &amp; Kelola Riset
                     <span class="block text-emerald-300">Laboratorium</span>

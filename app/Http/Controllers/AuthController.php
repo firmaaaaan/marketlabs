@@ -20,16 +20,16 @@ class AuthController extends Controller
     }
 
     /**
-     * Proses login menggunakan NIM/NIK/NIP.
+     * Proses login menggunakan username.
      */
     public function login(Request $request)
     {
         $request->validate([
-            'nim_nip' => ['required', 'string'],
+            'username' => ['required', 'string'],
             'password' => ['required'],
         ]);
 
-        $user = User::where('nim_nip', $request->nim_nip)->first();
+        $user = User::where('username', $request->username)->first();
 
         // Timing-safe: always run Hash::check to prevent user enumeration via response time.
         $valid = $user && Hash::check($request->password, $user->password);
@@ -41,8 +41,8 @@ class AuthController extends Controller
             }
 
             return back()->withErrors([
-                'nim_nip' => 'NIM/NIK/NIP atau kata sandi yang Anda masukkan salah.',
-            ])->onlyInput('nim_nip');
+                'username' => 'Username atau kata sandi yang Anda masukkan salah.',
+            ])->onlyInput('username');
         }
 
         Auth::login($user, $request->boolean('remember'));
@@ -70,17 +70,15 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
-            'nim_nip' => ['required', 'string', 'max:255', 'unique:users,nim_nip'],
-            'institution' => ['required', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
+            'username' => $validated['username'],
             'email' => $validated['email'],
-            'nim_nip' => $validated['nim_nip'],
-            'institution' => $validated['institution'],
             'participant_code' => User::generateParticipantCode(),
             'password' => Hash::make($validated['password']),
         ]);

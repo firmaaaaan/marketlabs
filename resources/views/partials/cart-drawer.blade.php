@@ -9,14 +9,14 @@
     {{-- Header --}}
     <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
         <h2 class="text-lg font-bold text-slate-900">
-            Keranjang Saya
+            Lihat Keranjang
             <span id="cart-drawer-badge"
                   class="ml-2 inline-flex items-center justify-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700 hidden">
             </span>
         </h2>
         <button type="button" id="cart-drawer-close"
                 class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-                aria-label="Tutup keranjang">
+                aria-label="Keranjang peminjaman">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>

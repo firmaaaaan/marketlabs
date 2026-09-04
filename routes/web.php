@@ -38,6 +38,7 @@ use App\Http\Controllers\HealthCheckupController;
 use App\Http\Controllers\LaboranController;
 use App\Http\Controllers\LaboranHealthCheckupController;
 use App\Http\Controllers\LandingPageController;
+
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
@@ -81,6 +82,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:auth')->name('password.update');
 });
+
+// Route publik — halaman riset bisa dilihat semua orang (tanpa login).
+Route::get('/riset/baru', [ResearchProposalController::class, 'create'])->name('research.create');
 
 Route::middleware(['auth', 'throttle.mutations'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -133,7 +137,6 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
 
         Route::get('/riset', [ResearchProposalController::class, 'index'])->name('research.index');
         Route::get('/riset/cari-anggota', [ResearchProposalController::class, 'searchMember'])->middleware('throttle:search')->name('research.search-member');
-        Route::get('/riset/baru', [ResearchProposalController::class, 'create'])->name('research.create');
         Route::post('/riset', [ResearchProposalController::class, 'store'])->name('research.store');
         Route::get('/riset/{proposal}/invoice', [ResearchProposalController::class, 'invoice'])->name('research.invoice');
         Route::get('/riset/{proposal}/logbook', [ResearchProposalController::class, 'logbook'])->name('research.logbook');

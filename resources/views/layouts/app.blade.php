@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Sistem Informasi MarketLabs')</title>
-    <meta name="description" content="Sistem Informasi MarketLabs - platform manajemen laboratorium yang modern, cepat, dan terintegrasi.">
+    <meta name="description" content="MarketLabs - Beranda.">
 
     @php $faviconPath = \App\Models\Setting::get('site_favicon'); @endphp
     <link rel="icon" href="{{ $faviconPath ? asset('storage/' . $faviconPath) : asset('favicon.ico') }}">
@@ -74,12 +74,7 @@
                 <a href="{{ route('lab-schedule') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Jadwal Lab</a>
                 <a href="{{ route('events.index') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Event</a>
                 <a href="{{ route('health-checkups.catalog') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Kesehatan</a>
-                @auth
-                    <a href="{{ route('research.create') }}"
-                       class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">
-                        Riset &amp; Penelitian
-                    </a>
-                @endauth
+                <a href="{{ route('research.create') }}" class="px-1 py-1 text-sm font-medium text-slate-600 transition-all hover:text-emerald-600">Riset &amp; Penelitian</a>
             </div>
 
             @php
@@ -148,7 +143,7 @@
                                 </div>
 
                                 <a href="{{ route('notifications.all') }}"
-                                   class="block rounded-b-2xl border-t border-slate-100 bg-slate-50 px-5 py-3 text-center text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50">
+                                   class="block rounded-b-2xl border-t border-slate-100 bg-slate-50 px-5 py-3 text-center text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50/50">
                                     Lihat Semua Notifikasi
                                 </a>
                             </div>
@@ -238,8 +233,8 @@
                 <a href="{{ route('lab-schedule') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Jadwal Lab</a>
                 <a href="{{ route('events.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Event</a>
                 <a href="{{ route('health-checkups.catalog') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Kesehatan</a>
+                <a href="{{ route('research.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Riset &amp; Penelitian</a>
                 @auth
-                    <a href="{{ route('research.create') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Riset &amp; Penelitian</a>
                     @if (Auth::user()->isLaboran())
                         <a href="{{ route('laboran.index') }}" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-all hover:bg-emerald-50 hover:text-emerald-700">Halaman Laboran</a>
                     @endif
@@ -466,7 +461,7 @@
     @endif
 
     {{-- Footer --}}
-    <footer class="border-t border-slate-200/80 bg-slate-50">
+    <footer class="border-t border-slate-200/80 bg-slate-50/80/50">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="grid gap-12 md:grid-cols-3">
                 {{-- Brand & alamat --}}
@@ -584,7 +579,7 @@
                             <label for="pc_nim_nip" class="block text-sm font-semibold text-slate-700">NIM / NIP / NIDN / NIK <span class="text-red-500">*</span></label>
                             <input type="text" id="pc_nim_nip" name="nim_nip" value="{{ old('nim_nip', Auth::user()->nim_nip) }}" required
                                    placeholder="Contoh: 2101234567"
-                                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                   class="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
                             @error('nim_nip')
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
@@ -594,7 +589,7 @@
                             <label for="pc_institution" class="block text-sm font-semibold text-slate-700">Instansi / Universitas <span class="text-red-500">*</span></label>
                             <input type="text" id="pc_institution" name="institution" value="{{ old('institution', Auth::user()->institution) }}" required
                                    placeholder="Contoh: Universitas Ahmad Dahlan"
-                                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                   class="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
                             @error('institution')
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
@@ -604,7 +599,7 @@
                             <label for="pc_phone" class="block text-sm font-semibold text-slate-700">Nomor Telepon / WhatsApp <span class="text-red-500">*</span></label>
                             <input type="tel" id="pc_phone" name="phone" value="{{ old('phone', Auth::user()->phone) }}" required
                                    placeholder="Contoh: 081234567890"
-                                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                   class="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
                             @error('phone')
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
@@ -612,7 +607,7 @@
 
                         <button type="submit"
                                 class="w-full rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
-                            Simpan & Lanjutkan
+                            Simpan &amp; Lanjutkan
                         </button>
                     </form>
 

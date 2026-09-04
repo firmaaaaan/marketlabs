@@ -31,6 +31,7 @@ class AdminUserController extends Controller
             $escaped = addcslashes($search, '%_');
             $query->where(function ($q) use ($escaped) {
                 $q->where('name', 'like', "%{$escaped}%")
+                    ->orWhere('username', 'like', "%{$escaped}%")
                     ->orWhere('email', 'like', "%{$escaped}%");
             });
         }
