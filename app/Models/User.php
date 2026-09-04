@@ -126,7 +126,7 @@ class User extends Authenticatable
 
     public function scopeAdmin($query)
     {
-        return $query->where('role', self::ROLE_ADMIN);
+        return $query->whereIn('role', [self::ROLE_ADMIN, self::ROLE_SUPERADMIN]);
     }
 
     public function scopeLaboran($query)
