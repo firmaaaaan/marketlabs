@@ -46,6 +46,12 @@
     </div>
 
     <div>
+        <label for="username" class="block text-sm font-semibold text-slate-700">Username <span class="text-red-500">*</span></label>
+        <input type="text" id="username" name="username" value="{{ old('username', $user->username) }}" required maxlength="255"
+               class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+    </div>
+
+    <div>
         <label for="password" class="block text-sm font-semibold text-slate-700">Kata Sandi Baru <span class="text-xs font-normal text-slate-400">(kosongkan bila tidak diubah)</span></label>
         <input type="password" id="password" name="password"
                class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">

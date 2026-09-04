@@ -324,8 +324,6 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
             Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');
             Route::resource('users', AdminUserController::class)->except(['show']);
 
-            Route::get('/activity-logs', [AdminActivityLogController::class, 'index'])->name('activity-logs.index');
-
             Route::get('/menus', [\App\Http\Controllers\Admin\MenuController::class, 'index'])->name('menus.index');
             Route::post('/menus/item', [\App\Http\Controllers\Admin\MenuController::class, 'storeMenuItem'])->name('menus.item.store');
             Route::put('/menus/item/{menuItem}', [\App\Http\Controllers\Admin\MenuController::class, 'updateMenuItem'])->name('menus.item.update');
@@ -336,13 +334,6 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
             Route::post('/menus/section/{section}/toggle', [\App\Http\Controllers\Admin\MenuController::class, 'toggleSection'])->name('menus.section.toggle');
             Route::post('/menus/sections/sort', [\App\Http\Controllers\Admin\MenuController::class, 'sortSection'])->name('menus.section.sort');
             Route::put('/menus/branding', [\App\Http\Controllers\Admin\MenuController::class, 'updateBranding'])->name('menus.branding.update');
-
-            Route::get('/footer', [AdminFooterController::class, 'index'])->name('footer.index');
-            Route::put('/footer', [AdminFooterController::class, 'updateSettings'])->name('footer.settings-update');
-            Route::post('/footer/logo', [AdminFooterController::class, 'storeLogo'])->name('footer.logo-store');
-            Route::put('/footer/logo/{logo}', [AdminFooterController::class, 'updateLogo'])->name('footer.logo-update');
-            Route::delete('/footer/logo/{logo}', [AdminFooterController::class, 'destroyLogo'])->name('footer.logo-destroy');
-            Route::post('/footer/logo/{logo}/move/{direction}', [AdminFooterController::class, 'moveLogo'])->name('footer.logo-move');
 
             // Backup & Restore
             Route::get('/backup', [\App\Http\Controllers\Admin\AdminBackupController::class, 'index'])->name('backup.index');

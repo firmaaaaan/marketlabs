@@ -156,7 +156,7 @@
                                 <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-emerald-600 text-xs font-bold text-white shadow-md shadow-emerald-600/20">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </span>
-                                <span class="hidden max-w-32 truncate text-sm font-semibold text-slate-700 sm:block">{{ Auth::user()->nim_nip }} - {{ Auth::user()->name }}</span>
+                                <span class="hidden max-w-32 truncate text-sm font-semibold text-slate-700 sm:block">{{ Auth::user()->username }} - {{ Auth::user()->name }}</span>
                                 <svg class="hidden h-4 w-4 flex-none text-slate-400 sm:block" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                 </svg>
@@ -165,7 +165,7 @@
                             <div id="user-menu-dropdown"
                                  class="absolute right-0 mt-2 hidden w-56 origin-top-right rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl">
                                 <div class="border-b border-slate-100 px-4 py-2.5">
-                                    <p class="truncate text-sm font-semibold text-slate-900">{{ Auth::user()->nim_nip }} - {{ Auth::user()->name }}</p>
+                                    <p class="truncate text-sm font-semibold text-slate-900">{{ Auth::user()->username }} - {{ Auth::user()->name }}</p>
                                     <p class="truncate text-xs text-slate-500">{{ Auth::user()->email }}</p>
                                 </div>
 

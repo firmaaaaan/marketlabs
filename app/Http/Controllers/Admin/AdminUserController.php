@@ -51,15 +51,16 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::in(array_keys(User::roles()))],
             'nim_nip' => ['nullable', 'string', 'max:50'],
             'institution' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $validated['participant_code'] = User::generateParticipantCode();
         $user = User::create($validated);
         $user->role = $validated['role'];
-        $user->participant_code = User::generateParticipantCode();
         $user->save();
 
         return redirect()->route('admin.users.index')
@@ -76,6 +77,7 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::in(array_keys(User::roles()))],
             'nim_nip' => ['nullable', 'string', 'max:50'],
@@ -160,12 +162,13 @@ class AdminUserController extends Controller
         $users = User::latest()->get();
 
         $rows = [[
-            'Nama', 'Email', 'NIM/NIK/NIP', 'Instansi', 'Role',
+            'Nama', 'Username', 'Email', 'NIM/NIK/NIP', 'Instansi', 'Role',
         ]];
 
         foreach ($users as $user) {
             $rows[] = [
                 $user->name,
+                $user->username ?? '',
                 $user->email,
                 $user->nim_nip ?? '',
                 $user->institution ?? '',
@@ -186,24 +189,24 @@ class AdminUserController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setTitle('Template User');
 
-            $headers = ['Nama', 'Email', 'NIM/NIK/NIP', 'Password', 'Role'];
+            $headers = ['Nama', 'Username', 'Email', 'NIM/NIK/NIP', 'Password', 'Role'];
             $sheet->fromArray([$headers], null, 'A1');
 
             // Baris contoh.
             $sheet->fromArray([
-                ['Budi Santoso', 'budi@example.com', '1234-5678-90', 'rahasia123', 'User'],
-                ['Siti Aminah', 'siti@example.com', '9876-5432-10', 'rahasia456', 'Laboran'],
-                ['Dr. Ahmad', 'ahmad@unisa.ac.id', '0012-3456-78', 'rahasia789', 'User'],
+                ['Budi Santoso', 'budisantoso', 'budi@example.com', '1234-5678-90', 'rahasia123', 'User'],
+                ['Siti Aminah', 'sitiaminah', 'siti@example.com', '9876-5432-10', 'rahasia456', 'Laboran'],
+                ['Dr. Ahmad', 'drahmad', 'ahmad@unisa.ac.id', '0012-3456-78', 'rahasia789', 'User'],
             ], null, 'A2');
 
             // Gaya header.
-            $sheet->getStyle('A1:E1')->applyFromArray([
+            $sheet->getStyle('A1:F1')->applyFromArray([
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '059669']],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            foreach (range('A', 'E') as $col) {
+            foreach (range('A', 'F') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
@@ -247,7 +250,7 @@ class AdminUserController extends Controller
         $allRows = $sheet->toArray(null, true, true, true);
         $spreadsheet->disconnectWorksheets();
 
-        $columns = ['Nama', 'Email', 'NIM/NIK/NIP', 'Password', 'Role'];
+        $columns = ['Nama', 'Username', 'Email', 'NIM/NIK/NIP', 'Password', 'Role'];
 
         $created = 0;
         $skipped = 0;
@@ -311,6 +314,15 @@ class AdminUserController extends Controller
             return 'baris dengan Nama kosong';
         }
 
+        $username = trim($values['Username'] ?? '');
+        if ($username === '') {
+            return "username kosong untuk '{$name}'";
+        }
+
+        if (User::where('username', $username)->exists()) {
+            return "username '{$username}' sudah terdaftar";
+        }
+
         $email = trim($values['Email'] ?? '');
         if ($email === '') {
             return "email kosong untuk '{$name}'";
@@ -345,6 +357,7 @@ class AdminUserController extends Controller
 
         $user = User::create([
             'name' => $name,
+            'username' => $username,
             'email' => $email,
             'nim_nip' => $nimNip !== '' ? $nimNip : null,
             'participant_code' => User::generateParticipantCode(),

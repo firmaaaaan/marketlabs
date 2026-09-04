@@ -51,15 +51,12 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'nim_nip' => ['required', 'string', 'max:50'],
             'institution' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],
         ]);
-
-        unset($validated['current_password']);
 
         $user->update($validated);
 

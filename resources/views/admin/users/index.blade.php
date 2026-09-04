@@ -178,7 +178,7 @@
             @csrf
             <p class="text-sm text-slate-600">
                 Upload file Excel (.xlsx/.xls/.csv) yang sesuai dengan template.
-                Kolom yang wajib diisi: <strong>Nama</strong>, <strong>Email</strong>, dan <strong>Password</strong>.
+                Kolom yang wajib diisi: <strong>Nama</strong>, <strong>Username</strong>, <strong>Email</strong>, dan <strong>Password</strong>.
                 Kolom <strong>NIM/NIK/NIP</strong> dan <strong>Role</strong> opsional (default role = User).
             </p>
             <div class="mt-4">
