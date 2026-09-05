@@ -270,6 +270,11 @@
                                     <input type="checkbox" name="is_active" value="1" {{ $parameter->is_active ? 'checked' : '' }} class="peer sr-only">
                                     <span class="relative h-6 w-11 flex-none rounded-full bg-slate-300 transition after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:bg-emerald-600 peer-checked:after:translate-x-5"></span>
                                 </label>
+                                <div class="w-full">
+                                    <label class="block text-xs font-semibold text-slate-500">Deskripsi</label>
+                                    <textarea name="description" rows="2" maxlength="1000"
+                                              class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">{{ $parameter->description }}</textarea>
+                                </div>
                                 <button type="submit"
                                         class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
                                     Simpan
