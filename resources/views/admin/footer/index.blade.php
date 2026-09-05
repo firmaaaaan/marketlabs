@@ -161,7 +161,7 @@
                                                 class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-emerald-300 hover:text-emerald-600"
                                                 title="Turunkan">▼</button>
                                     </form>
-                                    <button type="button" onclick="toggleEdit({{ $logo->id }})"
+                                        <button type="button" onclick="toggleEdit('{{ $logo->id }}')"
                                             class="rounded-lg bg-slate-100 p-1.5 text-slate-700 transition hover:bg-emerald-100 hover:text-emerald-700"
                                             title="Edit">
                                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -213,7 +213,7 @@
                                         </label>
                                     </div>
                                     <div class="flex items-end justify-end gap-2 sm:col-span-2">
-                                        <button type="button" onclick="toggleEdit({{ $logo->id }})"
+                                    <button type="button" onclick="toggleEdit('{{ $logo->id }}')"
                                                 class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300">
                                             Batal
                                         </button>

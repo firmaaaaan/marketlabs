@@ -79,7 +79,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <button type="button"
-                                onclick="toggleEdit({{ $category->id }})"
+                                onclick="toggleEdit('{{ $category->id }}')"
                                 class="rounded-lg bg-slate-100 p-1.5 text-slate-700 transition hover:bg-emerald-100 hover:text-emerald-700"
                                 title="Edit">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -112,7 +112,7 @@
                                 class="flex-none rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
                             Simpan
                         </button>
-                        <button type="button" onclick="toggleEdit({{ $category->id }})"
+                        <button type="button" onclick="toggleEdit('{{ $category->id }}')"
                                 class="flex-none rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300">
                             Batal
                         </button>
