@@ -48,8 +48,16 @@ class DatabaseBackupJob implements ShouldQueue
             'tables' => [],
         ];
 
+        $sensitiveColumns = ['password', 'remember_token'];
+
         foreach ($tables as $tableName => $rowCount) {
-            $rows = DB::table($tableName)->get()->toArray();
+            $rows = DB::table($tableName)->get()->each(function ($row) use ($sensitiveColumns) {
+                foreach ($sensitiveColumns as $col) {
+                    if (isset($row->$col)) {
+                        $row->$col = null;
+                    }
+                }
+            })->toArray();
             $data['tables'][$tableName] = [
                 'row_count' => count($rows),
                 'columns' => count($rows) > 0 ? array_keys((array) $rows[0]) : [],

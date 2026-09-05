@@ -179,7 +179,7 @@ class AdminBorrowingController extends Controller
     {
         $url = route('borrowings.show', $borrowing);
         $code = $borrowing->code;
-        $toolNames = $borrowing->items->pluck('tool.name')->implode(', ');
+        $toolNames = e($borrowing->items->pluck('tool.name')->implode(', '));
         $borrowDate = $borrowing->borrow_date->translatedFormat('d M Y');
         $returnDate = $borrowing->return_date->translatedFormat('d M Y');
         $duration = $borrowing->duration_days;
@@ -199,7 +199,7 @@ class AdminBorrowingController extends Controller
             Borrowing::STATUS_REJECTED => [
                 'Peminjaman Ditolak',
                 "Peminjaman {$code} untuk alat <strong>{$toolNames}</strong> ditolak oleh admin.".
-                ($borrowing->rejection_reason ? "<br><br><strong>Alasan Penolakan:</strong><br>{$borrowing->rejection_reason}" : '').
+                ($borrowing->rejection_reason ? '<br><br><strong>Alasan Penolakan:</strong><br>'.e($borrowing->rejection_reason) : '').
                 '<br><br>Hubungi admin untuk keterangan lebih lanjut.',
             ],
             Borrowing::STATUS_BORROWED => [

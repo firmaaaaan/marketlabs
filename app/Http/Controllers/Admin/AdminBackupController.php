@@ -37,6 +37,7 @@ class AdminBackupController extends Controller
 
     public function download(string $filename)
     {
+        $filename = $this->sanitizeFilename($filename);
         $path = $this->backupDir.'/'.$filename;
 
         if (! Storage::disk('local')->exists($path)) {
@@ -53,6 +54,7 @@ class AdminBackupController extends Controller
 
     public function destroy(string $filename)
     {
+        $filename = $this->sanitizeFilename($filename);
         $path = $this->backupDir.'/'.$filename;
 
         if (! Storage::disk('local')->exists($path)) {
@@ -134,7 +136,7 @@ class AdminBackupController extends Controller
             $exists = DB::select("SELECT COUNT(*) as cnt FROM sqlite_master WHERE type='table' AND name=?", [$tableName]);
         } else {
             $dbName = DB::getDatabaseName();
-            $exists = DB::select("SELECT COUNT(*) as cnt FROM information_schema.TABLES WHERE TABLE_SCHEMA = '{$dbName}' AND TABLE_NAME = '{$tableName}'");
+            $exists = DB::select('SELECT COUNT(*) as cnt FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?', [$dbName, $tableName]);
         }
 
         return $exists[0]->cnt > 0;
@@ -187,6 +189,11 @@ class AdminBackupController extends Controller
         usort($backups, fn ($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
 
         return $backups;
+    }
+
+    private function sanitizeFilename(string $filename): string
+    {
+        return preg_replace('/[^a-zA-Z0-9_\-\.]/', '', basename($filename));
     }
 
     private function formatBytes(int $bytes, int $precision = 2): string

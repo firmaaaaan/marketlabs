@@ -144,6 +144,10 @@ class DatabaseRestoreJob implements ShouldQueue
             return false;
         }
 
+        if (! preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
+            return false;
+        }
+
         $driver = DB::getDriverName();
 
         if ($driver === 'sqlite') {

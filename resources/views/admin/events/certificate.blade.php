@@ -269,16 +269,16 @@
 
 @push('scripts')
 <script>
-    const fontFamilies = {!! json_encode(array_keys($fonts)) !!};
+    const fontFamilies = {!! json_encode(array_keys($fonts), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) !!};
 
     const sides = {
         front: {
-            template: {!! $frontUrl ? json_encode($frontUrl) : 'null' !!},
-            line: {!! json_encode($frontLine, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT) !!}
+            template: {!! $frontUrl ? json_encode($frontUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) : 'null' !!},
+            line: {!! json_encode($frontLine, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) !!}
         },
         back: {
-            template: {!! $backUrl ? json_encode($backUrl) : 'null' !!},
-            line: {!! json_encode($backLine, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT) !!}
+            template: {!! $backUrl ? json_encode($backUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) : 'null' !!},
+            line: {!! json_encode($backLine, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) !!}
         }
     };
 
