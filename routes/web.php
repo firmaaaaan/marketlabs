@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminActivityLogController;
+use App\Http\Controllers\Admin\AdminAnalyticsController;
+use App\Http\Controllers\Admin\AdminBackupController;
 use App\Http\Controllers\Admin\AdminBenchFeeController;
 use App\Http\Controllers\Admin\AdminBorrowingController;
 use App\Http\Controllers\Admin\AdminCalendarController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\Admin\AdminTestParameterController;
 use App\Http\Controllers\Admin\AdminToolController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWhatsAppController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Api\CalendarApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BorrowingController;
@@ -37,8 +40,8 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\HealthCheckupController;
 use App\Http\Controllers\LaboranController;
 use App\Http\Controllers\LaboranHealthCheckupController;
+use App\Http\Controllers\LabScheduleController;
 use App\Http\Controllers\LandingPageController;
-
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
@@ -61,7 +64,7 @@ Route::get('/katalog-pemeriksaan', [HealthCheckupController::class, 'catalog'])-
 
 Route::get('/event', [EventController::class, 'index'])->name('events.index');
 
-Route::get('/jadwal-lab', [\App\Http\Controllers\LabScheduleController::class, 'index'])->name('lab-schedule');
+Route::get('/jadwal-lab', [LabScheduleController::class, 'index'])->name('lab-schedule');
 
 Route::get('/keranjang', [CartController::class, 'index'])->middleware('throttle:public')->name('cart.index');
 Route::get('/keranjang/json', [CartController::class, 'json'])->middleware('throttle:public')->name('cart.json');
@@ -94,6 +97,8 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
     Route::patch('/profil/lengkapi', [ProfileController::class, 'completeUpdate'])->name('profile.complete.update');
     Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/profil', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profil/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
+    Route::delete('/profil/avatar', [ProfileController::class, 'removeAvatar'])->name('profile.avatar.remove');
     Route::patch('/profil/password', [ProfileController::class, 'changePassword'])->name('profile.password');
 
     // Semua fitur lain — wajib profil lengkap (hanya user biasa).
@@ -112,6 +117,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::get('/notifikasi', [NotificationController::class, 'all'])->name('notifications.all');
         Route::post('/notifications/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+        Route::delete('/notifications/bulk-delete', [NotificationController::class, 'bulkDelete'])->name('notifications.bulk-delete');
 
         Route::post('/event/{event:slug}/daftar', [EventController::class, 'store'])->name('events.store');
         Route::get('/event/{event:slug}/cari-teman', [EventController::class, 'searchFriend'])->middleware('throttle:search')->name('events.search-friend');
@@ -160,9 +166,9 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::delete('/pengujian/{test}', [SampleTestController::class, 'cancel'])->name('sample-tests.cancel');
 
         // Calendar
-        Route::get('/kalender', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
-        Route::get('/kalender/events', [\App\Http\Controllers\Api\CalendarApiController::class, 'events'])->name('calendar.events');
-        Route::get('/kalender/export', [\App\Http\Controllers\CalendarController::class, 'export'])->name('calendar.export');
+        Route::get('/kalender', [CalendarController::class, 'index'])->name('calendar.index');
+        Route::get('/kalender/events', [CalendarApiController::class, 'events'])->name('calendar.events');
+        Route::get('/kalender/export', [CalendarController::class, 'export'])->name('calendar.export');
 
     }); // end profile.complete middleware
 
@@ -182,6 +188,11 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('analytics');
+        Route::get('/analytics/data', [AdminAnalyticsController::class, 'data'])->name('analytics.data');
+        Route::get('/analytics/export/excel', [AdminAnalyticsController::class, 'exportExcel'])->name('analytics.export-excel');
+        Route::get('/analytics/export/pdf', [AdminAnalyticsController::class, 'exportPdf'])->name('analytics.export-pdf');
+
         Route::get('/tools/export', [AdminToolController::class, 'export'])->middleware('throttle:admin-ops')->name('tools.export');
         Route::get('/tools/template', [AdminToolController::class, 'template'])->name('tools.template');
         Route::post('/tools/import', [AdminToolController::class, 'import'])->middleware('throttle:admin-ops')->name('tools.import');
@@ -196,6 +207,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::get('/borrowings/{borrowing}', [AdminBorrowingController::class, 'show'])->name('borrowings.show');
         Route::get('/borrowings/{borrowing}/invoice', [AdminBorrowingController::class, 'invoice'])->name('borrowings.invoice');
         Route::patch('/borrowings/{borrowing}/status', [AdminBorrowingController::class, 'updateStatus'])->name('borrowings.status');
+        Route::patch('/borrowings/bulk-status', [AdminBorrowingController::class, 'bulkUpdateStatus'])->name('borrowings.bulk-status');
         Route::patch('/borrowings/{borrowing}/billing', [AdminBorrowingController::class, 'updateBilling'])->name('borrowings.billing');
         Route::patch('/borrowings/{borrowing}/payment', [AdminBorrowingController::class, 'updatePayment'])->name('borrowings.payment');
 
@@ -205,6 +217,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::get('/riset/{proposal}/logbook', [AdminResearchProposalController::class, 'logbook'])->name('research.logbook');
         Route::get('/riset/{proposal}/logbook/print', [AdminResearchProposalController::class, 'logbookPrint'])->name('research.logbook.print');
         Route::patch('/riset/{proposal}/status', [AdminResearchProposalController::class, 'updateStatus'])->name('research.status');
+        Route::patch('/riset/bulk-status', [AdminResearchProposalController::class, 'bulkUpdateStatus'])->name('research.bulk-status');
         Route::patch('/riset/{proposal}/assignment', [AdminResearchProposalController::class, 'updateAssignment'])->name('research.assignment');
         Route::patch('/riset/{proposal}/payment', [AdminResearchProposalController::class, 'updatePayment'])->name('research.payment');
         Route::patch('/riset/{proposal}/penalty', [AdminResearchProposalController::class, 'updatePenalty'])->name('research.penalty');
@@ -226,9 +239,9 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::delete('/jadwal-layanan/petugas/{schedule}', [AdminScheduleController::class, 'destroyWeekly'])->name('schedule.weekly-destroy');
 
         // Calendar
-        Route::get('/kalender', [\App\Http\Controllers\Admin\AdminCalendarController::class, 'index'])->name('calendar.index');
-        Route::get('/kalender/events', [\App\Http\Controllers\Api\CalendarApiController::class, 'events'])->name('calendar.events');
-        Route::get('/kalender/export', [\App\Http\Controllers\Admin\AdminCalendarController::class, 'export'])->name('calendar.export');
+        Route::get('/kalender', [AdminCalendarController::class, 'index'])->name('calendar.index');
+        Route::get('/kalender/events', [CalendarApiController::class, 'events'])->name('calendar.events');
+        Route::get('/kalender/export', [AdminCalendarController::class, 'export'])->name('calendar.export');
 
         Route::resource('testimonials', AdminTestimonialController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('faqs', AdminFaqController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -263,6 +276,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::patch('/events/{event}/registrations/{registration}/status', [AdminEventController::class, 'updateRegistrationStatus'])->name('events.registrations.status');
         Route::patch('/events/{event}/registrations/bulk-status', [AdminEventController::class, 'bulkUpdateStatus'])->name('events.registrations.bulk-status');
         Route::patch('/events/{event}/registrations/{registration}/attendance', [AdminEventController::class, 'markAttendance'])->name('events.registrations.attendance');
+        Route::post('/events/{event}/registrations/{registration}/generate-certificate', [AdminEventController::class, 'generateSingleCertificate'])->name('events.registrations.generate-certificate');
         Route::resource('events', AdminEventController::class);
 
         Route::get('/pemeriksaan-kesehatan', [AdminHealthCheckupController::class, 'index'])->name('health-checkups.index');
@@ -293,6 +307,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
         Route::delete('/pengujian/{test}', [AdminSampleTestController::class, 'destroy'])->name('sample-tests.destroy');
         Route::get('/pengujian/{test}', [AdminSampleTestController::class, 'show'])->name('sample-tests.show');
         Route::patch('/pengujian/{test}/status', [AdminSampleTestController::class, 'updateStatus'])->name('sample-tests.status');
+        Route::patch('/pengujian/bulk-status', [AdminSampleTestController::class, 'bulkUpdateStatus'])->name('sample-tests.bulk-status');
         Route::patch('/pengujian/{test}/assignment', [AdminSampleTestController::class, 'updateAssignment'])->name('sample-tests.assignment');
         Route::patch('/pengujian/{test}/result', [AdminSampleTestController::class, 'updateResult'])->name('sample-tests.result');
         Route::post('/pengujian/{test}/hasil', [AdminSampleTestController::class, 'uploadResultFile'])->name('sample-tests.result-file');
@@ -324,24 +339,24 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
             Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');
             Route::resource('users', AdminUserController::class)->except(['show']);
 
-            Route::get('/menus', [\App\Http\Controllers\Admin\MenuController::class, 'index'])->name('menus.index');
-            Route::post('/menus/item', [\App\Http\Controllers\Admin\MenuController::class, 'storeMenuItem'])->name('menus.item.store');
-            Route::put('/menus/item/{menuItem}', [\App\Http\Controllers\Admin\MenuController::class, 'updateMenuItem'])->name('menus.item.update');
-            Route::delete('/menus/item/{menuItem}', [\App\Http\Controllers\Admin\MenuController::class, 'destroyMenuItem'])->name('menus.item.destroy');
-            Route::post('/menus/sort', [\App\Http\Controllers\Admin\MenuController::class, 'sortMenuItem'])->name('menus.item.sort');
-            Route::post('/menus/item/{menuItem}/toggle', [\App\Http\Controllers\Admin\MenuController::class, 'toggleMenuItem'])->name('menus.item.toggle');
-            Route::put('/menus/section/{section}', [\App\Http\Controllers\Admin\MenuController::class, 'updateSection'])->name('menus.section.update');
-            Route::post('/menus/section/{section}/toggle', [\App\Http\Controllers\Admin\MenuController::class, 'toggleSection'])->name('menus.section.toggle');
-            Route::post('/menus/sections/sort', [\App\Http\Controllers\Admin\MenuController::class, 'sortSection'])->name('menus.section.sort');
-            Route::put('/menus/branding', [\App\Http\Controllers\Admin\MenuController::class, 'updateBranding'])->name('menus.branding.update');
+            Route::get('/menus', [MenuController::class, 'index'])->name('menus.index');
+            Route::post('/menus/item', [MenuController::class, 'storeMenuItem'])->name('menus.item.store');
+            Route::put('/menus/item/{menuItem}', [MenuController::class, 'updateMenuItem'])->name('menus.item.update');
+            Route::delete('/menus/item/{menuItem}', [MenuController::class, 'destroyMenuItem'])->name('menus.item.destroy');
+            Route::post('/menus/sort', [MenuController::class, 'sortMenuItem'])->name('menus.item.sort');
+            Route::post('/menus/item/{menuItem}/toggle', [MenuController::class, 'toggleMenuItem'])->name('menus.item.toggle');
+            Route::put('/menus/section/{section}', [MenuController::class, 'updateSection'])->name('menus.section.update');
+            Route::post('/menus/section/{section}/toggle', [MenuController::class, 'toggleSection'])->name('menus.section.toggle');
+            Route::post('/menus/sections/sort', [MenuController::class, 'sortSection'])->name('menus.section.sort');
+            Route::put('/menus/branding', [MenuController::class, 'updateBranding'])->name('menus.branding.update');
 
             // Backup & Restore
-            Route::get('/backup', [\App\Http\Controllers\Admin\AdminBackupController::class, 'index'])->name('backup.index');
-            Route::post('/backup', [\App\Http\Controllers\Admin\AdminBackupController::class, 'store'])->name('backup.store');
-            Route::post('/backup/restore', [\App\Http\Controllers\Admin\AdminBackupController::class, 'restore'])->name('backup.restore');
-            Route::get('/backup/tables', [\App\Http\Controllers\Admin\AdminBackupController::class, 'tables'])->name('backup.tables');
-            Route::get('/backup/{filename}/download', [\App\Http\Controllers\Admin\AdminBackupController::class, 'download'])->name('backup.download');
-            Route::delete('/backup/{filename}', [\App\Http\Controllers\Admin\AdminBackupController::class, 'destroy'])->name('backup.destroy');
+            Route::get('/backup', [AdminBackupController::class, 'index'])->name('backup.index');
+            Route::post('/backup', [AdminBackupController::class, 'store'])->name('backup.store');
+            Route::post('/backup/restore', [AdminBackupController::class, 'restore'])->name('backup.restore');
+            Route::get('/backup/tables', [AdminBackupController::class, 'tables'])->name('backup.tables');
+            Route::get('/backup/{filename}/download', [AdminBackupController::class, 'download'])->name('backup.download');
+            Route::delete('/backup/{filename}', [AdminBackupController::class, 'destroy'])->name('backup.destroy');
         });
     });
 });

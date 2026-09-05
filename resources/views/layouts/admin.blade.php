@@ -43,6 +43,13 @@
                             <span class="block truncate text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</span>
                             <span class="block truncate text-xs text-slate-500">{{ Auth::user()->email }}</span>
                         </span>
+                        @if(Auth::user()->avatar)
+                            <img src="{{ Auth::user()->getAvatarUrl() }}" alt="{{ Auth::user()->name }}" class="h-9 w-9 rounded-full object-cover ring-2 ring-slate-200">
+                        @else
+                            <span class="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+                                {{ Auth::user()->getInitials() }}
+                            </span>
+                        @endif
 
                         {{-- Notifikasi --}}
                         <div class="relative" id="notif-wrap">

@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Middleware\EnsureProfileIsComplete;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsLaboran;
+use App\Http\Middleware\EnsureUserIsSuperAdmin;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\ThrottleMutations;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,19 +19,20 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
-            'superadmin' => \App\Http\Middleware\EnsureUserIsSuperAdmin::class,
-            'laboran' => \App\Http\Middleware\EnsureUserIsLaboran::class,
-            'throttle.mutations' => \App\Http\Middleware\ThrottleMutations::class,
-            'profile.complete' => \App\Http\Middleware\EnsureProfileIsComplete::class,
-            'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
+            'admin' => EnsureUserIsAdmin::class,
+            'superadmin' => EnsureUserIsSuperAdmin::class,
+            'laboran' => EnsureUserIsLaboran::class,
+            'throttle.mutations' => ThrottleMutations::class,
+            'profile.complete' => EnsureProfileIsComplete::class,
+            'security.headers' => SecurityHeaders::class,
         ]);
 
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(SecurityHeaders::class);
     })
-    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
+    ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('queue:prune-failed --hours=24')->daily();
         $schedule->command('queue:prune-batches --hours=24')->daily();
+        $schedule->command('app:send-reminders')->dailyAt('08:00');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

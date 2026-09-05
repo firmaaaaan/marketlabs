@@ -10,7 +10,6 @@ use App\Notifications\BorrowingNotification;
 use App\Support\ExcelExport;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminResearchProposalController extends Controller
 {
@@ -49,9 +48,24 @@ class AdminResearchProposalController extends Controller
         return view('admin.research.index', compact('proposals'));
     }
 
-    public function export(Request $request): StreamedResponse
+    public function export(Request $request)
     {
-        $proposals = $this->applyFilters($request, ResearchProposal::with(['user', 'laboran', 'laboratorium', 'tools'])->latest())->get();
+        $query = ResearchProposal::with(['user', 'laboran', 'laboratorium', 'tools'])->latest();
+
+        if ($status = $request->query('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($search = $request->query('search')) {
+            $escaped = addcslashes($search, '%_');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('code', 'like', "%{$escaped}%")
+                    ->orWhere('title', 'like', "%{$escaped}%")
+                    ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$escaped}%"));
+            });
+        }
+
+        $proposals = $query->get();
 
         $rows = [[
             'Kode', 'Judul', 'Bidang', 'Pemohon', 'Email', 'NIM/NIP/NIDN/NIK', 'Instansi',
@@ -88,7 +102,7 @@ class AdminResearchProposalController extends Controller
             ];
         }
 
-        return ExcelExport::download('riset-' . now()->format('Ymd-His') . '.xlsx', $rows);
+        return ExcelExport::download('riset-'.now()->format('Ymd-His').'.xlsx', $rows);
     }
 
     public function show(ResearchProposal $proposal)
@@ -180,7 +194,74 @@ class AdminResearchProposalController extends Controller
 
         $proposal->user->notify(new BorrowingNotification($title, $message, $url, notifyViaEmail: true));
 
-        return back()->with('success', 'Status permohonan riset ' . $code . ' diperbarui menjadi ' . ResearchProposal::statusLabel($validated['status']) . '.');
+        return back()->with('success', 'Status permohonan riset '.$code.' diperbarui menjadi '.ResearchProposal::statusLabel($validated['status']).'.');
+    }
+
+    public function bulkUpdateStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in([
+                ResearchProposal::STATUS_APPROVED,
+                ResearchProposal::STATUS_ONGOING,
+                ResearchProposal::STATUS_REJECTED,
+                ResearchProposal::STATUS_DONE,
+            ])],
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['string', 'exists:research_proposals,id'],
+        ]);
+
+        $newStatus = $validated['status'];
+        $updated = 0;
+
+        $proposals = ResearchProposal::whereIn('id', $validated['ids'])->get();
+
+        $timestamp = match ($newStatus) {
+            ResearchProposal::STATUS_APPROVED => 'approved_at',
+            ResearchProposal::STATUS_ONGOING => 'ongoing_at',
+            ResearchProposal::STATUS_REJECTED => 'rejected_at',
+            ResearchProposal::STATUS_DONE => 'done_at',
+            default => null,
+        };
+
+        foreach ($proposals as $proposal) {
+            $updateData = [
+                'status' => $newStatus,
+                'processed_at' => now(),
+            ];
+
+            if ($timestamp) {
+                $updateData[$timestamp] = now();
+            }
+
+            $proposal->update($updateData);
+
+            $code = $proposal->code;
+
+            [$title, $message] = match ($newStatus) {
+                ResearchProposal::STATUS_APPROVED => [
+                    'Permohonan Riset Disetujui',
+                    "Permohonan riset {$code} telah disetujui. Silakan cek detail untuk informasi selanjutnya.",
+                ],
+                ResearchProposal::STATUS_ONGOING => [
+                    'Permohonan Riset Sedang Berlangsung',
+                    "Permohonan riset {$code} sedang berlangsung.",
+                ],
+                ResearchProposal::STATUS_REJECTED => [
+                    'Permohonan Riset Ditolak',
+                    "Permohonan riset {$code} ditolak. Cek catatan admin pada detail permohonan.",
+                ],
+                ResearchProposal::STATUS_DONE => [
+                    'Permohonan Riset Selesai',
+                    "Permohonan riset {$code} telah ditandai selesai.",
+                ],
+                default => [$code, null],
+            };
+
+            $proposal->user->notify(new BorrowingNotification($title, $message, route('research.show', $proposal), notifyViaEmail: true));
+            $updated++;
+        }
+
+        return back()->with('success', "{$updated} permohonan riset berhasil diperbarui.");
     }
 
     public function logbook(ResearchProposal $proposal)
@@ -214,13 +295,13 @@ class AdminResearchProposalController extends Controller
         if ($validated['penalty'] > 0) {
             $proposal->user->notify(new BorrowingNotification(
                 'Denda Biaya Tambahan',
-                "Permohonan riset {$proposal->code} dikenakan biaya tambahan (denda) sebesar Rp " . number_format($validated['penalty'], 0, ',', '.') . ". Silakan cek detail permohonan.",
+                "Permohonan riset {$proposal->code} dikenakan biaya tambahan (denda) sebesar Rp ".number_format($validated['penalty'], 0, ',', '.').'. Silakan cek detail permohonan.',
                 route('research.show', $proposal),
                 notifyViaEmail: true,
             ));
         }
 
-        return back()->with('success', 'Denda / biaya tambahan ' . $proposal->code . ' diperbarui.');
+        return back()->with('success', 'Denda / biaya tambahan '.$proposal->code.' diperbarui.');
     }
 
     public function updatePayment(Request $request, ResearchProposal $proposal)
@@ -251,7 +332,7 @@ class AdminResearchProposalController extends Controller
             notifyViaEmail: true,
         ));
 
-        return back()->with('success', 'Status pembayaran ' . $proposal->code . ' diperbarui menjadi ' . ResearchProposal::paymentStatusLabel($validated['payment_status']) . '.');
+        return back()->with('success', 'Status pembayaran '.$proposal->code.' diperbarui menjadi '.ResearchProposal::paymentStatusLabel($validated['payment_status']).'.');
     }
 
     public function invoice(ResearchProposal $proposal)
@@ -263,10 +344,10 @@ class AdminResearchProposalController extends Controller
 
     protected function generateInvoiceNumber(): string
     {
-        $prefix = 'INV-RST-' . date('Ymd');
+        $prefix = 'INV-RST-'.date('Ymd');
 
         do {
-            $number = $prefix . '-' . strtoupper(substr(uniqid(), -5));
+            $number = $prefix.'-'.strtoupper(substr(uniqid(), -5));
         } while (ResearchProposal::where('invoice_number', $number)->exists());
 
         return $number;

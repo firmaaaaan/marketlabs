@@ -154,7 +154,11 @@
                                     class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 transition-all hover:border-emerald-300 hover:shadow-md sm:px-3.5"
                                     aria-label="Menu akun">
                                 <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-emerald-600 text-xs font-bold text-white shadow-md shadow-emerald-600/20">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    @if(Auth::user()->avatar)
+                                        <img src="{{ Auth::user()->getAvatarUrl() }}" alt="{{ Auth::user()->name }}" class="h-8 w-8 rounded-full object-cover">
+                                    @else
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    @endif
                                 </span>
                                 <span class="hidden max-w-32 truncate text-sm font-semibold text-slate-700 sm:block">{{ Auth::user()->username }} - {{ Auth::user()->name }}</span>
                                 <svg class="hidden h-4 w-4 flex-none text-slate-400 sm:block" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

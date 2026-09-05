@@ -10,7 +10,6 @@ use App\Support\ExcelExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminBorrowingController extends Controller
 {
@@ -42,7 +41,7 @@ class AdminBorrowingController extends Controller
         return view('admin.borrowings.show', compact('borrowing'));
     }
 
-    public function export(Request $request): StreamedResponse
+    public function export(Request $request)
     {
         $query = Borrowing::with(['user', 'items.tool'])->latest();
 
@@ -95,7 +94,7 @@ class AdminBorrowingController extends Controller
             ];
         }
 
-        return ExcelExport::download('peminjaman-' . now()->format('Ymd-His') . '.xlsx', $rows);
+        return ExcelExport::download('peminjaman-'.now()->format('Ymd-His').'.xlsx', $rows);
     }
 
     public function updateStatus(Request $request, Borrowing $borrowing)
@@ -170,7 +169,7 @@ class AdminBorrowingController extends Controller
 
         $this->notifyStatusChange($borrowing, $newStatus);
 
-        return back()->with('success', 'Status peminjaman diperbarui menjadi ' . Borrowing::statusLabel($newStatus) . '.');
+        return back()->with('success', 'Status peminjaman diperbarui menjadi '.Borrowing::statusLabel($newStatus).'.');
     }
 
     /**
@@ -191,28 +190,28 @@ class AdminBorrowingController extends Controller
                 "Peminjaman {$code} untuk alat <strong>{$toolNames}</strong> telah disetujui.<br><br>".
                 "Tanggal pinjam: {$borrowDate}<br>".
                 "Tanggal kembali: {$returnDate} ({$duration} hari)<br><br>".
-                "<strong>Rincian Biaya:</strong><br>".
+                '<strong>Rincian Biaya:</strong><br>'.
                 "• Biaya Sewa: {$borrowing->formatted_base_cost}<br>".
                 ($borrowing->discount > 0 ? "• Diskon ({$borrowing->discount}%): -{$borrowing->formatted_discount_amount}<br>" : '').
                 "• <strong>Total Biaya: {$borrowing->formatted_total_cost}</strong><br><br>".
-                "Silakan mengambil alat sesuai jadwal. Harap mengembalikan tepat waktu agar tidak dikenakan denda keterlambatan.",
+                'Silakan mengambil alat sesuai jadwal. Harap mengembalikan tepat waktu agar tidak dikenakan denda keterlambatan.',
             ],
             Borrowing::STATUS_REJECTED => [
                 'Peminjaman Ditolak',
                 "Peminjaman {$code} untuk alat <strong>{$toolNames}</strong> ditolak oleh admin.".
                 ($borrowing->rejection_reason ? "<br><br><strong>Alasan Penolakan:</strong><br>{$borrowing->rejection_reason}" : '').
-                "<br><br>Hubungi admin untuk keterangan lebih lanjut.",
+                '<br><br>Hubungi admin untuk keterangan lebih lanjut.',
             ],
             Borrowing::STATUS_BORROWED => [
                 'Alat Sedang Dipinjam',
                 "Alat <strong>{$toolNames}</strong> pada peminjaman {$code} telah diserahkan dan sedang dalam masa peminjaman.<br><br>".
                 "Tanggal kembali: <strong>{$returnDate}</strong><br><br>".
-                "Harap mengembalikan tepat waktu agar tidak dikenakan denda keterlambatan pengembalian.",
+                'Harap mengembalikan tepat waktu agar tidak dikenakan denda keterlambatan pengembalian.',
             ],
             Borrowing::STATUS_RETURNED => [
                 'Peminjaman Selesai',
                 "Alat <strong>{$toolNames}</strong> pada peminjaman {$code} telah berhasil dikembalikan.<br><br>".
-                "Terima kasih telah menggunakan layanan MarketLabs. Kami menunggu kunjungan Anda berikutnya.",
+                'Terima kasih telah menggunakan layanan MarketLabs. Kami menunggu kunjungan Anda berikutnya.',
             ],
             default => [$code, null],
         };
@@ -244,7 +243,7 @@ class AdminBorrowingController extends Controller
             'pickup_notes' => $validated['pickup_notes'] ?? null,
         ]);
 
-        return back()->with('success', 'Biaya & catatan pengambilan peminjaman ' . $borrowing->code . ' berhasil diperbarui.');
+        return back()->with('success', 'Biaya & catatan pengambilan peminjaman '.$borrowing->code.' berhasil diperbarui.');
     }
 
     public function invoice(Borrowing $borrowing)
@@ -284,6 +283,89 @@ class AdminBorrowingController extends Controller
         ]);
     }
 
+    public function bulkUpdateStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in([
+                Borrowing::STATUS_APPROVED,
+                Borrowing::STATUS_REJECTED,
+                Borrowing::STATUS_BORROWED,
+                Borrowing::STATUS_RETURNED,
+            ])],
+            'rejection_reason' => ['nullable', 'string', 'max:2000'],
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['string', 'exists:borrowings,id'],
+        ]);
+
+        $newStatus = $validated['status'];
+        $updated = 0;
+        $skipped = 0;
+
+        $allowed = [
+            Borrowing::STATUS_PENDING => [Borrowing::STATUS_APPROVED, Borrowing::STATUS_REJECTED],
+            Borrowing::STATUS_APPROVED => [Borrowing::STATUS_BORROWED, Borrowing::STATUS_REJECTED],
+            Borrowing::STATUS_BORROWED => [Borrowing::STATUS_RETURNED],
+        ];
+
+        $borrowings = Borrowing::with('items.tool')->whereIn('id', $validated['ids'])->get();
+
+        foreach ($borrowings as $borrowing) {
+            $oldStatus = $borrowing->status;
+
+            if (! isset($allowed[$oldStatus]) || ! in_array($newStatus, $allowed[$oldStatus])) {
+                $skipped++;
+
+                continue;
+            }
+
+            if ($newStatus === Borrowing::STATUS_APPROVED && $oldStatus === Borrowing::STATUS_PENDING) {
+                $stockError = false;
+                foreach ($borrowing->items as $item) {
+                    if ($item->quantity > $item->tool->available_stock) {
+                        $stockError = true;
+                        break;
+                    }
+                }
+                if ($stockError) {
+                    $skipped++;
+
+                    continue;
+                }
+                foreach ($borrowing->items as $item) {
+                    $item->tool->decrement('available_stock', $item->quantity);
+                }
+            }
+
+            if (($newStatus === Borrowing::STATUS_RETURNED && $oldStatus === Borrowing::STATUS_BORROWED)
+                || ($newStatus === Borrowing::STATUS_REJECTED && $oldStatus === Borrowing::STATUS_APPROVED)) {
+                foreach ($borrowing->items as $item) {
+                    $item->tool->increment('available_stock', $item->quantity);
+                }
+            }
+
+            $updateData = [
+                'status' => $newStatus,
+                'processed_at' => now(),
+                'returned_at' => $newStatus === Borrowing::STATUS_RETURNED ? now() : null,
+            ];
+
+            if ($newStatus === Borrowing::STATUS_REJECTED) {
+                $updateData['rejection_reason'] = $validated['rejection_reason'] ?? null;
+            }
+
+            $borrowing->update($updateData);
+            $this->notifyStatusChange($borrowing, $newStatus);
+            $updated++;
+        }
+
+        $message = "{$updated} peminjaman berhasil diperbarui.";
+        if ($skipped > 0) {
+            $message .= " {$skipped} dilewati (transisi tidak valid atau stok tidak cukup).";
+        }
+
+        return back()->with('success', $message);
+    }
+
     public function updatePayment(Request $request, Borrowing $borrowing)
     {
         $validated = $request->validate([
@@ -304,6 +386,6 @@ class AdminBorrowingController extends Controller
                 : "Status pembayaran peminjaman {$borrowing->code} diubah menjadi belum dibayar.",
         );
 
-        return back()->with('success', 'Status pembayaran ' . $borrowing->code . ' diperbarui menjadi ' . Borrowing::paymentStatusLabel($validated['payment_status']) . '.');
+        return back()->with('success', 'Status pembayaran '.$borrowing->code.' diperbarui menjadi '.Borrowing::paymentStatusLabel($validated['payment_status']).'.');
     }
 }

@@ -33,11 +33,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'username',
+        'avatar',
         'email',
         'password',
         'nim_nip',
         'institution',
         'phone',
+        'participant_code',
     ];
 
     /**
@@ -122,6 +124,24 @@ class User extends Authenticatable
         return filled($this->nim_nip)
             && filled($this->institution)
             && filled($this->phone);
+    }
+
+    public function getAvatarUrl(): string
+    {
+        return $this->avatar
+            ? asset('storage/avatars/'.$this->avatar)
+            : '';
+    }
+
+    public function getInitials(): string
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+        foreach (array_slice($words, 0, 2) as $word) {
+            $initials .= mb_strtoupper(mb_substr($word, 0, 1));
+        }
+
+        return $initials;
     }
 
     public function scopeAdmin($query)

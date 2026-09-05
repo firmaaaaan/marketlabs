@@ -32,6 +32,35 @@
     </div>
 @endif
 
+{{-- Bulk Action Bar --}}
+<div id="bulk-action-bar" class="mt-6 hidden rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
+    <div class="flex flex-wrap items-center gap-3">
+        <p class="text-sm font-medium text-emerald-700"><span id="selected-count">0</span> dipilih</p>
+        <select id="bulk-status"
+                class="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+            <option value="">Pilih Status</option>
+            <option value="approved">Disetujui</option>
+            <option value="rejected">Ditolak</option>
+            <option value="borrowed">Dipinjam</option>
+            <option value="returned">Dikembalikan</option>
+        </select>
+        <input type="text" id="bulk-rejection-reason" placeholder="Alasan penolakan (jika ditolak)"
+               class="hidden w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+        <button type="button" onclick="submitBulkStatus()"
+                class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+            Terapkan
+        </button>
+    </div>
+</div>
+
+<form id="bulk-status-form" action="{{ route('admin.borrowings.bulk-status') }}" method="POST">
+    @csrf
+    @method('PATCH')
+    <input type="hidden" name="status" id="bulk-status-input">
+    <input type="hidden" name="rejection_reason" id="bulk-rejection-input">
+    <input type="hidden" name="ids" id="bulk-ids">
+</form>
+
 {{-- Filter --}}
 <form action="{{ route('admin.borrowings.index') }}" method="GET" class="mt-6 flex flex-wrap gap-3">
     <input type="text" name="search" value="{{ request('search') }}"
@@ -58,6 +87,7 @@
         <table class="min-w-full divide-y divide-slate-200">
             <thead class="bg-slate-50">
                 <tr>
+                    <th class="px-4 py-3 text-center"><input type="checkbox" id="select-all" onchange="toggleAll(this)" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"></th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Kode</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Peminjam</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Tanggal</th>
@@ -70,6 +100,7 @@
             <tbody class="divide-y divide-slate-200">
                 @forelse ($borrowings as $borrowing)
                     <tr class="transition hover:bg-slate-50">
+                        <td class="px-4 py-4 text-center"><input type="checkbox" class="bulk-checkbox rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" value="{{ $borrowing->id }}" onchange="updateBulkBar()"></td>
                         <td class="px-6 py-4 text-sm font-semibold text-emerald-600">{{ $borrowing->code }}</td>
                         <td class="px-6 py-4 text-sm text-slate-900">{{ $borrowing->user->name }}</td>
                         <td class="px-6 py-4 text-sm text-slate-600">
@@ -109,7 +140,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada peminjaman.</td>
+                        <td colspan="8" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada peminjaman.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -120,5 +151,45 @@
 <div class="mt-6">
     {{ $borrowings->links() }}
 </div>
+
+<script>
+function toggleAll(el) {
+    document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = el.checked);
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.bulk-checkbox:checked').length;
+    document.getElementById('selected-count').textContent = checked;
+    document.getElementById('bulk-action-bar').classList.toggle('hidden', checked === 0);
+}
+
+function submitBulkStatus() {
+    const status = document.getElementById('bulk-status').value;
+    if (!status) { alert('Pilih status terlebih dahulu.'); return; }
+
+    const checked = document.querySelectorAll('.bulk-checkbox:checked');
+    if (checked.length === 0) { alert('Pilih minimal satu peminjaman.'); return; }
+
+    const ids = Array.from(checked).map(cb => cb.value);
+    document.getElementById('bulk-ids').value = JSON.stringify(ids);
+    document.getElementById('bulk-status-input').value = status;
+
+    const reasonInput = document.getElementById('bulk-rejection-reason');
+    document.getElementById('bulk-rejection-input').value = status === 'rejected' ? reasonInput.value : '';
+
+    if (status === 'rejected' && !reasonInput.value) {
+        alert('Alasan penolakan wajib diisi.');
+        return;
+    }
+
+    document.getElementById('bulk-status-form').submit();
+}
+
+document.getElementById('bulk-status').addEventListener('change', function() {
+    const reasonInput = document.getElementById('bulk-rejection-reason');
+    reasonInput.classList.toggle('hidden', this.value !== 'rejected');
+});
+</script>
 
 @endsection

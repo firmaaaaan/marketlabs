@@ -9,6 +9,55 @@
     @endif
 
     <div class="mt-6 space-y-6">
+        {{-- Foto Profil --}}
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h2 class="text-lg font-bold text-slate-900">Foto Profil</h2>
+            <p class="mt-1 text-sm text-slate-500">Unggah foto profil untuk mempersonalisasi akun Anda.</p>
+
+            <div class="mt-6 flex items-center gap-6">
+                <div class="shrink-0">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ Auth::user()->getAvatarUrl() }}" alt="{{ Auth::user()->name }}"
+                             class="h-20 w-20 rounded-full object-cover ring-4 ring-slate-100">
+                    @else
+                        <div class="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 ring-4 ring-slate-100">
+                            <span class="text-xl font-bold text-emerald-700">{{ Auth::user()->getInitials() }}</span>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex-1">
+                    <form action="{{ route('profile.avatar') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-3">
+                        @csrf
+                        @method('PATCH')
+                        <label for="avatar-input"
+                               class="cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                            Pilih Foto
+                        </label>
+                        <input type="file" id="avatar-input" name="avatar" accept="image/jpeg,image/png,image/webp" class="hidden"
+                               onchange="previewAvatar(this)">
+                        <button type="submit"
+                                class="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
+                            Unggah
+                        </button>
+                    </form>
+                    @if(Auth::user()->avatar)
+                        <form action="{{ route('profile.avatar.remove') }}" method="POST" class="mt-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Hapus foto profil?')"
+                                    class="text-xs font-semibold text-red-600 hover:text-red-700">
+                                Hapus Foto
+                            </button>
+                        </form>
+                    @endif
+                    <p class="mt-2 text-xs text-slate-400">Format: JPG, PNG, Webp. Maks 2MB.</p>
+                    @error('avatar')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
         {{-- Kode Partisipan --}}
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-6 shadow-sm sm:p-8">
             <h2 class="text-lg font-bold text-slate-900">Kode Partisipan</h2>
@@ -195,6 +244,26 @@
                 input.type = 'password';
                 eyeOpen.classList.remove('hidden');
                 eyeClosed.classList.add('hidden');
+            }
+        }
+
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.querySelector('.shrink-0 img');
+                    const fallback = document.querySelector('.shrink-0 .flex');
+                    if (img) {
+                        img.src = e.target.result;
+                    } else if (fallback) {
+                        const newImg = document.createElement('img');
+                        newImg.src = e.target.result;
+                        newImg.alt = 'Avatar';
+                        newImg.className = 'h-20 w-20 rounded-full object-cover ring-4 ring-slate-100';
+                        fallback.replaceWith(newImg);
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
             }
         }
     </script>

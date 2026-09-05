@@ -13,6 +13,7 @@ use App\Notifications\BorrowingNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class AdminSampleTestController extends Controller
@@ -263,6 +264,77 @@ class AdminSampleTestController extends Controller
         return back()->with('success', 'Status pengujian '.$test->code.' diperbarui menjadi '.$test->status_label.'.');
     }
 
+    public function bulkUpdateStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in([
+                SampleTest::STATUS_APPROVED,
+                SampleTest::STATUS_RECEIVED,
+                SampleTest::STATUS_TESTING,
+                SampleTest::STATUS_DONE,
+                SampleTest::STATUS_REJECTED,
+            ])],
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['string', 'exists:sample_tests,id'],
+        ]);
+
+        $newStatus = $validated['status'];
+        $updated = 0;
+
+        $tests = SampleTest::whereIn('id', $validated['ids'])->get();
+
+        $now = now();
+
+        foreach ($tests as $test) {
+            $data = ['status' => $newStatus];
+
+            switch ($newStatus) {
+                case SampleTest::STATUS_APPROVED:
+                    $data['processed_at'] = $now;
+                    $data['approved_at'] = $now;
+                    break;
+                case SampleTest::STATUS_RECEIVED:
+                    $data['processed_at'] = $now;
+                    $data['received_at'] = $now;
+                    break;
+                case SampleTest::STATUS_TESTING:
+                    $data['processed_at'] = $now;
+                    $data['tested_at'] = $now;
+                    break;
+                case SampleTest::STATUS_DONE:
+                    $data['processed_at'] = $now;
+                    $data['done_at'] = $now;
+                    break;
+                case SampleTest::STATUS_REJECTED:
+                    $data['processed_at'] = $now;
+                    $data['rejected_at'] = $now;
+                    break;
+            }
+
+            $test->update($data);
+
+            $title = match ($newStatus) {
+                SampleTest::STATUS_APPROVED => 'Pengujian Disetujui',
+                SampleTest::STATUS_RECEIVED => 'Sampel Diterima',
+                SampleTest::STATUS_TESTING => 'Pengujian Sedang Berlangsung',
+                SampleTest::STATUS_DONE => 'Pengujian Selesai',
+                SampleTest::STATUS_REJECTED => 'Pengujian Ditolak',
+                default => 'Status Pengujian Diperbarui',
+            };
+
+            $test->user->notify(new BorrowingNotification(
+                $title,
+                "Pengujian sampel {$test->code} telah ditandai '{$test->status_label}'. Silakan cek detail pengujian.",
+                route('sample-tests.show', $test),
+                notifyViaEmail: true,
+            ));
+
+            $updated++;
+        }
+
+        return back()->with('success', "{$updated} pengujian sampel berhasil diperbarui.");
+    }
+
     public function updateResult(Request $request, SampleTest $test)
     {
         $validated = $request->validate([
@@ -324,7 +396,7 @@ class AdminSampleTestController extends Controller
             }
         }
 
-        $userName = \Illuminate\Support\Str::slug($test->user->name);
+        $userName = Str::slug($test->user->name);
         $ext = strtolower($ext);
         $path = $request->file('result_file')->storeAs('test-results', 'hasil-'.$test->code.'-'.$userName.'.'.$ext);
 
