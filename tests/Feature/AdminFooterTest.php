@@ -74,7 +74,7 @@ class AdminFooterTest extends TestCase
             ->get('/')
             ->assertOk()
             ->assertSee('UPT Laboratorium Terpadu', false)
-            ->assertSee('storage/' . $logo->image, false);
+            ->assertSee('storage/'.$logo->image, false);
     }
 
     public function test_admin_can_update_footer_logo_and_old_image_is_deleted(): void
@@ -113,7 +113,7 @@ class AdminFooterTest extends TestCase
         $this->actingAs($admin)
             ->get('/')
             ->assertOk()
-            ->assertDontSee('storage/' . $logo->image, false);
+            ->assertDontSee('storage/'.$logo->image, false);
     }
 
     public function test_admin_can_delete_footer_logo_with_its_file(): void
@@ -191,6 +191,6 @@ class AdminFooterTest extends TestCase
         $this->actingAs($admin)
             ->get('/')
             ->assertOk()
-            ->assertDontSee('storage/' . $logo->image, false);
+            ->assertDontSee('storage/'.$logo->image, false);
     }
 }

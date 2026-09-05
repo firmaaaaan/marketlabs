@@ -72,4 +72,56 @@ class ExcelExport
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
+
+    /**
+     * Simpan file .xlsx ke path lokal (untuk queue job).
+     *
+     * @param  array<int, array<int, mixed>>  $rows
+     */
+    public static function save(string $path, array $rows, array $columnWidths = []): void
+    {
+        $spreadsheet = new Spreadsheet;
+        $sheet = $spreadsheet->getActiveSheet();
+
+        foreach ($rows as $r => $row) {
+            foreach (array_values($row) as $c => $value) {
+                $cell = $sheet->getCell([$c + 1, $r + 1]);
+
+                if ($value === null || $value === '') {
+                    continue;
+                }
+
+                if (is_string($value)) {
+                    $cell->setValueExplicit($value, DataType::TYPE_STRING2);
+                } else {
+                    $cell->setValue($value);
+                }
+            }
+        }
+
+        $headerRange = 'A1:'.$sheet->getHighestColumn().'1';
+        $sheet->getStyle($headerRange)->applyFromArray([
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '059669']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ]);
+
+        $sheet->getRowDimension(1)->setRowHeight(22);
+
+        if ($columnWidths) {
+            foreach ($columnWidths as $col => $width) {
+                $sheet->getColumnDimension($col)->setWidth($width);
+            }
+        } else {
+            foreach (range('A', $sheet->getHighestColumn()) as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+        }
+
+        $sheet->freezePane('A2');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($path);
+        $spreadsheet->disconnectWorksheets();
+    }
 }

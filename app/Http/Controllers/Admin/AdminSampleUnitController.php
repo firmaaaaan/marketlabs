@@ -78,6 +78,7 @@ class AdminSampleUnitController extends Controller
         foreach ($units as $unit) {
             if ($unit->parameters()->count() > 0) {
                 $skipped[] = $unit->name;
+
                 continue;
             }
             $unit->delete();
@@ -86,7 +87,7 @@ class AdminSampleUnitController extends Controller
 
         $message = "{$deleted} satuan berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return redirect()->route('admin.sample-units.index')->with('success', $message);

@@ -29,15 +29,6 @@
         </div>
 
         <div>
-            <label for="email" class="block text-sm font-semibold text-slate-700">Email <span class="text-red-500">*</span></label>
-            <input type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="email"
-                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-            @error('email')
-                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div>
             <label for="password" class="block text-sm font-semibold text-slate-700">Kata Sandi <span class="text-red-500">*</span></label>
             <div class="relative mt-1.5">
                 <input type="password" id="password" name="password" required autocomplete="new-password"

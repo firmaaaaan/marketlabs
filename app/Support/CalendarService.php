@@ -242,11 +242,11 @@ class CalendarService
 
         foreach ($events as $event) {
             $ics .= "BEGIN:VEVENT\r\n";
-            $ics .= "DTSTART;VALUE=DATE:" . Carbon::parse($event['start'])->format('Ymd') . "\r\n";
-            $ics .= "DTEND;VALUE=DATE:" . Carbon::parse($event['end'])->format('Ymd') . "\r\n";
-            $ics .= "SUMMARY:" . $this->escapeIcsText($event['title']) . "\r\n";
-            $ics .= "DESCRIPTION:" . $this->escapeIcsText($event['extendedProps']['status_label'] ?? '') . "\r\n";
-            $ics .= "UID:" . $event['id'] . "@marketlabs\r\n";
+            $ics .= 'DTSTART;VALUE=DATE:'.Carbon::parse($event['start'])->format('Ymd')."\r\n";
+            $ics .= 'DTEND;VALUE=DATE:'.Carbon::parse($event['end'])->format('Ymd')."\r\n";
+            $ics .= 'SUMMARY:'.$this->escapeIcsText($event['title'])."\r\n";
+            $ics .= 'DESCRIPTION:'.$this->escapeIcsText($event['extendedProps']['status_label'] ?? '')."\r\n";
+            $ics .= 'UID:'.$event['id']."@marketlabs\r\n";
             $ics .= "END:VEVENT\r\n";
         }
 
@@ -257,10 +257,10 @@ class CalendarService
 
     private function escapeIcsText(string $text): string
     {
-        $text = str_replace("\\", "\\\\", $text);
-        $text = str_replace(",", "\\,", $text);
-        $text = str_replace(";", "\\;", $text);
-        $text = str_replace("\n", "\\n", $text);
+        $text = str_replace('\\', '\\\\', $text);
+        $text = str_replace(',', '\\,', $text);
+        $text = str_replace(';', '\\;', $text);
+        $text = str_replace("\n", '\\n', $text);
 
         return $text;
     }

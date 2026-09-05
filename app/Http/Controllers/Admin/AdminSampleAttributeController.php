@@ -67,6 +67,7 @@ class AdminSampleAttributeController extends Controller
         foreach ($items as $item) {
             if ($item->items()->exists()) {
                 $skipped[] = $item->name;
+
                 continue;
             }
             $item->delete();
@@ -75,7 +76,7 @@ class AdminSampleAttributeController extends Controller
 
         $message = "{$deleted} bentuk sampel berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return back()->with('success', $message);
@@ -131,6 +132,7 @@ class AdminSampleAttributeController extends Controller
         foreach ($items as $item) {
             if ($item->items()->exists()) {
                 $skipped[] = $item->name;
+
                 continue;
             }
             $item->delete();
@@ -139,7 +141,7 @@ class AdminSampleAttributeController extends Controller
 
         $message = "{$deleted} jenis sampel berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return back()->with('success', $message);

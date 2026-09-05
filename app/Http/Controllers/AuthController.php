@@ -71,14 +71,13 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'username' => $validated['username'],
-            'email' => $validated['email'],
+            'email' => $validated['username'].'@pending.local',
             'participant_code' => User::generateParticipantCode(),
             'password' => Hash::make($validated['password']),
         ]);

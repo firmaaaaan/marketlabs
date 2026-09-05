@@ -30,7 +30,7 @@ class SampleTestFlowTest extends TestCase
     {
         return SampleTest::create(array_merge([
             'user_id' => $user->id,
-            'code' => 'UJI-TEST-' . strtoupper(substr(uniqid(), -5)),
+            'code' => 'UJI-TEST-'.strtoupper(substr(uniqid(), -5)),
             'status' => SampleTest::STATUS_PENDING,
             'total_cost' => 0,
             'payment_status' => SampleTest::PAYMENT_UNPAID,

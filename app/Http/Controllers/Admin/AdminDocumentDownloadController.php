@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ZipDocumentsJob;
 use App\Models\Borrowing;
 use App\Models\Event;
 use App\Models\EventRegistration;
@@ -13,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use ZipArchive;
 
 class AdminDocumentDownloadController extends Controller
 {
@@ -132,57 +132,14 @@ class AdminDocumentDownloadController extends Controller
             'date_to' => ['required', 'date', 'after_or_equal:date_from'],
         ]);
 
-        $feature = $validated['feature'];
-        $meta = $this->features()[$feature];
-        $model = $meta['model'];
+        ZipDocumentsJob::dispatch(
+            $validated['feature'],
+            $validated['date_from'],
+            $validated['date_to'],
+            auth()->id()
+        );
 
-        $dateColumn = $meta['date_column'];
-        $records = $model::query()
-            ->whereDate($dateColumn, '>=', $validated['date_from'])
-            ->whereDate($dateColumn, '<=', $validated['date_to'])
-            ->latest($dateColumn)
-            ->get();
-
-        $zipFile = tempnam(sys_get_temp_dir(), 'dokumen_');
-        $zip = new ZipArchive;
-
-        if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            return back()->with('error', 'Gagal membuat file ZIP.');
-        }
-
-        foreach ($records as $record) {
-            $files = $this->getDocumentPaths($record, $feature);
-            if ($files->isEmpty()) {
-                continue;
-            }
-
-            $folderName = $this->sanitizeFolderName($record->{$meta['code_column']});
-
-            foreach ($files as $label => $path) {
-                $disk = $this->resolveDisk($path);
-                if (! $disk || ! Storage::disk($disk)->exists($path)) {
-                    continue;
-                }
-
-                $content = Storage::disk($disk)->get($path);
-                $ext = pathinfo($path, PATHINFO_EXTENSION);
-                $fileName = "{$label}.{$ext}";
-                $zip->addFromString("{$folderName}/{$fileName}", $content);
-            }
-        }
-
-        $zip->close();
-
-        $dateFrom = str_replace('-', '', $validated['date_from']);
-        $dateTo = str_replace('-', '', $validated['date_to']);
-        $zipName = "dokumen-{$meta['label']}-{$dateFrom}-{$dateTo}.zip";
-
-        return response()->streamDownload(function () use ($zipFile) {
-            readfile($zipFile);
-            @unlink($zipFile);
-        }, $zipName, [
-            'Content-Type' => 'application/zip',
-        ]);
+        return back()->with('success', 'Pembuatan ZIP dokumen sedang diproses di queue. Anda akan mendapat notifikasi setelah selesai.');
     }
 
     /**

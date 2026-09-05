@@ -3,10 +3,11 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class EventNotification extends Notification
+class EventNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -30,8 +31,8 @@ class EventNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $mail = (new MailMessage)
-            ->subject($this->title . ' – MarketLabs')
-            ->greeting('Halo, ' . $notifiable->name . '!')
+            ->subject($this->title.' – MarketLabs')
+            ->greeting('Halo, '.$notifiable->name.'!')
             ->line($this->message);
 
         if ($this->url) {

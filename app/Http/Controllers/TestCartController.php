@@ -40,7 +40,7 @@ class TestCartController extends Controller
         $totalCost = 0;
 
         foreach ($cart as $parameterId => $_) {
-            $parameter = \App\Models\TestParameter::with('unit')->find($parameterId);
+            $parameter = TestParameter::with('unit')->find($parameterId);
 
             if (! $parameter || ! $parameter->is_active) {
                 continue;
@@ -78,7 +78,7 @@ class TestCartController extends Controller
             $testTotalCost = 0;
 
             foreach ($cartData as $parameterId => $_) {
-                $param = \App\Models\TestParameter::with('unit')->find($parameterId);
+                $param = TestParameter::with('unit')->find($parameterId);
 
                 if (! $param || ! $param->is_active) {
                     continue;

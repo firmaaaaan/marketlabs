@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\BulkDeleteFilesJob;
 use App\Models\GalleryImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -39,7 +40,7 @@ class AdminGalleryController extends Controller
         }
 
         return redirect()->route('admin.gallery.index')
-            ->with('success', count($request->file('images')) . ' gambar berhasil ditambahkan.');
+            ->with('success', count($request->file('images')).' gambar berhasil ditambahkan.');
     }
 
     public function update(Request $request, GalleryImage $image)
@@ -78,13 +79,18 @@ class AdminGalleryController extends Controller
 
         $images = GalleryImage::whereIn('id', $validated['ids'])->get();
 
+        $filePaths = [];
         foreach ($images as $image) {
-            Storage::disk('public')->delete($image->path);
+            $filePaths[] = $image->path;
             $image->delete();
         }
 
+        if (! empty($filePaths)) {
+            BulkDeleteFilesJob::dispatch($filePaths, 'public');
+        }
+
         return redirect()->route('admin.gallery.index')
-            ->with('success', count($images) . ' gambar berhasil dihapus.');
+            ->with('success', count($images).' gambar berhasil dihapus.');
     }
 
     public function sort(Request $request)

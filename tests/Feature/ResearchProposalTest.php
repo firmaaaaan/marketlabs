@@ -2,11 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Models\Laboratorium;
+use App\Models\ResearchLogbook;
 use App\Models\ResearchProposal;
 use App\Models\Tool;
+use App\Models\ToolCategory;
 use App\Models\User;
+use App\Notifications\BorrowingNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
 
 class ResearchProposalTest extends TestCase
@@ -98,10 +104,10 @@ class ResearchProposalTest extends TestCase
     public function test_user_can_submit_research_proposal(): void
     {
         $user = User::factory()->create();
-        $tool = \App\Models\Tool::create([
+        $tool = Tool::create([
             'code' => 'AL-RST-01',
             'name' => 'Spektrometer Riset',
-            'category_id' => \App\Models\ToolCategory::create(['name' => 'Uji'])->id,
+            'category_id' => ToolCategory::create(['name' => 'Uji'])->id,
             'total_stock' => 5,
             'available_stock' => 5,
             'price_per_day' => 100000,
@@ -119,8 +125,8 @@ class ResearchProposalTest extends TestCase
                 'customer_type' => 'mahasiswa',
                 'start_date' => now()->addDay()->format('Y-m-d'),
                 'end_date' => now()->addDays(30)->format('Y-m-d'),
-                'letter' => \Illuminate\Http\UploadedFile::fake()->create('surat-permohonan.pdf', 20),
-                'replacement_letter' => \Illuminate\Http\UploadedFile::fake()->create('surat-penggantian.pdf', 20),
+                'letter' => UploadedFile::fake()->create('surat-permohonan.pdf', 20),
+                'replacement_letter' => UploadedFile::fake()->create('surat-penggantian.pdf', 20),
                 'tools' => [$tool->id],
                 'quantities' => [$tool->id => 2],
                 'days' => [$tool->id => 10],
@@ -207,10 +213,10 @@ class ResearchProposalTest extends TestCase
 
     public function test_informasi_pemohon_fields_always_required(): void
     {
-        $tool = \App\Models\Tool::create([
+        $tool = Tool::create([
             'code' => 'AL-RST-03',
             'name' => 'Sentrifuge Riset',
-            'category_id' => \App\Models\ToolCategory::create(['name' => 'Uji'])->id,
+            'category_id' => ToolCategory::create(['name' => 'Uji'])->id,
             'total_stock' => 4,
             'available_stock' => 4,
             'price_per_day' => 100000,
@@ -251,10 +257,10 @@ class ResearchProposalTest extends TestCase
     public function test_research_proposal_detail_shows_team_tools_and_letters(): void
     {
         $user = User::factory()->create();
-        $tool = \App\Models\Tool::create([
+        $tool = Tool::create([
             'code' => 'AL-RST-02',
             'name' => 'Mikroskop Riset',
-            'category_id' => \App\Models\ToolCategory::create(['name' => 'Optik'])->id,
+            'category_id' => ToolCategory::create(['name' => 'Optik'])->id,
             'total_stock' => 3,
             'available_stock' => 3,
             'price_per_day' => 50000,
@@ -367,7 +373,7 @@ class ResearchProposalTest extends TestCase
         $this->assertNotNull($proposal->rejected_at);
         $this->assertNull($proposal->approved_at);
 
-        Notification::assertSentTo($user, \App\Notifications\BorrowingNotification::class);
+        Notification::assertSentTo($user, BorrowingNotification::class);
     }
 
     public function test_admin_can_mark_proposal_as_ongoing(): void
@@ -399,7 +405,7 @@ class ResearchProposalTest extends TestCase
         $this->assertNotNull($proposal->ongoing_at);
         $this->assertEquals('Sedang Berlangsung', ResearchProposal::statusLabel($proposal->status));
 
-        Notification::assertSentTo($user, \App\Notifications\BorrowingNotification::class);
+        Notification::assertSentTo($user, BorrowingNotification::class);
     }
 
     public function test_client_research_history_shows_status_tracker_with_wib_time(): void
@@ -462,12 +468,12 @@ class ResearchProposalTest extends TestCase
         $admin = User::factory()->create();
         $user = User::factory()->create(['role' => User::ROLE_USER]);
         $laboran = User::factory()->create(['role' => User::ROLE_LABORAN, 'name' => 'Sari Laboran']);
-        $lab = \App\Models\Laboratorium::create(['name' => 'Laboratorium Kimia']);
+        $lab = Laboratorium::create(['name' => 'Laboratorium Kimia']);
 
-        $tool = \App\Models\Tool::create([
+        $tool = Tool::create([
             'code' => 'AL-RST-04',
             'name' => 'Spektrometer Penugasan',
-            'category_id' => \App\Models\ToolCategory::create(['name' => 'Uji'])->id,
+            'category_id' => ToolCategory::create(['name' => 'Uji'])->id,
             'total_stock' => 5,
             'available_stock' => 5,
             'price_per_day' => 50000,
@@ -511,7 +517,7 @@ class ResearchProposalTest extends TestCase
     {
         $user = User::factory()->create(['role' => User::ROLE_USER]);
         $laboran = User::factory()->create(['role' => User::ROLE_LABORAN, 'name' => 'Dewi Laboran']);
-        $lab = \App\Models\Laboratorium::create(['name' => 'Laboratorium Biologi Molekuler']);
+        $lab = Laboratorium::create(['name' => 'Laboratorium Biologi Molekuler']);
 
         $proposal = ResearchProposal::create([
             'user_id' => $user->id,
@@ -567,7 +573,7 @@ class ResearchProposalTest extends TestCase
         file_put_contents($tmp, $binary);
 
         try {
-            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($tmp);
+            $reader = IOFactory::createReaderForFile($tmp);
             $reader->setReadDataOnly(true);
             $spreadsheet = $reader->load($tmp);
             $values = [];
@@ -587,7 +593,7 @@ class ResearchProposalTest extends TestCase
     /**
      * Payload valid untuk pengajuan riset.
      */
-    protected function validProposalPayload(\App\Models\Tool $tool, array $overrides = []): array
+    protected function validProposalPayload(Tool $tool, array $overrides = []): array
     {
         return array_merge([
             'title' => 'Riset Validasi Form',
@@ -599,8 +605,8 @@ class ResearchProposalTest extends TestCase
             'customer_type' => 'mahasiswa',
             'start_date' => now()->addDay()->format('Y-m-d'),
             'end_date' => now()->addDays(30)->format('Y-m-d'),
-            'letter' => \Illuminate\Http\UploadedFile::fake()->create('surat-permohonan.pdf', 20),
-            'replacement_letter' => \Illuminate\Http\UploadedFile::fake()->create('surat-penggantian.pdf', 20),
+            'letter' => UploadedFile::fake()->create('surat-permohonan.pdf', 20),
+            'replacement_letter' => UploadedFile::fake()->create('surat-penggantian.pdf', 20),
             'tools' => [$tool->id],
             'quantities' => [$tool->id => 1],
             'days' => [$tool->id => 30],
@@ -610,12 +616,12 @@ class ResearchProposalTest extends TestCase
         ], $overrides);
     }
 
-    protected function createResearchTool(): \App\Models\Tool
+    protected function createResearchTool(): Tool
     {
-        return \App\Models\Tool::create([
-            'code' => 'AL-RST-' . rand(1000, 9999),
+        return Tool::create([
+            'code' => 'AL-RST-'.rand(1000, 9999),
             'name' => 'Spektrometer Riset',
-            'category_id' => \App\Models\ToolCategory::create(['name' => 'Uji'])->id,
+            'category_id' => ToolCategory::create(['name' => 'Uji'])->id,
             'total_stock' => 5,
             'available_stock' => 5,
             'price_per_day' => 100000,
@@ -768,10 +774,10 @@ class ResearchProposalTest extends TestCase
     {
         $admin = User::factory()->create();
         $user = User::factory()->create(['role' => User::ROLE_USER, 'nim_nip' => '2019123456', 'institution' => 'Universitas Contoh']);
-        $tool = \App\Models\Tool::create([
+        $tool = Tool::create([
             'code' => 'AL-RST-PLT',
             'name' => 'Mikroskop Riset',
-            'category_id' => \App\Models\ToolCategory::create(['name' => 'Uji'])->id,
+            'category_id' => ToolCategory::create(['name' => 'Uji'])->id,
             'total_stock' => 2,
             'available_stock' => 2,
             'price_per_day' => 50000,
@@ -911,7 +917,7 @@ class ResearchProposalTest extends TestCase
             'start_date' => now()->subDay(),
             'end_date' => now()->addDays(7),
         ]);
-        $logbook = \App\Models\ResearchLogbook::create([
+        $logbook = ResearchLogbook::create([
             'research_proposal_id' => $proposal->id,
             'log_date' => now()->format('Y-m-d'),
             'note' => 'Entri uji coba.',
@@ -942,7 +948,7 @@ class ResearchProposalTest extends TestCase
             'start_date' => now()->subDay(),
             'end_date' => now()->addDays(7),
         ]);
-        \App\Models\ResearchLogbook::create([
+        ResearchLogbook::create([
             'research_proposal_id' => $proposal->id,
             'log_date' => now()->format('Y-m-d'),
             'note' => 'Analisis data minggu pertama.',
@@ -975,7 +981,7 @@ class ResearchProposalTest extends TestCase
             'start_date' => now()->subDay(),
             'end_date' => now()->addDays(7),
         ]);
-        \App\Models\ResearchLogbook::create([
+        ResearchLogbook::create([
             'research_proposal_id' => $proposal->id,
             'log_date' => now()->format('Y-m-d'),
             'note' => 'Analisis sampel selesai.',
@@ -1016,7 +1022,7 @@ class ResearchProposalTest extends TestCase
             'start_date' => now()->subDay(),
             'end_date' => now()->addDays(7),
         ]);
-        \App\Models\ResearchLogbook::create([
+        ResearchLogbook::create([
             'research_proposal_id' => $proposal->id,
             'log_date' => now()->format('Y-m-d'),
             'note' => 'Analisis data minggu pertama.',

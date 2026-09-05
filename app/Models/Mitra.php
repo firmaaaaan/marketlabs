@@ -29,7 +29,7 @@ class Mitra extends Model
 
     public function getLogoUrlAttribute(): ?string
     {
-        if (!$this->logo) {
+        if (! $this->logo) {
             return null;
         }
 
@@ -37,6 +37,6 @@ class Mitra extends Model
             return $this->logo;
         }
 
-        return asset('storage/' . $this->logo);
+        return asset('storage/'.$this->logo);
     }
 }

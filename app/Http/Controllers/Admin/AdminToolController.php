@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\BulkDeleteFilesJob;
+use App\Jobs\ImportExcelJob;
 use App\Models\Tool;
 use App\Models\ToolCategory;
 use App\Models\ToolImage;
 use App\Support\ExcelExport;
-use App\Support\ImportReadFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -131,24 +131,29 @@ class AdminToolController extends Controller
 
         $tools = Tool::whereIn('id', $validated['ids'])->get();
 
+        $filePaths = [];
         foreach ($tools as $tool) {
             foreach ($tool->images as $image) {
-                Storage::disk('public')->delete($image->path);
+                $filePaths[] = $image->path;
             }
             if ($tool->image) {
-                Storage::disk('public')->delete($tool->image);
+                $filePaths[] = $tool->image;
             }
             $tool->delete();
         }
 
+        if (! empty($filePaths)) {
+            BulkDeleteFilesJob::dispatch($filePaths, 'public');
+        }
+
         return redirect()->route('admin.tools.index')
-            ->with('success', count($tools) . ' alat berhasil dihapus.');
+            ->with('success', count($tools).' alat berhasil dihapus.');
     }
 
     /**
      * Export daftar alat ke Excel (.xlsx) mengikuti filter yang aktif.
      */
-    public function export(Request $request): StreamedResponse
+    public function export(Request $request)
     {
         $query = Tool::with('category')->latest();
 
@@ -161,8 +166,8 @@ class AdminToolController extends Controller
             });
         }
 
-        if ($request->has('status') && $request->query('status') !== '') {
-            $query->where('is_active', $request->query('status') === 'active');
+        if (($status = $request->query('status')) !== null && $status !== '') {
+            $query->where('is_active', $status === 'active');
         }
 
         $tools = $query->get();
@@ -248,75 +253,11 @@ class AdminToolController extends Controller
             return back()->with('error', 'File harus berformat Excel (.xlsx / .xls) atau CSV.');
         }
 
-        try {
-            $reader = IOFactory::createReaderForFile($file->getRealPath());
-            $reader->setReadDataOnly(true);
-            $reader->setReadEmptyCells(false);
-            $reader->setReadFilter(new ImportReadFilter);
-            $spreadsheet = $reader->load($file->getRealPath());
-        } catch (\Throwable $e) {
-            return back()->with('error', 'Tidak dapat membaca file. Pastikan file adalah Excel/CSV yang valid.');
-        }
+        $path = $file->store('imports');
 
-        $sheet = $spreadsheet->getActiveSheet();
-        $allRows = $sheet->toArray(null, true, true, true);
-        $spreadsheet->disconnectWorksheets();
+        ImportExcelJob::dispatch(storage_path('app/private/'.$path), 'tool', auth()->id());
 
-        // Kolom yang dikenali di template.
-        $columns = ['Kode', 'Nama', 'Kategori', 'Merk', 'Seri', 'Deskripsi', 'Total Stok', 'Harga Sewa/Hari', 'Status Aktif'];
-
-        $created = 0;
-        $updated = 0;
-        $skipped = 0;
-        $skipReasons = [];
-        $usedCodes = [];
-        $indexMap = [];
-
-        foreach ($allRows as $i => $row) {
-            $row = array_values($row);
-
-            if ($i === 1) {
-                // Baris header (strip BOM bila ada).
-                $row[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) ($row[0] ?? ''));
-                $indexMap = $this->buildColumnMap($row, $columns);
-
-                continue;
-            }
-
-            $values = $this->mapRow($row, $indexMap);
-
-            // Lewati baris kosong.
-            if (empty(implode('', $values))) {
-                continue;
-            }
-
-            $result = $this->importRow($values, $usedCodes);
-
-            if ($result === 'created') {
-                $created++;
-            } elseif ($result === 'updated') {
-                $updated++;
-            } else {
-                $skipped++;
-                if (count($skipReasons) < 5) {
-                    $skipReasons[] = $result;
-                }
-            }
-        }
-
-        if (! isset($indexMap['Nama'])) {
-            return back()->with('error', 'Format file tidak dikenali. Gunakan template yang tersedia.');
-        }
-
-        $message = "Import selesai: {$created} alat ditambahkan, {$updated} alat diperbarui.";
-        if ($skipped > 0) {
-            $message .= " {$skipped} baris dilewati.";
-            if (! empty($skipReasons)) {
-                $message .= ' Alasan: '.implode('; ', $skipReasons);
-            }
-        }
-
-        return back()->with('success', $message);
+        return back()->with('success', 'Import alat sedang diproses di queue. Anda akan mendapat notifikasi setelah selesai.');
     }
 
     /**

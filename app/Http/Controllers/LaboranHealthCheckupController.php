@@ -6,6 +6,7 @@ use App\Models\HealthCheckup;
 use App\Models\User;
 use App\Notifications\BorrowingNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class LaboranHealthCheckupController extends Controller
@@ -149,7 +150,7 @@ class LaboranHealthCheckupController extends Controller
             } elseif ($resultFile && \Storage::disk('public')->exists($resultFile)) {
                 \Storage::disk('public')->delete($resultFile);
             }
-            $userName = \Illuminate\Support\Str::slug($checkup->user->name);
+            $userName = Str::slug($checkup->user->name);
             $ext = strtolower($request->file('result_file')->getClientOriginalExtension());
             $resultFile = $request->file('result_file')->storeAs('health-checkup-results', 'hasil-'.$checkup->code.'-'.$userName.'.'.$ext);
         }

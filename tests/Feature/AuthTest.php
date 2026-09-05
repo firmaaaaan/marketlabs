@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -212,7 +213,7 @@ class AuthTest extends TestCase
             ])
             ->assertRedirect();
 
-        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('rahasiaBaru456', $user->fresh()->password));
+        $this->assertTrue(Hash::check('rahasiaBaru456', $user->fresh()->password));
 
         // Bisa login dengan kata sandi baru.
         $this->post(route('logout'));

@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Storage;
 class CertificateRenderer
 {
     /**
+     * Cache raw bytes template PNG agar tidak dibaca ulang dari disk setiap kali.
+     * Key: path template di storage, Value: raw PNG bytes.
+     *
+     * @var array<string, string>
+     */
+    private static array $templateCache = [];
+
+    /**
      * Font bawaan (tanpa perlu install/upload) — key → [regular, bold].
      * Font yang hanya punya satu berat akan memakai file yang sama untuk bold.
      */
@@ -130,8 +138,14 @@ class CertificateRenderer
 
         $layout = ($back ? $event->certificate_layout_back : $event->certificate_layout) ?? [];
 
+        $templatePath = Storage::disk('public')->path($template);
+
+        if (! isset(self::$templateCache[$templatePath])) {
+            self::$templateCache[$templatePath] = (string) file_get_contents($templatePath);
+        }
+
         // @ : tekan warning gd/libpng (mis. iCCP sRGB profile) agar tidak menjadi exception.
-        $image = @imagecreatefromstring((string) file_get_contents(Storage::disk('public')->path($template)));
+        $image = @imagecreatefromstring(self::$templateCache[$templatePath]);
 
         if ($image === false) {
             return null;
@@ -149,10 +163,8 @@ class CertificateRenderer
             }
         }
 
-
-
         ob_start();
-        imagepng($image);
+        imagepng($image, null, 6);
         $png = (string) ob_get_clean();
         imagedestroy($image);
 
@@ -224,5 +236,13 @@ class CertificateRenderer
         [$r, $g, $b] = array_map(fn ($h) => hexdec($h), str_split($hex, 2));
 
         return imagecolorallocate($image, $r, $g, $b);
+    }
+
+    /**
+     * Bersihkan cache template dari memori.
+     */
+    public static function clearCache(): void
+    {
+        self::$templateCache = [];
     }
 }

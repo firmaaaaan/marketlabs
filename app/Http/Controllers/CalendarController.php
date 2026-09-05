@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Support\CalendarService;
 use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 
 class CalendarController extends Controller
 {

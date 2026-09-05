@@ -86,6 +86,7 @@ class AdminHealthCheckupTypeController extends Controller
         foreach ($types as $type) {
             if ($type->checkups()->count() > 0) {
                 $skipped[] = $type->name;
+
                 continue;
             }
             $type->delete();
@@ -94,7 +95,7 @@ class AdminHealthCheckupTypeController extends Controller
 
         $message = "{$deleted} jenis pemeriksaan berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return redirect()->route('admin.health-checkup-types.index')->with('success', $message);

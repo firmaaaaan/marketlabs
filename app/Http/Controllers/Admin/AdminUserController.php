@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportExcelJob;
 use App\Models\User;
 use App\Support\ExcelExport;
-use App\Support\ImportReadFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -50,7 +49,7 @@ class AdminUserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::in(array_keys(User::roles()))],
@@ -58,6 +57,7 @@ class AdminUserController extends Controller
             'institution' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $validated['email'] = $validated['email'] ?? ($validated['username'].'@pending.local');
         $validated['participant_code'] = User::generateParticipantCode();
         $user = User::create($validated);
         $user->role = $validated['role'];
@@ -76,7 +76,7 @@ class AdminUserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'role' => ['required', Rule::in(array_keys(User::roles()))],
@@ -86,6 +86,14 @@ class AdminUserController extends Controller
 
         if (empty($validated['password'])) {
             unset($validated['password']);
+        }
+
+        if (isset($validated['email']) && $validated['email'] !== null) {
+            // keep provided email
+        } elseif (! $user->email || str_ends_with($user->email, '@pending.local')) {
+            $validated['email'] = $validated['username'].'@pending.local';
+        } else {
+            unset($validated['email']);
         }
 
         // Jangan izinkan mengubah role admin lain.
@@ -135,11 +143,13 @@ class AdminUserController extends Controller
 
         foreach ($users as $user) {
             if ($user->id === auth()->id()) {
-                $skipped[] = $user->name . ' (akun sendiri)';
+                $skipped[] = $user->name.' (akun sendiri)';
+
                 continue;
             }
             if ($user->isAdmin()) {
-                $skipped[] = $user->name . ' (admin)';
+                $skipped[] = $user->name.' (admin)';
+
                 continue;
             }
             $user->delete();
@@ -148,7 +158,7 @@ class AdminUserController extends Controller
 
         $message = "{$deleted} user berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' user dilewati: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' user dilewati: '.implode(', ', $skipped).'.';
         }
 
         return redirect()->route('admin.users.index')->with('success', $message);
@@ -157,7 +167,7 @@ class AdminUserController extends Controller
     /**
      * Export daftar user ke Excel (.xlsx).
      */
-    public function export(): StreamedResponse
+    public function export()
     {
         $users = User::latest()->get();
 
@@ -189,24 +199,24 @@ class AdminUserController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setTitle('Template User');
 
-            $headers = ['Nama', 'Username', 'Email', 'NIM/NIK/NIP', 'Password', 'Role'];
+            $headers = ['Nama', 'Username', 'NIM/NIK/NIP', 'Password', 'Role'];
             $sheet->fromArray([$headers], null, 'A1');
 
             // Baris contoh.
             $sheet->fromArray([
-                ['Budi Santoso', 'budisantoso', 'budi@example.com', '1234-5678-90', 'rahasia123', 'User'],
-                ['Siti Aminah', 'sitiaminah', 'siti@example.com', '9876-5432-10', 'rahasia456', 'Laboran'],
-                ['Dr. Ahmad', 'drahmad', 'ahmad@unisa.ac.id', '0012-3456-78', 'rahasia789', 'User'],
+                ['Budi Santoso', 'budisantoso', '1234-5678-90', 'rahasia123', 'User'],
+                ['Siti Aminah', 'sitiaminah', '9876-5432-10', 'rahasia456', 'Laboran'],
+                ['Dr. Ahmad', 'drahmad', '0012-3456-78', 'rahasia789', 'User'],
             ], null, 'A2');
 
             // Gaya header.
-            $sheet->getStyle('A1:F1')->applyFromArray([
+            $sheet->getStyle('A1:E1')->applyFromArray([
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '059669']],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            foreach (range('A', 'F') as $col) {
+            foreach (range('A', 'E') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
@@ -236,70 +246,11 @@ class AdminUserController extends Controller
             return back()->with('error', 'File harus berformat Excel (.xlsx / .xls) atau CSV.');
         }
 
-        try {
-            $reader = IOFactory::createReaderForFile($file->getRealPath());
-            $reader->setReadDataOnly(true);
-            $reader->setReadEmptyCells(false);
-            $reader->setReadFilter(new ImportReadFilter);
-            $spreadsheet = $reader->load($file->getRealPath());
-        } catch (\Throwable $e) {
-            return back()->with('error', 'Tidak dapat membaca file. Pastikan file adalah Excel/CSV yang valid.');
-        }
+        $path = $file->store('imports');
 
-        $sheet = $spreadsheet->getActiveSheet();
-        $allRows = $sheet->toArray(null, true, true, true);
-        $spreadsheet->disconnectWorksheets();
+        ImportExcelJob::dispatch(storage_path('app/private/'.$path), 'user', auth()->id());
 
-        $columns = ['Nama', 'Username', 'Email', 'NIM/NIK/NIP', 'Password', 'Role'];
-
-        $created = 0;
-        $skipped = 0;
-        $skipReasons = [];
-        $indexMap = [];
-
-        foreach ($allRows as $i => $row) {
-            $row = array_values($row);
-
-            if ($i === 1) {
-                // Baris header (strip BOM bila ada).
-                $row[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) ($row[0] ?? ''));
-                $indexMap = $this->buildColumnMap($row, $columns);
-
-                continue;
-            }
-
-            $values = $this->mapRow($row, $indexMap);
-
-            // Lewati baris kosong.
-            if (empty(implode('', $values))) {
-                continue;
-            }
-
-            $result = $this->importRow($values);
-
-            if ($result === 'created') {
-                $created++;
-            } else {
-                $skipped++;
-                if (count($skipReasons) < 5) {
-                    $skipReasons[] = $result;
-                }
-            }
-        }
-
-        if (! isset($indexMap['Nama'])) {
-            return back()->with('error', 'Format file tidak dikenali. Gunakan template yang tersedia.');
-        }
-
-        $message = "Import selesai: {$created} user berhasil ditambahkan.";
-        if ($skipped > 0) {
-            $message .= " {$skipped} baris dilewati.";
-            if (! empty($skipReasons)) {
-                $message .= ' Alasan: '.implode('; ', $skipReasons);
-            }
-        }
-
-        return back()->with('success', $message);
+        return back()->with('success', 'Import user sedang diproses di queue. Anda akan mendapat notifikasi setelah selesai.');
     }
 
     /**
@@ -324,16 +275,16 @@ class AdminUserController extends Controller
         }
 
         $email = trim($values['Email'] ?? '');
-        if ($email === '') {
-            return "email kosong untuk '{$name}'";
-        }
-
-        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email !== '' && ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return "format email tidak valid untuk '{$name}'";
         }
 
-        if (User::where('email', $email)->exists()) {
+        if ($email !== '' && User::where('email', $email)->exists()) {
             return "email '{$email}' sudah terdaftar";
+        }
+
+        if ($email === '') {
+            $email = $username.'@pending.local';
         }
 
         $password = trim($values['Password'] ?? '');

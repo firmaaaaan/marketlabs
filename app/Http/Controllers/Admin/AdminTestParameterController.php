@@ -7,7 +7,6 @@ use App\Models\SampleUnit;
 use App\Models\TestParameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class AdminTestParameterController extends Controller
 {
@@ -86,7 +85,7 @@ class AdminTestParameterController extends Controller
     {
         $testParameter->update(['is_active' => ! $testParameter->is_active]);
 
-        return back()->with('success', "Parameter '{$testParameter->name}' kini " . ($testParameter->is_active ? 'aktif' : 'nonaktif') . ".");
+        return back()->with('success', "Parameter '{$testParameter->name}' kini ".($testParameter->is_active ? 'aktif' : 'nonaktif').'.');
     }
 
     public function destroy(TestParameter $testParameter)
@@ -115,6 +114,7 @@ class AdminTestParameterController extends Controller
         foreach ($parameters as $parameter) {
             if ($parameter->sampleTestItems()->exists()) {
                 $skipped[] = $parameter->name;
+
                 continue;
             }
             $parameter->delete();
@@ -123,7 +123,7 @@ class AdminTestParameterController extends Controller
 
         $message = "{$deleted} parameter berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return redirect()->route('admin.test-parameters.index')->with('success', $message);

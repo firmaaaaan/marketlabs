@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\BorrowingNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class ResearchProposalController extends Controller
@@ -74,8 +75,8 @@ class ResearchProposalController extends Controller
             $validated['end_date'],
         );
 
-        $userName = \Illuminate\Support\Str::slug(auth()->user()->name);
-        $uniqueSuffix = time().'-'.\Illuminate\Support\Str::random(6);
+        $userName = Str::slug(auth()->user()->name);
+        $uniqueSuffix = time().'-'.Str::random(6);
         $ext = fn ($file) => $file->getClientOriginalExtension();
 
         $documentPath = $request->hasFile('document')

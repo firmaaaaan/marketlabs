@@ -126,7 +126,7 @@ class BorrowingController extends Controller
             'document' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120'],
         ]);
 
-        $userName = \Illuminate\Support\Str::slug(auth()->user()->name);
+        $userName = Str::slug(auth()->user()->name);
         $uniqueSuffix = time().'-'.Str::random(6);
         $ext = $request->hasFile('document') ? strtolower($request->file('document')->getClientOriginalExtension()) : null;
 

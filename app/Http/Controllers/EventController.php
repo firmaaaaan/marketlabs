@@ -15,6 +15,7 @@ class EventController extends Controller
 {
     /** Maksimal jumlah teman yang bisa didaftarkan satu akun untuk satu event. */
     public const MAX_PROXY_PER_EVENT = 5;
+
     public function index()
     {
         $events = Event::withCount([
@@ -79,7 +80,7 @@ class EventController extends Controller
     protected function storeFriend(Request $request, Event $event, array $fields)
     {
         $validated = $request->validate([
-            'friend_codes'   => ['required', 'array', 'min:1', 'max:'.self::MAX_PROXY_PER_EVENT],
+            'friend_codes' => ['required', 'array', 'min:1', 'max:'.self::MAX_PROXY_PER_EVENT],
             'friend_codes.*' => ['required', 'string'],
         ]);
 
@@ -100,21 +101,25 @@ class EventController extends Controller
 
             if (! $friend) {
                 $errors[] = "Kode '{$code}' tidak ditemukan.";
+
                 continue;
             }
 
             if ($friend->id === auth()->id()) {
                 $errors[] = "Kode '{$code}' adalah milik Anda sendiri.";
+
                 continue;
             }
 
             if ($friend->role !== User::ROLE_USER) {
                 $errors[] = " '{$friend->name}' bukan akun peserta.";
+
                 continue;
             }
 
             if ($event->isRegisteredBy($friend)) {
                 $alreadyRegisteredNames[] = $friend->name;
+
                 continue;
             }
 
@@ -127,12 +132,14 @@ class EventController extends Controller
 
                 if ($field['required'] && ($value === null || $value === '')) {
                     $errors[] = "Bidang {$field['label']} wajib diisi untuk '{$friend->name}'.";
+
                     continue;
                 }
 
                 if ($value !== null && $value !== '') {
                     if ($field['options'] && ! in_array((string) $value, $field['options'], true)) {
                         $errors[] = "Nilai '{$value}' pada bidang {$field['label']} tidak valid untuk '{$friend->name}'.";
+
                         continue;
                     }
                     $friendAnswers[$key] = (string) $value;
@@ -161,6 +168,7 @@ class EventController extends Controller
 
         if ($proxyCount + count($friends) > self::MAX_PROXY_PER_EVENT) {
             $sisa = self::MAX_PROXY_PER_EVENT - $proxyCount;
+
             return back()->with('error', "Anda sudah mendaftarkan {$proxyCount} teman. Sisa kuota hanya {$sisa} orang lagi.");
         }
 
@@ -168,10 +176,10 @@ class EventController extends Controller
         $selfRegistered = false;
         if ($request->boolean('register_self') && ! $event->isRegisteredBy(auth()->user())) {
             EventRegistration::create([
-                'event_id'         => $event->id,
-                'user_id'          => auth()->id(),
-                'status'           => EventRegistration::STATUS_PENDING,
-                'answers'          => $answers,
+                'event_id' => $event->id,
+                'user_id' => auth()->id(),
+                'status' => EventRegistration::STATUS_PENDING,
+                'answers' => $answers,
                 'attendance_token' => Str::random(32),
             ]);
             $selfRegistered = true;
@@ -184,11 +192,11 @@ class EventController extends Controller
             $friendAnswers = $friendData['answers'];
 
             EventRegistration::create([
-                'event_id'         => $event->id,
-                'user_id'          => $friend->id,
-                'registered_by'    => auth()->id(),
-                'status'           => EventRegistration::STATUS_PENDING,
-                'answers'          => $friendAnswers,
+                'event_id' => $event->id,
+                'user_id' => $friend->id,
+                'registered_by' => auth()->id(),
+                'status' => EventRegistration::STATUS_PENDING,
+                'answers' => $friendAnswers,
                 'attendance_token' => Str::random(32),
             ]);
 

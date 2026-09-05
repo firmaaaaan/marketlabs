@@ -61,6 +61,9 @@ class Event extends Model
         'certificate_font',
         'certificate_layout',
         'certificate_layout_back',
+        'certificate_batch_status',
+        'certificate_batch_total',
+        'certificate_batch_done',
         'created_by',
         'attendance_enabled',
     ];
@@ -78,6 +81,8 @@ class Event extends Model
             'attendance_fields' => 'array',
             'certificate_layout' => 'array',
             'certificate_layout_back' => 'array',
+            'certificate_batch_total' => 'integer',
+            'certificate_batch_done' => 'integer',
             'attendance_enabled' => 'boolean',
         ];
     }
@@ -215,6 +220,20 @@ class Event extends Model
     public function getCertificateReadyAttribute(): bool
     {
         return $this->certificate_template !== null && $this->certificate_layout !== null;
+    }
+
+    public function getCertificateBatchPercentageAttribute(): ?int
+    {
+        if ($this->certificate_batch_total <= 0) {
+            return null;
+        }
+
+        return (int) round(($this->certificate_batch_done / $this->certificate_batch_total) * 100);
+    }
+
+    public function getIsCertificateBatchProcessingAttribute(): bool
+    {
+        return $this->certificate_batch_status === 'processing';
     }
 
     /**

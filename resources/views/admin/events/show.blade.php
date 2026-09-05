@@ -38,8 +38,9 @@
         <form action="{{ route('admin.events.certificate.generate', $event) }}" method="POST" class="inline">
             @csrf
             <button type="submit"
-                    class="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
-                Generate Sertifikat Hadir
+                    @disabled($event->is_certificate_batch_processing)
+                    class="rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition {{ $event->is_certificate_batch_processing ? 'cursor-not-allowed bg-slate-400 shadow-none' : 'bg-emerald-600 shadow-emerald-600/30 hover:bg-emerald-700' }}">
+                {{ $event->is_certificate_batch_processing ? 'Sedang Diproses...' : 'Generate Sertifikat Hadir' }}
             </button>
         </form>
         <a href="{{ route('admin.events.export-participants', $event) }}"
@@ -73,6 +74,26 @@
                 <li>{{ $error }}</li>
             @endforeach
         </ul>
+    </div>
+@endif
+
+@if ($event->is_certificate_batch_processing)
+    <div class="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+        <div class="flex items-center gap-3">
+            <svg class="h-5 w-5 animate-spin text-amber-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-amber-800">Memproses sertifikat...</p>
+                <p class="text-xs text-amber-600">{{ $event->certificate_batch_done }} / {{ $event->certificate_batch_total }} selesai</p>
+            </div>
+            <span class="text-sm font-bold text-amber-700">{{ $event->certificate_batch_percentage }}%</span>
+        </div>
+        <div class="mt-2 h-2 overflow-hidden rounded-full bg-amber-200">
+            <div class="h-full rounded-full bg-amber-500 transition-all duration-500"
+                 style="width: {{ $event->certificate_batch_percentage }}%"></div>
+        </div>
     </div>
 @endif
 
@@ -283,12 +304,33 @@
                                        class="text-xs font-semibold text-sky-600 hover:underline" onclick="event.stopPropagation()">
                                         {{ $registration->certificate_number }}
                                     </a>
+                                @elseif ($registration->certificate_status === 'pending')
+                                    <span class="inline-block rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                                        Antrian
+                                    </span>
+                                @elseif ($registration->certificate_status === 'processing')
+                                    <span class="inline-block rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                                        Diproses
+                                    </span>
+                                @elseif ($registration->certificate_status === 'failed')
+                                    <span class="inline-block rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700" title="{{ $registration->certificate_error }}">
+                                        Gagal
+                                    </span>
                                 @else
                                     <span class="text-xs text-slate-400">-</span>
                                 @endif
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2">
+                                    @if ($event->certificate_ready && $registration->attended_at && ! $registration->certificate_number && ! $registration->certificate_status)
+                                        <form action="{{ route('admin.events.registrations.generate-certificate', [$event, $registration]) }}" method="POST" onclick="event.stopPropagation()">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 transition hover:bg-sky-100">
+                                                Generate
+                                            </button>
+                                        </form>
+                                    @endif
                                     <form action="{{ route('admin.events.registrations.status', [$event, $registration]) }}" method="POST" onclick="event.stopPropagation()">
                                         @csrf
                                         @method('PATCH')

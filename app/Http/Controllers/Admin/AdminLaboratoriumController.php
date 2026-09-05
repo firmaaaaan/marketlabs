@@ -82,6 +82,7 @@ class AdminLaboratoriumController extends Controller
         foreach ($labs as $lab) {
             if ($lab->researchProposals()->count() > 0) {
                 $skipped[] = $lab->name;
+
                 continue;
             }
             $lab->delete();
@@ -90,7 +91,7 @@ class AdminLaboratoriumController extends Controller
 
         $message = "{$deleted} laboratorium berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return redirect()->route('admin.laboratoriums.index')->with('success', $message);

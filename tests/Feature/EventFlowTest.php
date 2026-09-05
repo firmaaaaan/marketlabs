@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\GenerateCertificatesBatchJob;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\User;
 use App\Support\FormFields;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -329,6 +331,7 @@ class EventFlowTest extends TestCase
     public function test_admin_can_generate_certificates_for_attended_only(): void
     {
         Storage::fake('public');
+        Bus::fake();
         $admin = User::factory()->create();
 
         $event = $this->makeEvent();
@@ -372,25 +375,25 @@ class EventFlowTest extends TestCase
         $this->assertEquals('lato', $event->certificate_layout[0]['font']);
         $this->assertEquals('great_vibes', $event->certificate_layout_back[0]['font']);
 
-        // Generate — hanya peserta hadir yang mendapat sertifikat.
+        // Generate — dispatch batch job ke queue.
         $this->actingAs($admin)
             ->post(route('admin.events.certificate.generate', $event))
             ->assertRedirect()
-            ->assertSessionHas('success', '1 sertifikat berhasil digenerate untuk peserta yang hadir.');
+            ->assertSessionHas('success');
+
+        Bus::assertDispatched(GenerateCertificatesBatchJob::class, function ($job) use ($event) {
+            return $job->event->id === $event->id;
+        });
+
+        // jalankan batch job secara sync untuk verifikasi
+        $batchJob = new GenerateCertificatesBatchJob($event);
+        $batchJob->handle();
 
         $attended->refresh();
         $absent->refresh();
 
-        $this->assertNotNull($attended->certificate_number);
-        $this->assertNotNull($attended->certificate_path);
-        $this->assertNotNull($attended->certificate_back_path);
+        $this->assertEquals('pending', $attended->certificate_status);
         $this->assertNull($absent->certificate_number);
-
-        Storage::disk('public')->assertExists($attended->certificate_path);
-        Storage::disk('public')->assertExists($attended->certificate_back_path);
-
-        // Notifikasi "sertifikat tersedia" untuk peserta hadir.
-        $this->assertDatabaseHas('notifications', ['notifiable_id' => $user->id]);
     }
 
     public function test_admin_can_delete_certificate_back_side(): void

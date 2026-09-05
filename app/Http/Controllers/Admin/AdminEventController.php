@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\GenerateCertificateJob;
+use App\Jobs\GenerateCertificatesBatchJob;
 use App\Models\Event;
 use App\Models\EventRegistration;
-use App\Notifications\EventNotification;
 use App\Support\CertificateRenderer;
 use App\Support\ExcelExport;
 use App\Support\FormFields;
@@ -164,7 +165,7 @@ class AdminEventController extends Controller
 
         $registration->update(['status' => $newStatus]);
 
-        return back()->with('success', 'Status peserta diperbarui menjadi ' . EventRegistration::statusLabel($newStatus) . '.');
+        return back()->with('success', 'Status peserta diperbarui menjadi '.EventRegistration::statusLabel($newStatus).'.');
     }
 
     public function bulkUpdateStatus(Request $request, Event $event)
@@ -183,7 +184,7 @@ class AdminEventController extends Controller
             ->where('event_id', $event->id)
             ->update(['status' => $validated['status']]);
 
-        return back()->with('success', "{$count} peserta berhasil diperbarui menjadi " . EventRegistration::statusLabel($validated['status']) . '.');
+        return back()->with('success', "{$count} peserta berhasil diperbarui menjadi ".EventRegistration::statusLabel($validated['status']).'.');
     }
 
     public function markAttendance(Request $request, Event $event, EventRegistration $registration)
@@ -214,26 +215,38 @@ class AdminEventController extends Controller
             ->latest()
             ->get();
 
-        $rows = [['No', 'Nama', 'Email', 'NIM/NIP', 'Instansi', 'Hadir', 'Tanggal Daftar']];
+        $formFields = FormFields::normalize($event->form_fields);
+
+        $headers = ['No', 'Nama', 'Email', 'NIM/NIP', 'Instansi', 'Hadir'];
+        foreach ($formFields as $field) {
+            $headers[] = $field['label'];
+        }
+        $headers[] = 'Tanggal Daftar';
+
+        $rows = [$headers];
 
         foreach ($registrations as $i => $reg) {
-            $rows[] = [
+            $answers = $reg->answers ?? [];
+            $row = [
                 $i + 1,
                 $reg->user->name,
                 $reg->user->email,
                 $reg->user->nim_nip ?? '-',
                 $reg->user->institution ?? '-',
                 $reg->is_attended ? 'Ya' : 'Tidak',
-                $reg->created_at->translatedFormat('d M Y H:i'),
             ];
+
+            foreach ($formFields as $field) {
+                $row[] = $answers[$field['key']] ?? '-';
+            }
+
+            $row[] = $reg->created_at->translatedFormat('d M Y H:i');
+            $rows[] = $row;
         }
 
-        return ExcelExport::download('peserta-'.Str::slug($event->title).'-'.now()->format('Ymd-His').'.xlsx', $rows);
+        return ExcelExport::download('peserta-'.$event->slug.'-'.now()->format('Ymd-His').'.xlsx', $rows);
     }
 
-    /**
-     * Export data presensi/kehadiran peserta event.
-     */
     public function exportAttendance(Event $event)
     {
         $registrations = $event->registrations()
@@ -243,8 +256,7 @@ class AdminEventController extends Controller
             ->orderBy('attended_at')
             ->get();
 
-        // Header dinamis berdasarkan attendance_fields event.
-        $attendanceFields = \App\Support\FormFields::normalize($event->attendance_fields);
+        $attendanceFields = FormFields::normalize($event->attendance_fields);
         $attendanceHeaders = array_map(fn ($f) => $f['label'], $attendanceFields);
 
         $headers = array_merge([
@@ -264,7 +276,6 @@ class AdminEventController extends Controller
                 $reg->attended_at->translatedFormat('d M Y H:i'),
             ];
 
-            // Isi jawaban presensi sesuai urutan field.
             foreach ($attendanceFields as $field) {
                 $row[] = $attendanceAnswers[$field['key']] ?? '-';
             }
@@ -272,7 +283,7 @@ class AdminEventController extends Controller
             $rows[] = $row;
         }
 
-        return ExcelExport::download('presensi-'.Str::slug($event->title).'-'.now()->format('Ymd-His').'.xlsx', $rows);
+        return ExcelExport::download('presensi-'.$event->slug.'-'.now()->format('Ymd-His').'.xlsx', $rows);
     }
 
     public function certificate(Event $event)
@@ -350,36 +361,42 @@ class AdminEventController extends Controller
             return back()->with('error', 'Unggah template & atur tata letak sertifikat terlebih dahulu.');
         }
 
-        $count = 0;
-        $registrations = $event->registrations()
-            ->where('status', EventRegistration::STATUS_REGISTERED)
-            ->with('user')
-            ->get();
-
-        foreach ($registrations as $registration) {
-            if (! $registration->attended_at || $registration->certificate_number) {
-                continue;
-            }
-
-            $paths = CertificateRenderer::render($event, $registration);
-
-            $registration->certificate_number = $this->nextCertificateNumber();
-            $registration->certificate_path = $paths['front'];
-            $registration->certificate_back_path = $paths['back'] ?? null;
-            $registration->certificate_generated_at = now();
-            $registration->save();
-
-            $registration->user->notify(new EventNotification(
-                'Sertifikat Tersedia',
-                "Sertifikat untuk event '{$event->title}' telah tersedia. Silakan unduh sertifikat Anda.",
-                route('events.certificate', $registration),
-                notifyViaEmail: true,
-            ));
-
-            $count++;
+        if ($event->is_certificate_batch_processing) {
+            return back()->with('error', 'Sertifikat sedang diproses. Silakan tunggu hingga selesai.');
         }
 
-        return back()->with('success', "{$count} sertifikat berhasil digenerate untuk peserta yang hadir.");
+        $pendingCount = $event->registrations()
+            ->where('status', EventRegistration::STATUS_REGISTERED)
+            ->whereNotNull('attended_at')
+            ->whereNull('certificate_number')
+            ->count();
+
+        if ($pendingCount === 0) {
+            return back()->with('error', 'Tidak ada peserta hadir yang belum memiliki sertifikat.');
+        }
+
+        GenerateCertificatesBatchJob::dispatch($event);
+
+        return back()->with('success', "Queue generate sertifikat telah dimulai untuk {$pendingCount} peserta. Proses berjalan di background.");
+    }
+
+    public function generateSingleCertificate(Event $event, EventRegistration $registration)
+    {
+        if (! $event->certificate_ready) {
+            return back()->with('error', 'Unggah template & atur tata letak sertifikat terlebih dahulu.');
+        }
+
+        if (! $registration->attended_at) {
+            return back()->with('error', 'Peserta belum hadir, sertifikat belum bisa digenerate.');
+        }
+
+        if ($registration->certificate_number) {
+            return back()->with('error', 'Peserta sudah memiliki sertifikat.');
+        }
+
+        GenerateCertificateJob::dispatch($registration);
+
+        return back()->with('success', "Sertifikat untuk {$registration->user->name} sedang diproses di queue.");
     }
 
     protected function validateEvent(Request $request): array
@@ -441,17 +458,6 @@ class AdminEventController extends Controller
         }
 
         return $slug;
-    }
-
-    protected function nextCertificateNumber(): string
-    {
-        $year = date('Y');
-
-        do {
-            $number = 'CERT-'.$year.'-'.str_pad((string) (EventRegistration::count() + 1), 4, '0', STR_PAD_LEFT);
-        } while (EventRegistration::where('certificate_number', $number)->exists());
-
-        return $number;
     }
 
     protected function normalizeLayout(mixed $layout): array

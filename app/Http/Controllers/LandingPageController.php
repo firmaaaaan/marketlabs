@@ -6,12 +6,11 @@ use App\Models\Faq;
 use App\Models\GalleryImage;
 use App\Models\HealthTestType;
 use App\Models\Mitra;
-use App\Models\TestParameter;
 use App\Models\Testimonial;
+use App\Models\TestParameter;
 use App\Models\Tool;
 use App\Models\ToolCategory;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
 {

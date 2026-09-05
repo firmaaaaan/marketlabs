@@ -66,6 +66,7 @@ class AdminCategoryController extends Controller
         foreach ($categories as $category) {
             if ($category->tools()->count() > 0) {
                 $skipped[] = $category->name;
+
                 continue;
             }
             $category->delete();
@@ -74,7 +75,7 @@ class AdminCategoryController extends Controller
 
         $message = "{$deleted} kategori berhasil dihapus.";
         if (! empty($skipped)) {
-            $message .= ' ' . count($skipped) . ' kategori dilewati karena masih dipakai: ' . implode(', ', $skipped) . '.';
+            $message .= ' '.count($skipped).' kategori dilewati karena masih dipakai: '.implode(', ', $skipped).'.';
         }
 
         return redirect()->route('admin.categories.index')->with('success', $message);

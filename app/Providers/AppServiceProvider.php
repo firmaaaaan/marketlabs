@@ -7,7 +7,6 @@ use App\View\Composers\ClientNotificationsComposer;
 use App\View\Composers\StaffNotificationsComposer;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;

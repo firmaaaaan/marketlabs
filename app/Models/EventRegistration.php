@@ -29,6 +29,8 @@ class EventRegistration extends Model
         'certificate_path',
         'certificate_back_path',
         'certificate_generated_at',
+        'certificate_status',
+        'certificate_error',
     ];
 
     protected function casts(): array
@@ -92,5 +94,16 @@ class EventRegistration extends Model
     public function getHasCertificateBackAttribute(): bool
     {
         return $this->certificate_back_path !== null;
+    }
+
+    public function getCertificateStatusLabelAttribute(): ?string
+    {
+        return match ($this->certificate_status) {
+            'pending' => 'Menunggu Diproses',
+            'processing' => 'Sedang Diproses',
+            'completed' => 'Selesai',
+            'failed' => 'Gagal',
+            default => null,
+        };
     }
 }

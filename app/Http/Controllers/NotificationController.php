@@ -67,4 +67,23 @@ class NotificationController extends Controller
 
         return back()->with('success', 'Semua notifikasi ditandai sudah dibaca.');
     }
+
+    /**
+     * Hapus notifikasi secara bulk berdasarkan ID yang dipilih.
+     */
+    public function bulkDelete(Request $request): JsonResponse|RedirectResponse
+    {
+        $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['string'],
+        ]);
+
+        $count = auth()->user()->notifications()->whereIn('id', $request->ids)->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json(['ok' => true, 'deleted' => $count]);
+        }
+
+        return back()->with('success', "{$count} notifikasi berhasil dihapus.");
+    }
 }
