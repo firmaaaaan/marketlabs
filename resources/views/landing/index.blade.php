@@ -108,7 +108,17 @@
 
 {{-- ===== KATEGORI ===== --}}
 @if ($categories->isNotEmpty())
-    <section class="py-12 lg:py-16">
+    <section class="relative overflow-hidden bg-gradient-to-br from-white via-emerald-50/30 to-stone-50 py-12 lg:py-16">
+        <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+             style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.15) 1px, transparent 0); background-size: 28px 28px;"></div>
+
+        {{-- SVG Lab Icons --}}
+        <svg class="pointer-events-none absolute top-10 left-[8%] h-24 w-24 text-emerald-500 opacity-[0.07] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+        </svg>
+        <svg class="pointer-events-none absolute bottom-8 right-[6%] h-20 w-20 text-emerald-500 opacity-[0.07] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+        </svg>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="reveal flex flex-wrap items-end justify-between gap-4">
                 <div>
@@ -147,7 +157,17 @@
 @endif
 
 {{-- ===== ALAT POPULER ===== --}}
-<section class="bg-stone-50 pb-20 lg:pb-28">
+<section class="relative overflow-hidden bg-stone-50 pb-20 lg:pb-28">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.12) 1px, transparent 0); background-size: 28px 28px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-12 right-[6%] h-20 w-20 text-emerald-500 opacity-[0.06] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 17l8 4m8-4l-8 4" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-16 left-[4%] h-16 w-16 text-emerald-500 opacity-[0.06] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -253,7 +273,17 @@
 </section>
 
 {{-- ===== PENGUJIAN POPULER ===== --}}
-<section class="py-16 lg:py-24">
+<section class="relative overflow-hidden py-16 lg:py-24">
+        <div class="pointer-events-none absolute inset-0 opacity-[0.025]"
+             style="background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+
+        {{-- SVG Lab Icons --}}
+        <svg class="pointer-events-none absolute top-16 right-[10%] h-20 w-20 text-emerald-500 opacity-[0.07] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+        <svg class="pointer-events-none absolute bottom-12 left-[5%] h-16 w-16 text-emerald-500 opacity-[0.07] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+        </svg>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="reveal flex flex-wrap items-end justify-between gap-4">
                 <div>
@@ -348,7 +378,17 @@
 </section>
 
 {{-- ===== LAYANAN ===== --}}
-<section class="bg-stone-50 py-24 lg:py-32">
+<section class="relative overflow-hidden bg-stone-50 py-24 lg:py-32">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.025]"
+         style="background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-20 left-[5%] h-24 w-24 text-emerald-500 opacity-[0.06] lab-icon-float-slow" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-12 right-[7%] h-16 w-16 text-emerald-500 opacity-[0.06] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    </svg>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="reveal flex flex-wrap items-end justify-between gap-4">
                 <div>
@@ -429,7 +469,17 @@
 </section>
 
 {{-- ===== CARA KERJA ===== --}}
-<section id="cara-kerja" class="py-20 lg:py-28">
+<section id="cara-kerja" class="relative overflow-hidden bg-gradient-to-br from-white via-stone-50/50 to-emerald-50/20 py-20 lg:py-28">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.12) 1px, transparent 0); background-size: 32px 32px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-20 left-[4%] h-28 w-28 text-emerald-500 opacity-[0.06] lab-icon-float-slow" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-16 right-[6%] h-20 w-20 text-emerald-500 opacity-[0.06] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal mx-auto max-w-2xl text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Cara Kerja</span>
@@ -466,7 +516,17 @@
 </section>
 
 {{-- ===== TESTIMONI ===== --}}
-<section class="bg-stone-50 py-16 lg:py-24">
+<section class="relative overflow-hidden bg-stone-50 py-16 lg:py-24">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.12) 1px, transparent 0); background-size: 32px 32px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-16 left-[6%] h-20 w-20 text-emerald-500 opacity-[0.06] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-10 right-[5%] h-16 w-16 text-emerald-500 opacity-[0.06] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal mx-auto max-w-2xl text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Testimoni</span>
@@ -616,7 +676,19 @@
 </section>
 
 {{-- ===== FITUR ===== --}}
-<section id="fitur" class="py-24 lg:py-32">
+<section id="fitur" class="relative overflow-hidden bg-gradient-to-br from-stone-50 via-white to-emerald-50/20 py-24 lg:py-32">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.025]"
+         style="background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+    <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.12) 1px, transparent 0); background-size: 32px 32px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-24 right-[8%] h-24 w-24 text-emerald-500 opacity-[0.06] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-20 left-[5%] h-20 w-20 text-emerald-500 opacity-[0.06] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal mx-auto max-w-2xl text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Fitur Unggulan</span>
@@ -645,7 +717,17 @@
 </section>
 
 {{-- ===== TENTANG ===== --}}
-<section id="tentang" class="bg-stone-50 py-20 lg:py-28">
+<section id="tentang" class="relative overflow-hidden bg-stone-50 py-20 lg:py-28">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.025]"
+         style="background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-20 right-[8%] h-20 w-20 text-emerald-500 opacity-[0.06] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-16 left-[4%] h-16 w-16 text-emerald-500 opacity-[0.06] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal grid items-center gap-12 lg:grid-cols-2">
             <div>
@@ -698,7 +780,17 @@
 </section>
 
 {{-- ===== FAQ ===== --}}
-<section id="faq" class="py-16 lg:py-24">
+<section id="faq" class="relative overflow-hidden bg-gradient-to-br from-white via-stone-50/30 to-white py-16 lg:py-24">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.12) 1px, transparent 0); background-size: 28px 28px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-12 left-[6%] h-16 w-16 text-emerald-500 opacity-[0.07] lab-icon-float-reverse" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-12 right-[8%] h-20 w-20 text-emerald-500 opacity-[0.07] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">FAQ</span>
@@ -733,7 +825,17 @@
 </section>
 
 {{-- ===== MITRA KAMI ===== --}}
-<section class="bg-stone-50 py-12 lg:py-16">
+<section class="relative overflow-hidden bg-stone-50 py-12 lg:py-16">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.02]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.12) 1px, transparent 0); background-size: 28px 28px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-8 left-[8%] h-14 w-14 text-emerald-500 opacity-[0.06] lab-icon-float-slow" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.015A3.001 3.001 0 0021 9.349" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-6 right-[6%] h-12 w-12 text-emerald-500 opacity-[0.06] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+    </svg>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Mitra Kami</span>
@@ -771,26 +873,34 @@
 </section>
 
 {{-- ===== CTA ===== --}}
-<section class="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-700 py-20 lg:py-28">
-    <div class="pointer-events-none absolute inset-0 opacity-[0.04]"
-         style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.4) 1px, transparent 0); background-size: 24px 24px;"></div>
+<section class="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-stone-50 py-20 lg:py-28">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.03]"
+         style="background-image: radial-gradient(circle at 1px 1px, rgba(5,150,105,0.15) 1px, transparent 0); background-size: 28px 28px;"></div>
+
+    {{-- SVG Lab Icons --}}
+    <svg class="pointer-events-none absolute top-12 right-[10%] h-24 w-24 text-emerald-500 opacity-[0.07] lab-icon-float-slow" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+    </svg>
+    <svg class="pointer-events-none absolute bottom-10 left-[7%] h-16 w-16 text-emerald-500 opacity-[0.07] lab-icon-float" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+    </svg>
 
     <div class="reveal relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
             Siap Mengelola Laboratorium
             <br class="hidden sm:block">
             Secara Digital?
         </h2>
-        <p class="mx-auto mt-5 max-w-xl text-base text-emerald-100/90">
+        <p class="mx-auto mt-5 max-w-xl text-base text-slate-500">
             Daftar sekarang dan nikmati kemudahan mengajukan peminjaman alat serta permohonan riset &amp; penelitian dalam satu platform.
         </p>
         <div class="mt-8 flex flex-wrap justify-center gap-3">
             <a href="{{ route('register') }}"
-               class="rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-emerald-700 shadow-lg transition hover:bg-emerald-50 hover:shadow-xl">
+               class="rounded-xl bg-emerald-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 hover:shadow-xl">
                 Daftar Gratis
             </a>
             <a href="{{ route('tools.index') }}"
-               class="rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+               class="rounded-xl border border-slate-300 bg-white px-8 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
                 Jelajahi Katalog Alat
             </a>
         </div>

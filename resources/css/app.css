@@ -117,3 +117,22 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
+
+/* Lab Icon Floating Animation */
+@keyframes lab-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(3deg); }
+}
+@keyframes lab-float-reverse {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(10px) rotate(-2deg); }
+}
+.lab-icon-float {
+    animation: lab-float 6s ease-in-out infinite;
+}
+.lab-icon-float-reverse {
+    animation: lab-float-reverse 7s ease-in-out infinite;
+}
+.lab-icon-float-slow {
+    animation: lab-float 9s ease-in-out infinite;
+}
