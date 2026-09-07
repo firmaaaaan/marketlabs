@@ -1,13 +1,22 @@
 @php
-    // Staff (laboran) memakai layout internal; user biasa memakai layout publik dua kolom.
-    $isStaff = Auth::user()->isLaboran();
+    $user = Auth::user();
+    $isAdmin = $user->isAdmin() || $user->isSuperAdmin();
+    $isStaff = $user->isLaboran();
 @endphp
-@extends($isStaff ? 'layouts.staff' : 'layouts.account')
+@extends($isAdmin ? 'layouts.admin' : ($isStaff ? 'layouts.staff' : 'layouts.account'))
 
 @section('title', 'Profil Saya - MarketLabs')
 @section('page', 'Profil Saya')
 
-@if ($isStaff)
+@if ($isAdmin)
+    @section('content')
+        <section class="py-4">
+            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+                @include('profile._forms')
+            </div>
+        </section>
+    @endsection
+@elseif ($isStaff)
     @section('content')
         <section class="py-4">
             <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">

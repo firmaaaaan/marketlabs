@@ -58,7 +58,8 @@
                 </div>
             </div>
         </div>
-        {{-- Kode Partisipan --}}
+        {{-- Kode Partisipan — hanya untuk user biasa --}}
+        @if (! (Auth::user()->isAdmin() || Auth::user()->isSuperAdmin() || Auth::user()->isLaboran()))
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-6 shadow-sm sm:p-8">
             <h2 class="text-lg font-bold text-slate-900">Kode Partisipan</h2>
             <p class="mt-1 text-sm text-slate-500">Bagikan kode ini kepada teman agar mereka bisa didaftarkan ke event atas nama Anda.</p>
@@ -74,6 +75,7 @@
             </div>
             <p id="copy-msg" class="mt-2 hidden text-xs font-semibold text-emerald-600">Berhasil disalin!</p>
         </div>
+        @endif
 
         {{-- Informasi akun --}}
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
