@@ -46,6 +46,17 @@
         outline: 2px dashed rgba(16, 185, 129, 0.7);
         outline-offset: 2px;
     }
+
+    .font-dropdown-list {
+        max-height: 15rem;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+    .font-dropdown-list::-webkit-scrollbar { width: 6px; }
+    .font-dropdown-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .font-option { transition: background-color 0.1s, color 0.1s; }
+    .font-option:hover { background-color: #f0fdf4; color: #047857; }
+    .font-option.active { background-color: #ecfdf5; color: #047857; font-weight: 700; }
 </style>
 
 <div class="flex flex-wrap items-center justify-between gap-4">
@@ -147,12 +158,12 @@
                 <div class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-500">Posisi X (%)</label>
-                        <input type="number" id="name-x" min="0" max="100" step="1" oninput="CertEditor.set('x', Number(this.value))"
+                        <input type="number" id="name-x" min="0" max="100" step="0.1" oninput="CertEditor.set('x', Number(this.value))"
                                class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900">
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-500">Posisi Y (%)</label>
-                        <input type="number" id="name-y" min="0" max="100" step="1" oninput="CertEditor.set('y', Number(this.value))"
+                        <input type="number" id="name-y" min="0" max="100" step="0.1" oninput="CertEditor.set('y', Number(this.value))"
                                class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900">
                     </div>
                     <div>
@@ -184,12 +195,24 @@
                     </div>
                     <div class="col-span-2 sm:col-span-3">
                         <label class="block text-[11px] font-semibold text-slate-500">Font</label>
-                        <select id="name-font" onchange="CertEditor.set('font', this.value)"
-                                class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900">
-                            @foreach ($fonts as $value => $label)
-                                <option value="{{ $value }}">{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" id="name-font" value="{{ $frontLine['font'] ?? 'lato' }}">
+                        <div class="relative mt-1" id="font-dropdown">
+                            <button type="button" id="font-trigger" onclick="toggleFontDropdown()"
+                                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-left text-sm text-slate-900 transition hover:border-emerald-300 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                <span id="font-trigger-label"></span>
+                                <svg class="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                            </button>
+                            <div id="font-list" class="font-dropdown-list absolute z-50 mt-1 hidden w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                                @foreach ($fonts as $value => $label)
+                                    <div class="font-option cursor-pointer px-3 py-2 text-sm text-slate-700"
+                                         data-font="{{ $value }}"
+                                         style="font-family: '{{ $value }}', serif;"
+                                         onclick="selectFont('{{ $value }}')">
+                                        {{ $label }}
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -211,7 +234,7 @@
             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <h2 class="text-base font-bold text-slate-900">Pratinjau <span id="preview-side-label"></span></h2>
-                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">Seret nama pada pratinjau untuk menggeser</span>
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">Seret nama untuk menggeser · scroll untuk zoom</span>
                 </div>
 
                 <div id="cert-preview" class="relative mt-4 w-full overflow-hidden rounded-xl border border-slate-200 shadow-inner"
@@ -269,7 +292,7 @@
 
 @push('scripts')
 <script>
-    const fontFamilies = {!! json_encode(array_keys($fonts), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) !!};
+    const fontLabels = {!! json_encode($fonts, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) !!};
 
     const sides = {
         front: {
@@ -284,11 +307,8 @@
 
     let currentSide = 'front';
 
-    function esc(str) {
-        return String(str == null ? '' : str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
     function clamp(v, min, max) {
+        if (isNaN(v)) return min;
         return Math.min(max, Math.max(min, v));
     }
 
@@ -296,6 +316,34 @@
         document.getElementById('certificate-layout').value = JSON.stringify([sides.front.line]);
         document.getElementById('certificate-layout-back').value = JSON.stringify([sides.back.line]);
     }
+
+    function updateFontTrigger(value) {
+        const trigger = document.getElementById('font-trigger-label');
+        const hidden = document.getElementById('name-font');
+        hidden.value = value;
+        trigger.textContent = fontLabels[value] || value;
+        trigger.style.fontFamily = "'" + value + "', serif";
+        document.querySelectorAll('.font-option').forEach(function (el) {
+            el.classList.toggle('active', el.dataset.font === value);
+        });
+    }
+
+    function toggleFontDropdown() {
+        document.getElementById('font-list').classList.toggle('hidden');
+    }
+
+    function selectFont(value) {
+        updateFontTrigger(value);
+        CertEditor.set('font', value);
+        document.getElementById('font-list').classList.add('hidden');
+    }
+
+    document.addEventListener('click', function (e) {
+        const dd = document.getElementById('font-dropdown');
+        if (dd && !dd.contains(e.target)) {
+            document.getElementById('font-list').classList.add('hidden');
+        }
+    });
 
     function line() {
         return sides[currentSide].line;
@@ -316,6 +364,14 @@
 
         set: function (key, value) {
             line()[key] = value;
+            syncHidden();
+            renderPreview();
+        },
+
+        zoomName: function (delta) {
+            const l = line();
+            l.size = clamp(l.size + delta, 8, 300);
+            document.getElementById('name-size').value = l.size;
             syncHidden();
             renderPreview();
         }
@@ -360,7 +416,7 @@
             document.getElementById('name-color').value = l.color;
             document.getElementById('name-align').value = l.align;
             document.getElementById('name-weight').value = l.weight;
-            document.getElementById('name-font').value = l.font;
+            updateFontTrigger(l.font);
             document.getElementById('name-enabled').checked = !!l.enabled;
         }
     }
@@ -384,23 +440,39 @@
         const scale = width / 1240;
         const l = line();
 
-        // Nama (dapat diseret) — hanya sisi depan
+        // Nama (dapat diseret + scroll zoom) — hanya sisi depan
         if (currentSide === 'front' && l.enabled) {
-            const el = document.createElement('div');
-            el.id = 'name-overlay';
-            el.className = 'cert-name-drag';
-            el.textContent = 'Nama Peserta Contoh';
-            el.style.cssText = 'position:absolute;left:' + l.x + '%;top:' + l.y + '%;transform:translate(-50%,-50%);font-size:' + Math.round(l.size * scale) + 'px;color:' + l.color + ';white-space:nowrap;font-family:\'' + l.font + '\',serif;font-weight:' + (l.weight === 'bold' ? 700 : 400) + ';z-index:10;';
-            if (l.align === 'left') el.style.transform = 'translateY(-50%)';
-            else if (l.align === 'right') el.style.transform = 'translate(-100%,-50%)';
-            attachDrag(el);
-            overlays.appendChild(el);
+            const wrapper = document.createElement('div');
+            wrapper.id = 'name-overlay';
+            wrapper.style.cssText = 'position:absolute;left:' + l.x + '%;top:' + l.y + '%;transform:translate(-50%,-50%);z-index:10;';
+            if (l.align === 'left') wrapper.style.transform = 'translateY(-50%)';
+            else if (l.align === 'right') wrapper.style.transform = 'translate(-100%,-50%)';
+
+            const txt = document.createElement('span');
+            txt.className = 'cert-name-drag';
+            txt.textContent = 'Nama Peserta Contoh';
+            txt.style.cssText = 'font-size:' + Math.round(l.size * scale) + 'px;color:' + l.color + ';white-space:nowrap;font-family:\'' + l.font + '\',serif;font-weight:' + (l.weight === 'bold' ? 700 : 400) + ';';
+
+            wrapper.appendChild(txt);
+
+            wrapper.addEventListener('wheel', function (e) {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 2 : -2;
+                l.size = clamp(l.size + delta, 8, 300);
+                document.getElementById('name-size').value = l.size;
+                txt.style.fontSize = Math.round(l.size * scale) + 'px';
+                syncHidden();
+            }, { passive: false });
+
+            attachDrag(txt, wrapper);
+            overlays.appendChild(wrapper);
         }
 
 
     }
 
-    function attachDrag(el) {
+    function attachDrag(el, target) {
+        const pos = target || el;
         let dragging = false;
 
         el.addEventListener('pointerdown', function (e) {
@@ -419,8 +491,8 @@
             l.y = clamp(Math.round(y * 10) / 10, 0, 100);
             document.getElementById('name-x').value = l.x;
             document.getElementById('name-y').value = l.y;
-            el.style.left = l.x + '%';
-            el.style.top = l.y + '%';
+            pos.style.left = l.x + '%';
+            pos.style.top = l.y + '%';
             syncHidden();
         });
 
@@ -432,6 +504,18 @@
     document.addEventListener('DOMContentLoaded', function () {
         renderControls();
         renderPreview();
+
+        document.getElementById('template-input').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                sides[currentSide].template = ev.target.result;
+                renderControls();
+                renderPreview();
+            };
+            reader.readAsDataURL(file);
+        });
     });
 
     window.addEventListener('resize', renderPreview);

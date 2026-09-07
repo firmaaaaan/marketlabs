@@ -93,6 +93,7 @@ class CartController extends Controller
     public function add(Request $request, Tool $tool)
     {
         abort_unless($tool->is_active, 404);
+        abort_if($tool->available_stock < 1, 404);
 
         $validated = $request->validate([
             'quantity' => ['required', 'integer', 'min:1', "max:{$tool->available_stock}"],

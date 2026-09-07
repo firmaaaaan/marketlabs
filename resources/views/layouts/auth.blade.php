@@ -102,7 +102,7 @@
                 @if ($siteLogo)
                         <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo MarketLabs" class="h-14 w-14 object-contain">
                     @else
-                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-600 text-lg font-bold text-white shadow-lg">M</span>
+                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-lg font-bold text-white shadow-lg">M</span>
                     @endif
                 <div>
                     <span class="text-2xl font-bold tracking-tight text-slate-900">

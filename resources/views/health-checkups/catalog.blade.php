@@ -58,7 +58,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid gap-6 md:grid-cols-2">
             @forelse ($types as $type)
-                <div class="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl">
+                <div class="group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-xl">
                     <div class="absolute -top-12 -right-12 h-36 w-36 rounded-full bg-emerald-50 transition duration-300 group-hover:scale-150"></div>
 
                     <div class="relative">

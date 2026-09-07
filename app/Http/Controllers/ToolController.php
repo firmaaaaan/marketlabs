@@ -26,8 +26,21 @@ class ToolController extends Controller
             $query->whereHas('category', fn ($q) => $q->where('name', $category));
         }
 
+        if ($type = $request->query('type')) {
+            $query->where('type', $type);
+        }
+
         $tools = $query->orderBy('name')->paginate(8)->withQueryString();
-        $categories = ToolCategory::orderBy('name')->get();
+
+        $categoriesQuery = ToolCategory::with(['tools' => function ($q) {
+            $q->select('id', 'category_id', 'type')->limit(1);
+        }]);
+
+        if ($type = $request->query('type')) {
+            $categoriesQuery->whereHas('tools', fn ($q) => $q->where('type', $type));
+        }
+
+        $categories = $categoriesQuery->orderBy('name')->get();
 
         return view('tools.index', compact('tools', 'categories'));
     }

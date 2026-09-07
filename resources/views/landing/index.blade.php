@@ -85,13 +85,13 @@
     <div class="mx-auto max-w-5xl">
         <div class="reveal grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-stone-200 bg-stone-200 shadow-xl sm:grid-cols-4">
             @foreach ([
-                ['icon' => 'M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Harga Transparan', 'text' => 'Bench fee & sewa alat dihitung otomatis'],
-                ['icon' => 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z', 'title' => 'Invoice Resmi', 'text' => 'Tagihan lengkap & bisa diunduh'],
-                ['icon' => 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z', 'title' => 'Proses Digital', 'text' => 'Ajukan & pantau status real-time'],
-                ['icon' => 'M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z', 'title' => 'Dukungan Admin', 'text' => 'Laboran & admin siap membantu'],
+                ['icon' => 'M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Harga Transparan', 'text' => 'Bench fee & sewa alat dihitung otomatis', 'color' => 'text-emerald-600 bg-emerald-50'],
+                ['icon' => 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z', 'title' => 'Invoice Resmi', 'text' => 'Tagihan lengkap & bisa diunduh', 'color' => 'text-amber-600 bg-amber-50'],
+                ['icon' => 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z', 'title' => 'Proses Digital', 'text' => 'Ajukan & pantau status real-time', 'color' => 'text-sky-600 bg-sky-50'],
+                ['icon' => 'M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z', 'title' => 'Dukungan Admin', 'text' => 'Laboran & admin siap membantu', 'color' => 'text-violet-600 bg-violet-50'],
             ] as $trust)
                 <div class="flex items-start gap-3 bg-white p-5 sm:p-6">
-                    <span class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <span class="flex h-10 w-10 flex-none items-center justify-center rounded-lg {{ $trust['color'] }}">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="{{ $trust['icon'] }}" />
                         </svg>
@@ -108,7 +108,7 @@
 
 {{-- ===== KATEGORI ===== --}}
 @if ($categories->isNotEmpty())
-    <section class="py-20 lg:py-28">
+    <section class="py-12 lg:py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="reveal flex flex-wrap items-end justify-between gap-4">
                 <div>
@@ -170,18 +170,22 @@
 
         <div class="reveal mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             @forelse ($featuredTools as $tool)
-                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
+                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
                     <a href="{{ route('tools.show', $tool) }}" class="block overflow-hidden">
                         <div class="relative flex h-48 items-center justify-center bg-slate-50">
                             @if ($tool->image)
                                 <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
-                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
+                                     class="h-full w-full object-cover">
                             @else
                                 <svg class="h-16 w-16 text-slate-200" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                                 </svg>
                             @endif
                             <span class="absolute top-3 left-3 rounded-lg px-2.5 py-1 text-[11px] font-semibold shadow-sm
+                                {{ $tool->type === 'non-kesehatan' ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' }}">
+                                {{ $tool->type === 'non-kesehatan' ? 'Non-Kesehatan' : 'Kesehatan' }}
+                            </span>
+                            <span class="absolute top-3 right-3 rounded-lg px-2.5 py-1 text-[11px] font-semibold shadow-sm
                                 {{ $tool->available_stock <= 3 ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' }}">
                                 {{ $tool->available_stock <= 3 ? 'Stok Terbatas' : 'Tersedia' }}
                             </span>
@@ -190,7 +194,7 @@
 
                     <div class="flex flex-1 flex-col p-4">
                         <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">{{ $tool->category?->name ?? 'Alat Laboratorium' }}</p>
-                        <a href="{{ route('tools.show', $tool) }}" class="mt-1 text-sm font-semibold text-slate-900 transition hover:text-emerald-600">
+                        <a href="{{ route('tools.show', $tool) }}" class="mt-1 text-sm font-semibold text-slate-900">
                             {{ $tool->name }}
                         </a>
                         <p class="mt-0.5 text-xs text-slate-500">
@@ -211,14 +215,14 @@
                                         @csrf
                                         <input type="hidden" name="quantity" value="1">
                                         <button type="submit"
-                                                class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-700">
+                                                class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                                             </svg>
                                             Keranjang
                                         </button>
                                         <a href="{{ route('tools.show', $tool) }}"
-                                           class="rounded-xl border border-stone-200 p-2.5 text-slate-400 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
+                                           class="rounded-xl border border-stone-200 p-2.5 text-slate-400"
                                            aria-label="Lihat detail {{ $tool->name }}">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -249,11 +253,11 @@
 </section>
 
 {{-- ===== PENGUJIAN POPULER ===== --}}
-<section class="py-20 lg:py-28">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal flex flex-wrap items-end justify-between gap-4">
-            <div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Katalog Pengujian</span>
+<section class="py-16 lg:py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="reveal flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Katalog Pengujian</span>
                 <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                     Layanan Pengujian Populer
                 </h2>
@@ -272,12 +276,12 @@
 
         <div class="reveal mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             @forelse ($featuredParameters as $parameter)
-                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
+                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
                     <a href="{{ route('sample-tests.parameter', $parameter) }}" class="block overflow-hidden">
                         <div class="relative flex h-48 items-center justify-center bg-slate-50">
                             @if ($parameter->image)
                                 <img src="{{ asset('storage/' . $parameter->image) }}" alt="{{ $parameter->name }}"
-                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-110">
+                                     class="h-full w-full object-cover">
                             @else
                                 <svg class="h-16 w-16 text-slate-200" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15" />
@@ -344,10 +348,11 @@
 </section>
 
 {{-- ===== LAYANAN ===== --}}
-<section class="bg-stone-50 py-20 lg:py-28">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal mx-auto max-w-2xl text-center">
-            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Layanan Kami</span>
+<section class="bg-stone-50 py-24 lg:py-32">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="reveal flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Layanan Kami</span>
             <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                 Satu Platform, Tiga Layanan Utama
             </h2>
@@ -461,7 +466,7 @@
 </section>
 
 {{-- ===== TESTIMONI ===== --}}
-<section class="bg-stone-50 py-20 lg:py-28">
+<section class="bg-stone-50 py-16 lg:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal mx-auto max-w-2xl text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Testimoni</span>
@@ -474,7 +479,7 @@
         </div>
 
         @php
-            $avatarColors = ['bg-emerald-600', 'bg-emerald-600', 'bg-emerald-700'];
+            $avatarColors = ['bg-emerald-600', 'bg-amber-500', 'bg-sky-500', 'bg-violet-500'];
         @endphp
 
         <div class="reveal mt-10">
@@ -611,7 +616,7 @@
 </section>
 
 {{-- ===== FITUR ===== --}}
-<section id="fitur" class="py-20 lg:py-28">
+<section id="fitur" class="py-24 lg:py-32">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal mx-auto max-w-2xl text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Fitur Unggulan</span>
@@ -693,7 +698,7 @@
 </section>
 
 {{-- ===== FAQ ===== --}}
-<section id="faq" class="py-20 lg:py-28">
+<section id="faq" class="py-16 lg:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">FAQ</span>
@@ -728,7 +733,7 @@
 </section>
 
 {{-- ===== MITRA KAMI ===== --}}
-<section class="bg-stone-50 py-20 lg:py-28">
+<section class="bg-stone-50 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="reveal text-center">
             <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Mitra Kami</span>

@@ -39,7 +39,7 @@
     {{-- Section Katalog Alat --}}
     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h2 class="text-base font-bold text-slate-900">Section Katalog Alat</h2>
-        <p class="mt-0.5 text-sm text-slate-600">Jumlah card alat yang ditampilkan di halaman utama.</p>
+        <p class="mt-0.5 text-sm text-slate-600">Jumlah card alat (kesehatan & non-kesehatan) yang ditampilkan di halaman utama.</p>
 
         <div class="mt-6 space-y-4">
             <label class="flex cursor-pointer items-start justify-between gap-4">

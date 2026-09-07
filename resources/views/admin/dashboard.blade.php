@@ -61,11 +61,6 @@
                     </svg>
                 </div>
             </div>
-            <div class="mt-3">
-                <div class="h-1.5 w-full rounded-full bg-slate-100">
-                    <div class="h-1.5 rounded-full bg-gradient-to-r {{ $stat['bg'] }}" style="width: {{ max(10, min(100, ($stat['value'] > 0 ? min(100, max(10, (int) str_replace(',', '', $stat['value']) * 3)) : 10))) }}%"></div>
-                </div>
-            </div>
         </div>
     @endforeach
 </div>
@@ -88,11 +83,6 @@
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="{{ $stat['icon'] }}" />
                     </svg>
-                </div>
-            </div>
-            <div class="mt-3">
-                <div class="h-1.5 w-full rounded-full bg-slate-100">
-                    <div class="h-1.5 rounded-full bg-gradient-to-r {{ $stat['bg'] }}" style="width: {{ max(10, min(100, ($stat['value'] > 0 ? min(100, max(10, (int) str_replace(',', '', $stat['value']) * 3)) : 10))) }}%"></div>
                 </div>
             </div>
         </div>

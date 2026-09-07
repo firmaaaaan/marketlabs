@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ToolCategorySeeder::class,
             ToolSeeder::class,
+            NonHealthToolSeeder::class,
             SampleTestSeeder::class,
             EventSeeder::class,
             MitraSeeder::class,

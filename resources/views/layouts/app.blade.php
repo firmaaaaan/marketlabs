@@ -60,7 +60,7 @@
                     @if ($siteLogo)
                         <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo MarketLabs" class="h-12 w-12 object-contain transition-transform hover:scale-105">
                     @else
-                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-600 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition-transform hover:scale-105">M</span>
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition-transform hover:scale-105">M</span>
                     @endif
                     <div>
                         <span class="text-lg font-bold tracking-tight text-slate-900">
@@ -157,7 +157,7 @@
                             <button type="button" id="user-menu-btn"
                                     class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 transition-all hover:border-emerald-300 hover:shadow-md sm:px-3.5"
                                     aria-label="Menu akun">
-                                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-emerald-600 text-xs font-bold text-white shadow-md shadow-emerald-600/20">
+                                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white shadow-md shadow-emerald-600/20">
                                     @if(Auth::user()->avatar)
                                         <img src="{{ Auth::user()->getAvatarUrl() }}" alt="{{ Auth::user()->name }}" class="h-8 w-8 rounded-full object-cover">
                                     @else
@@ -224,7 +224,7 @@
                             Masuk
                         </a>
                         <a href="{{ route('register') }}"
-                           class="btn-premium rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 hover:from-emerald-700 hover:to-emerald-700">
+                           class="btn-premium rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700">
                             Daftar
                         </a>
                     </div>
@@ -469,7 +469,7 @@
     @endif
 
     {{-- Footer --}}
-    <footer class="border-t border-slate-200/80 bg-slate-50/80/50">
+    <footer class="border-t border-emerald-200/80 bg-emerald-900">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="grid gap-12 md:grid-cols-3">
                 {{-- Brand & alamat --}}
@@ -478,13 +478,13 @@
                         @if ($siteLogo)
                             <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo MarketLabs" class="h-12 w-12 object-contain">
                         @else
-                            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-600 text-sm font-bold text-white shadow-lg shadow-emerald-600/30">M</span>
+                            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-lg shadow-emerald-600/30">M</span>
                         @endif
                         <div>
-                            <span class="text-lg font-bold text-slate-900">
-                                Market<span class="text-emerald-600">Labs</span>
+                            <span class="text-lg font-bold text-white">
+                                Market<span class="text-emerald-300">Labs</span>
                             </span>
-                            <p class="text-[10px] font-semibold leading-tight text-slate-500">by UPT Laboratorium Terpadu</p>
+                            <p class="text-[10px] font-semibold leading-tight text-emerald-200">by UPT Laboratorium Terpadu</p>
                         </div>
                     </div>
                     @php
@@ -505,8 +505,8 @@
                             @endforeach
                         </div>
                     @endif
-                    <p class="mt-4 flex items-start gap-2.5 text-sm leading-relaxed text-slate-500">
-                        <svg class="mt-0.5 h-5 w-5 flex-none text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                    <p class="mt-4 flex items-start gap-2.5 text-sm leading-relaxed text-emerald-100">
+                        <svg class="mt-0.5 h-5 w-5 flex-none text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
@@ -516,10 +516,10 @@
 
                 {{-- Kontak --}}
                 <div>
-                    <p class="text-sm font-bold text-slate-900">Kontak</p>
-                    <ul class="mt-4 space-y-3 text-sm text-slate-500">
+                    <p class="text-sm font-bold text-white">Kontak</p>
+                    <ul class="mt-4 space-y-3 text-sm text-emerald-100">
                         <li class="flex items-center gap-2.5">
-                            <svg class="h-5 w-5 flex-none text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                            <svg class="h-5 w-5 flex-none text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
                             @php
@@ -530,30 +530,30 @@
                                 }
                                 $footerEmail = \App\Models\Setting::get('footer_email', 'info@marketlabs.id');
                             @endphp
-                            <a href="tel:{{ $footerPhoneLink }}" class="transition hover:text-emerald-600">{{ $footerPhone }}</a>
+                            <a href="tel:{{ $footerPhoneLink }}" class="transition hover:text-white">{{ $footerPhone }}</a>
                         </li>
                         <li class="flex items-center gap-2.5">
-                            <svg class="h-5 w-5 flex-none text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                            <svg class="h-5 w-5 flex-none text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <a href="mailto:{{ $footerEmail }}" class="transition hover:text-emerald-600">{{ $footerEmail }}</a>
+                            <a href="mailto:{{ $footerEmail }}" class="transition hover:text-white">{{ $footerEmail }}</a>
                         </li>
                     </ul>
                 </div>
 
                 {{-- Tautan --}}
                 <div>
-                    <p class="text-sm font-bold text-slate-900">Tautan</p>
-                    <ul class="mt-4 space-y-3 text-sm text-slate-500">
-                        <li><a href="#tentang" class="transition-all hover:text-emerald-600 hover:pl-1">Tentang</a></li>
-                        <li><a href="#fitur" class="transition-all hover:text-emerald-600 hover:pl-1">Fitur</a></li>
-                        <li><a href="#pemeriksaan" class="transition-all hover:text-emerald-600 hover:pl-1">Pemeriksaan</a></li>
-                        <li><a href="#faq" class="transition-all hover:text-emerald-600 hover:pl-1">FAQ</a></li>
+                    <p class="text-sm font-bold text-white">Tautan</p>
+                    <ul class="mt-4 space-y-3 text-sm text-emerald-100">
+                        <li><a href="#tentang" class="transition-all hover:text-white hover:pl-1">Tentang</a></li>
+                        <li><a href="#fitur" class="transition-all hover:text-white hover:pl-1">Fitur</a></li>
+                        <li><a href="#pemeriksaan" class="transition-all hover:text-white hover:pl-1">Pemeriksaan</a></li>
+                        <li><a href="#faq" class="transition-all hover:text-white hover:pl-1">FAQ</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="mt-12 border-t border-slate-200 pt-8 text-center text-sm text-slate-500">
+            <div class="mt-12 border-t border-emerald-700 pt-8 text-center text-sm text-emerald-200">
                 &copy; {{ date('Y') }} Sistem Informasi MarketLabs. Semua hak dilindungi.
             </div>
         </div>

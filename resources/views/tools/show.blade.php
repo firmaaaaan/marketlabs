@@ -74,6 +74,9 @@
                 @endif
 
                 <div class="mt-4 flex flex-wrap items-center gap-3">
+                    <span class="rounded-full {{ $tool->type === 'non-kesehatan' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700' }} px-4 py-1.5 text-sm font-semibold">
+                        {{ $tool->type === 'non-kesehatan' ? 'Non-Kesehatan' : 'Kesehatan' }}
+                    </span>
                     <span class="rounded-full bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700">
                         {{ $tool->formatted_price }} / hari
                     </span>

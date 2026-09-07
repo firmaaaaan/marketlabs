@@ -28,6 +28,20 @@
             </div>
 
             <div>
+                <label for="type" class="block text-sm font-semibold text-slate-700">Tipe Alat <span class="text-red-500">*</span></label>
+                <select id="type" name="type" required
+                        class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                    <option value="kesehatan" {{ old('type', $tool->type) === 'kesehatan' ? 'selected' : '' }}>Kesehatan</option>
+                    <option value="non-kesehatan" {{ old('type', $tool->type) === 'non-kesehatan' ? 'selected' : '' }}>Non-Kesehatan</option>
+                </select>
+                @error('type')
+                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <div class="mt-5 grid gap-5 sm:grid-cols-2">
+            <div>
                 <label for="category_id" class="block text-sm font-semibold text-slate-700">Kategori <span class="text-red-500">*</span></label>
                 <select id="category_id" name="category_id" required
                         class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">

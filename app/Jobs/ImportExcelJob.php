@@ -70,7 +70,7 @@ class ImportExcelJob implements ShouldQueue
         $allRows = $sheet->toArray(null, true, true, true);
         $spreadsheet->disconnectWorksheets();
 
-        $columns = ['Kode', 'Nama', 'Kategori', 'Merk', 'Seri', 'Deskripsi', 'Total Stok', 'Harga Sewa/Hari', 'Status Aktif'];
+        $columns = ['Kode', 'Nama', 'Tipe', 'Kategori', 'Merk', 'Seri', 'Deskripsi', 'Total Stok', 'Harga Sewa/Hari', 'Status Aktif'];
 
         $created = 0;
         $updated = 0;
@@ -200,11 +200,17 @@ class ImportExcelJob implements ShouldQueue
             $category = ToolCategory::create(['name' => $categoryName]);
         }
 
+        $rawType = trim($values['Tipe'] ?? '');
+        $type = in_array(mb_strtolower($rawType), ['non-kesehatan', 'non kesehatan', 'nonkesehatan'])
+            ? Tool::TYPE_NON_KESEHATAN
+            : Tool::TYPE_KESEHATAN;
+
         $code = trim($values['Kode'] ?? '');
         $tool = $code !== '' ? Tool::where('code', $code)->first() : null;
 
         $data = [
             'name' => $name,
+            'type' => $type,
             'category_id' => $category->id,
             'brand' => $this->nullIfEmpty($values['Merk'] ?? ''),
             'series' => $this->nullIfEmpty($values['Seri'] ?? ''),

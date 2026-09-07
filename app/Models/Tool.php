@@ -11,9 +11,13 @@ class Tool extends Model
 {
     use HasFactory, HasUuids, LogsActivity;
 
+    public const TYPE_KESEHATAN = 'kesehatan';
+    public const TYPE_NON_KESEHATAN = 'non-kesehatan';
+
     protected $fillable = [
         'code',
         'name',
+        'type',
         'category_id',
         'brand',
         'series',
@@ -66,6 +70,21 @@ class Tool extends Model
     public function scopeAvailable($query)
     {
         return $query->where('available_stock', '>', 0);
+    }
+
+    public function scopeHealth($query)
+    {
+        return $query->where('type', self::TYPE_KESEHATAN);
+    }
+
+    public function scopeNonHealth($query)
+    {
+        return $query->where('type', self::TYPE_NON_KESEHATAN);
+    }
+
+    public function isHealth(): bool
+    {
+        return $this->type === self::TYPE_KESEHATAN;
     }
 
     /**

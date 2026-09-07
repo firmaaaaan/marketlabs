@@ -163,9 +163,13 @@ class CertificateRenderer
             }
         }
 
+        $level = ob_get_level();
         ob_start();
         imagepng($image, null, 6);
         $png = (string) ob_get_clean();
+        while (ob_get_level() > $level) {
+            ob_end_clean();
+        }
         imagedestroy($image);
 
         Storage::disk('public')->put($outputPath, $png);
@@ -199,9 +203,17 @@ class CertificateRenderer
         $size = (float) ($line['size'] ?? 44) * $scale;
         $color = self::allocateColor($image, $line['color'] ?? '#1e293b');
 
-        $bbox = imagettfbbox($size, 0, $fontPath, $text);
+        // ukuran font CSS ≠ ukuran GD — sesuaikan agar proporsional.
+        // CSS font-size = em-square; GD size = ascender+descender scale.
+        $gdSize = $size * 0.82;
+
+        $bbox = imagettfbbox($gdSize, 0, $fontPath, $text);
         $textWidth = abs($bbox[2] - $bbox[0]);
-        $textHeight = abs($bbox[5] - $bbox[1]);
+
+        // Pusat visual teks relatif terhadap baseline.
+        // bbox[1] = y atas (negatif = di atas baseline),
+        // bbox[5] = y bawah (positif = di bawah baseline).
+        $visualCenterY = ($bbox[1] + $bbox[5]) / 2;
 
         $anchorX = ($line['x'] ?? 50) / 100 * $width;
         $anchorY = ($line['y'] ?? 50) / 100 * $height;
@@ -212,10 +224,11 @@ class CertificateRenderer
             default => $anchorX - $textWidth / 2,
         };
 
-        // imagettftext: titik y adalah baseline (dasar teks).
-        $y = $anchorY + $textHeight / 2;
+        // imagettftext: y = baseline. Agar pusat visual = anchorY:
+        // baseline = anchorY − visualCenterY
+        $y = $anchorY - $visualCenterY;
 
-        imagettftext($image, $size, 0, (int) round($x), (int) round($y), $color, $fontPath, $text);
+        imagettftext($image, $gdSize, 0, (int) round($x), (int) round($y), $color, $fontPath, $text);
     }
 
     private static function fontPath(string $family, string $weight): ?string

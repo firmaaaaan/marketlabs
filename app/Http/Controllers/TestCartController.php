@@ -64,10 +64,6 @@ class TestCartController extends Controller
     {
         abort_unless($parameter->is_active, 404);
 
-        $request->validate([
-            'quantity' => ['nullable', 'integer', 'min:1', 'max:100'],
-        ]);
-
         $cart = $this->cart();
         $cart[$parameter->id] = 1;
         $this->saveCart($cart);

@@ -32,8 +32,12 @@ class AdminToolController extends Controller
             });
         }
 
-        if ($request->has('status') && $request->query('status') !== '') {
-            $query->where('is_active', $request->query('status') === 'active');
+        if (($status = $request->query('status')) !== null && $status !== '') {
+            $query->where('is_active', $status === 'active');
+        }
+
+        if (($type = $request->query('type')) !== null && $type !== '') {
+            $query->where('type', $type);
         }
 
         $tools = $query->paginate(15)->withQueryString();
@@ -56,6 +60,7 @@ class AdminToolController extends Controller
         $tool = Tool::create([
             'code' => $this->generateCode(),
             'name' => $validated['name'],
+            'type' => $validated['type'],
             'category_id' => $validated['category_id'],
             'brand' => $validated['brand'] ?? null,
             'series' => $validated['series'] ?? null,
@@ -90,6 +95,7 @@ class AdminToolController extends Controller
 
         $tool->update([
             'name' => $validated['name'],
+            'type' => $validated['type'],
             'category_id' => $validated['category_id'],
             'brand' => $validated['brand'] ?? null,
             'series' => $validated['series'] ?? null,
@@ -170,10 +176,14 @@ class AdminToolController extends Controller
             $query->where('is_active', $status === 'active');
         }
 
+        if (($type = $request->query('type')) !== null && $type !== '') {
+            $query->where('type', $type);
+        }
+
         $tools = $query->get();
 
         $rows = [[
-            'Kode', 'Nama', 'Kategori', 'Merk', 'Seri', 'Deskripsi',
+            'Kode', 'Nama', 'Tipe', 'Kategori', 'Merk', 'Seri', 'Deskripsi',
             'Total Stok', 'Stok Tersedia', 'Harga Sewa/Hari', 'Status Aktif',
         ]];
 
@@ -181,6 +191,7 @@ class AdminToolController extends Controller
             $rows[] = [
                 $tool->code,
                 $tool->name,
+                $tool->type === Tool::TYPE_KESEHATAN ? 'Kesehatan' : 'Non-Kesehatan',
                 $tool->category?->name ?? '',
                 $tool->brand ?? '',
                 $tool->series ?? '',
@@ -207,23 +218,23 @@ class AdminToolController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setTitle('Template Alat');
 
-            $headers = ['Kode', 'Nama', 'Kategori', 'Merk', 'Seri', 'Deskripsi', 'Total Stok', 'Harga Sewa/Hari', 'Status Aktif'];
+            $headers = ['Kode', 'Nama', 'Tipe', 'Kategori', 'Merk', 'Seri', 'Deskripsi', 'Total Stok', 'Harga Sewa/Hari', 'Status Aktif'];
             $sheet->fromArray([$headers], null, 'A1');
 
             // Baris contoh (Kode boleh dikosongkan → dibuat otomatis).
             $sheet->fromArray([
-                ['', 'Contoh Alat 1', $categories ?: 'Kategori A', 'Merk Contoh', 'S001', 'Deskripsi singkat alat.', '5', '50000', 'Aktif'],
-                ['', 'Contoh Alat 2', $categories ?: 'Kategori B', '', '', '', '2', '75000', 'Nonaktif'],
+                ['', 'Contoh Alat Kesehatan', 'Kesehatan', $categories ?: 'Kategori A', 'Merk Contoh', 'S001', 'Deskripsi singkat alat.', '5', '50000', 'Aktif'],
+                ['', 'Contoh Alat Non-Kesehatan', 'Non-Kesehatan', $categories ?: 'Kategori B', '', '', '', '2', '75000', 'Aktif'],
             ], null, 'A2');
 
             // Gaya header.
-            $sheet->getStyle('A1:I1')->applyFromArray([
+            $sheet->getStyle('A1:J1')->applyFromArray([
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '059669']],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            foreach (range('A', 'I') as $col) {
+            foreach (range('A', 'J') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
@@ -293,11 +304,17 @@ class AdminToolController extends Controller
             $category = ToolCategory::create(['name' => $categoryName]);
         }
 
+        $rawType = trim($values['Tipe'] ?? '');
+        $type = in_array(mb_strtolower($rawType), ['non-kesehatan', 'non kesehatan', 'nonkesehatan'])
+            ? Tool::TYPE_NON_KESEHATAN
+            : Tool::TYPE_KESEHATAN;
+
         $code = trim($values['Kode'] ?? '');
         $tool = $code !== '' ? Tool::where('code', $code)->first() : null;
 
         $data = [
             'name' => $name,
+            'type' => $type,
             'category_id' => $category->id,
             'brand' => $this->nullIfEmpty($values['Merk'] ?? ''),
             'series' => $this->nullIfEmpty($values['Seri'] ?? ''),
@@ -404,6 +421,7 @@ class AdminToolController extends Controller
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'in:kesehatan,non-kesehatan'],
             'category_id' => ['required', 'exists:tool_categories,id'],
             'brand' => ['nullable', 'string', 'max:100'],
             'series' => ['nullable', 'string', 'max:100'],

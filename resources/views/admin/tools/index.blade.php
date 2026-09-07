@@ -121,6 +121,12 @@
     <input type="text" name="search" value="{{ request('search') }}"
            placeholder="Cari nama atau kode alat..."
            class="w-full max-w-xs rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+    <select name="type"
+            class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+        <option value="">Semua Tipe</option>
+        <option value="kesehatan" {{ request('type') === 'kesehatan' ? 'selected' : '' }}>Kesehatan</option>
+        <option value="non-kesehatan" {{ request('type') === 'non-kesehatan' ? 'selected' : '' }}>Non-Kesehatan</option>
+    </select>
     <select name="status"
             class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
         <option value="">Semua Status</option>
@@ -146,6 +152,7 @@
                     </th>
                     @endif
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Alat</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Tipe</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Kategori</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Stok</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
@@ -183,6 +190,11 @@
                                 </div>
                             </div>
                         </td>
+                        <td class="px-6 py-4">
+                            <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $tool->type === 'kesehatan' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
+                                {{ $tool->type === 'kesehatan' ? 'Kesehatan' : 'Non-Kesehatan' }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 text-sm text-slate-600">{{ $tool->category?->name ?? '-' }}</td>
                         <td class="px-6 py-4 text-sm text-slate-600">
                             <span class="font-semibold text-slate-900">{{ $tool->available_stock }}</span> / {{ $tool->total_stock }}
@@ -218,7 +230,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada alat.</td>
+                        <td colspan="7" class="px-6 py-10 text-center text-sm text-slate-500">Belum ada alat.</td>
                     </tr>
                 @endforelse
             </tbody>
