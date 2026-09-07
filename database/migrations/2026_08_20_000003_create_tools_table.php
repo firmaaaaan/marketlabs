@@ -12,7 +12,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('code')->unique();
             $table->string('name');
-            $table->foreignUuid('category_id')->nullable()->after('name')->constrained('tool_categories')->nullOnDelete();
+            $table->string('type', 20)->default('kesehatan')->after('name');
+            $table->foreignUuid('category_id')->nullable()->after('type')->constrained('tool_categories')->nullOnDelete();
             $table->string('brand')->nullable()->after('category_id');
             $table->string('series')->nullable()->after('brand');
             $table->text('description')->nullable();
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('price_per_day')->default(0);
             $table->string('image')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->index('type');
             $table->timestamps();
         });
     }
