@@ -12,6 +12,12 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
     <form action="{{ route('login') }}" method="POST" class="mt-6 space-y-5">
         @csrf
 
@@ -41,9 +47,6 @@
                     </svg>
                 </button>
             </div>
-            @error('password')
-                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-            @enderror
         </div>
 
         <div class="flex items-center justify-between">
