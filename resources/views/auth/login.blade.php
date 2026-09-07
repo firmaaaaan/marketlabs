@@ -6,6 +6,13 @@
     <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Masuk</h1>
     <p class="mt-1 text-sm text-slate-600">Selamat datang kembali! Masuk untuk melanjutkan.</p>
 
+    <div class="mt-4 flex items-start gap-3 rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-700">
+        <svg class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>Civitas UNISA dapat login menggunakan <strong>NIK</strong> atau <strong>NIP</strong> sebagai username.</span>
+    </div>
+
     @if (session('status'))
         <div class="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
             {{ session('status') }}
@@ -47,6 +54,9 @@
                     </svg>
                 </button>
             </div>
+            @error('password')
+                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
         <div class="flex items-center justify-between">

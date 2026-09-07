@@ -130,6 +130,14 @@ class AdminUserController extends Controller
             ->with('success', "User '{$user->name}' berhasil dihapus.");
     }
 
+    public function resetPassword(User $user)
+    {
+        $user->update(['password' => Hash::make('password')]);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', "Password user '{$user->name}' berhasil direset ke password awal.");
+    }
+
     public function bulkDestroy(Request $request)
     {
         $validated = $request->validate([

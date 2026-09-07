@@ -157,7 +157,7 @@
             </form>
 
             {{-- Ringkasan item --}}
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+            <div class="self-start rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <h2 class="text-lg font-bold text-slate-900">Alat yang Dipinjam</h2>
                 <ul class="mt-4 space-y-3 border-t border-slate-100 pt-4">
                     @foreach ($items as $item)

@@ -31,17 +31,29 @@ class AuthController extends Controller
 
         $user = User::where('username', $request->username)->first();
 
-        // Timing-safe: always run Hash::check to prevent user enumeration via response time.
-        $valid = $user && Hash::check($request->password, $user->password);
-
-        if (! $valid) {
-            // Run a dummy hash to normalize timing when user does not exist.
-            if (! $user) {
+        if (! $user) {
+            // Dummy hash to normalize timing — prevent user enumeration via response time.
+            try {
                 Hash::check($request->password, '$2y$12$000000000000000000000000000000000000000000000000000000X');
+            } catch (\RuntimeException) {
+                // Timing-safe fallback.
             }
 
             return back()->withErrors([
-                'username' => 'Username atau kata sandi yang Anda masukkan salah.',
+                'username' => 'Username tidak ditemukan.',
+            ])->onlyInput('username');
+        }
+
+        $valid = false;
+        try {
+            $valid = Hash::check($request->password, $user->password);
+        } catch (\RuntimeException) {
+            // Password hash not Bcrypt — treat as invalid.
+        }
+
+        if (! $valid) {
+            return back()->withErrors([
+                'password' => 'Kata sandi yang Anda masukkan salah.',
             ])->onlyInput('username');
         }
 

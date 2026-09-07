@@ -341,6 +341,7 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
             Route::get('/users/export', [AdminUserController::class, 'export'])->name('users.export');
             Route::get('/users/template', [AdminUserController::class, 'template'])->name('users.template');
             Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');
+            Route::post('/users/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('users.reset-password');
             Route::resource('users', AdminUserController::class)->except(['show']);
 
             Route::get('/menus', [MenuController::class, 'index'])->name('menus.index');
