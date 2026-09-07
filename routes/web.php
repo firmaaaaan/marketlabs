@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminBorrowingController;
 use App\Http\Controllers\Admin\AdminCalendarController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminDisplaySettingController;
 use App\Http\Controllers\Admin\AdminDocumentDownloadController;
 use App\Http\Controllers\Admin\AdminEventController;
 use App\Http\Controllers\Admin\AdminFaqController;
@@ -231,6 +232,9 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
 
         Route::get('/invoice', [AdminInvoiceController::class, 'index'])->name('invoice.index');
         Route::put('/invoice', [AdminInvoiceController::class, 'update'])->name('invoice.update');
+
+        Route::get('/display-settings', [AdminDisplaySettingController::class, 'index'])->name('display-settings.index');
+        Route::put('/display-settings', [AdminDisplaySettingController::class, 'update'])->name('display-settings.update');
 
         Route::get('/jadwal-layanan', [AdminScheduleController::class, 'index'])->name('schedule.index');
         Route::put('/jadwal-layanan', [AdminScheduleController::class, 'update'])->name('schedule.update');

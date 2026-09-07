@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('icon')->nullable(); // SVG path
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->string('min_role', 20)->nullable();
             $table->timestamps();
         });
     }

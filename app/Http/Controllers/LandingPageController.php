@@ -7,6 +7,7 @@ use App\Models\GalleryImage;
 use App\Models\HealthTestType;
 use App\Models\Mitra;
 use App\Models\Testimonial;
+use App\Models\Setting;
 use App\Models\TestParameter;
 use App\Models\Tool;
 use App\Models\ToolCategory;
@@ -50,19 +51,29 @@ class LandingPageController extends Controller
         ];
 
         // Alat unggulan untuk section katalog ala e-commerce di landing page.
-        $featuredTools = Tool::active()
+        $showAllTools = Setting::get('landing_show_all_tools') === '1';
+        $featuredToolsQuery = Tool::active()
             ->available()
             ->with(['category', 'images'])
-            ->latest()
-            ->take(5)
-            ->get();
+            ->latest();
+
+        if (! $showAllTools) {
+            $featuredToolsQuery->take(max(1, min(50, (int) Setting::get('landing_featured_tools_count', 5))));
+        }
+
+        $featuredTools = $featuredToolsQuery->get();
 
         // Parameter pengujian unggulan untuk section pengujian di landing page.
-        $featuredParameters = TestParameter::active()
+        $showAllParameters = Setting::get('landing_show_all_parameters') === '1';
+        $featuredParametersQuery = TestParameter::active()
             ->with('unit')
-            ->latest()
-            ->take(5)
-            ->get();
+            ->latest();
+
+        if (! $showAllParameters) {
+            $featuredParametersQuery->take(max(1, min(50, (int) Setting::get('landing_featured_parameters_count', 5))));
+        }
+
+        $featuredParameters = $featuredParametersQuery->get();
 
         // Kategori alat beserta jumlah alat aktif di dalamnya.
         $categories = ToolCategory::withCount(['tools' => function ($query) {

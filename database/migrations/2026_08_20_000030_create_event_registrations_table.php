@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('certificate_path')->nullable();
             $table->string('certificate_back_path')->nullable();
             $table->timestamp('certificate_generated_at')->nullable();
+            $table->string('certificate_status')->nullable();
+            $table->text('certificate_error')->nullable();
             $table->timestamps();
 
             $table->unique(['event_id', 'user_id']);

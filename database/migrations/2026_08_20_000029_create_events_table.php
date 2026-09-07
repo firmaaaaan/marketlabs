@@ -32,6 +32,9 @@ return new class extends Migration
             $table->string('certificate_font')->nullable();
             $table->json('certificate_layout')->nullable();
             $table->json('certificate_layout_back')->nullable();
+            $table->string('certificate_batch_status')->nullable();
+            $table->unsignedInteger('certificate_batch_total')->default(0);
+            $table->unsignedInteger('certificate_batch_done')->default(0);
             $table->boolean('attendance_enabled')->default(true);
             $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
