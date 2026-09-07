@@ -96,6 +96,15 @@
                 </div>
 
                 <div>
+                    <label for="username" class="block text-sm font-semibold text-slate-700">Username <span class="text-xs font-normal text-slate-400">(opsional)</span></label>
+                    <input type="text" id="username" name="username" value="{{ old('username', Auth::user()->username) }}" maxlength="255"
+                           class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                    @error('username')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
                     <label for="email" class="block text-sm font-semibold text-slate-700">Email <span class="text-red-500">*</span></label>
                     <input type="email" id="email" name="email" value="{{ old('email', Auth::user()->email) }}" required
                            class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
