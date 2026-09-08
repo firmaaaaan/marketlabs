@@ -32,14 +32,15 @@ class MenuSeeder extends Seeder
             ['label' => 'Pengaturan Invoice', 'route_name' => 'admin.invoice.index', 'sort_order' => 17, 'is_active' => true],
             ['label' => 'Pengaturan WhatsApp', 'route_name' => 'admin.whatsapp.index', 'sort_order' => 18, 'is_active' => true],
             ['label' => 'Pengaturan Tampilan', 'route_name' => 'admin.display-settings.index', 'sort_order' => 19, 'is_active' => true],
-            ['label' => 'Pengaturan Footer', 'route_name' => 'admin.footer.index', 'sort_order' => 20, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Kelola Menu', 'route_name' => 'admin.menus.index', 'sort_order' => 21, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Kelola Testimoni', 'route_name' => 'admin.testimonials.index', 'sort_order' => 22, 'is_active' => true],
-            ['label' => 'Kelola FAQ', 'route_name' => 'admin.faqs.index', 'sort_order' => 23, 'is_active' => true],
-            ['label' => 'Kelola Mitra', 'route_name' => 'admin.mitras.index', 'sort_order' => 24, 'is_active' => true],
-            ['label' => 'Log Aktivitas', 'route_name' => 'admin.activity-logs.index', 'sort_order' => 25, 'is_active' => true, 'min_role' => 'superadmin'],
-            ['label' => 'Download Dokumen', 'route_name' => 'admin.document-downloads.index', 'sort_order' => 26, 'is_active' => true],
-            ['label' => 'Backup & Restore', 'route_name' => 'admin.backup.index', 'sort_order' => 27, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Mode Maintenance', 'route_name' => 'admin.maintenance.index', 'sort_order' => 20, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Pengaturan Footer', 'route_name' => 'admin.footer.index', 'sort_order' => 21, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Kelola Menu', 'route_name' => 'admin.menus.index', 'sort_order' => 22, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Kelola Testimoni', 'route_name' => 'admin.testimonials.index', 'sort_order' => 23, 'is_active' => true],
+            ['label' => 'Kelola FAQ', 'route_name' => 'admin.faqs.index', 'sort_order' => 24, 'is_active' => true],
+            ['label' => 'Kelola Mitra', 'route_name' => 'admin.mitras.index', 'sort_order' => 25, 'is_active' => true],
+            ['label' => 'Log Aktivitas', 'route_name' => 'admin.activity-logs.index', 'sort_order' => 26, 'is_active' => true, 'min_role' => 'superadmin'],
+            ['label' => 'Download Dokumen', 'route_name' => 'admin.document-downloads.index', 'sort_order' => 27, 'is_active' => true],
+            ['label' => 'Backup & Restore', 'route_name' => 'admin.backup.index', 'sort_order' => 28, 'is_active' => true, 'min_role' => 'superadmin'],
         ];
 
         foreach ($sidebarItems as $item) {

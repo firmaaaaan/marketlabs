@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureProfileIsComplete;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsLaboran;
 use App\Http\Middleware\EnsureUserIsSuperAdmin;
+use App\Http\Middleware\MaintenanceMode;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\ThrottleMutations;
 use Illuminate\Console\Scheduling\Schedule;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'throttle.mutations' => ThrottleMutations::class,
             'profile.complete' => EnsureProfileIsComplete::class,
             'security.headers' => SecurityHeaders::class,
+            'maintenance' => MaintenanceMode::class,
         ]);
 
         $middleware->append(SecurityHeaders::class);

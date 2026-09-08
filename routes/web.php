@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AdminHealthCheckupController;
 use App\Http\Controllers\Admin\AdminHealthCheckupTypeController;
 use App\Http\Controllers\Admin\AdminInvoiceController;
 use App\Http\Controllers\Admin\AdminLaboratoriumController;
+use App\Http\Controllers\Admin\AdminMaintenanceController;
 use App\Http\Controllers\Admin\AdminMitrasController;
 use App\Http\Controllers\Admin\AdminResearchProposalController;
 use App\Http\Controllers\Admin\AdminSampleAttributeController;
@@ -43,6 +44,7 @@ use App\Http\Controllers\LaboranController;
 use App\Http\Controllers\LaboranHealthCheckupController;
 use App\Http\Controllers\LabScheduleController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
@@ -74,6 +76,8 @@ Route::patch('/keranjang/{tool}', [CartController::class, 'update'])->middleware
 Route::delete('/keranjang/{tool}', [CartController::class, 'remove'])->middleware('throttle:public')->name('cart.remove');
 Route::delete('/keranjang', [CartController::class, 'clear'])->middleware('throttle:public')->name('cart.clear');
 
+Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth');
@@ -90,7 +94,7 @@ Route::middleware('guest')->group(function () {
 // Route publik — halaman riset bisa dilihat semua orang (tanpa login).
 Route::get('/riset/baru', [ResearchProposalController::class, 'create'])->name('research.create');
 
-Route::middleware(['auth', 'throttle.mutations'])->group(function () {
+Route::middleware(['auth', 'maintenance', 'throttle.mutations'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Profil — bisa diakses meskipun profil belum lengkap.
@@ -235,6 +239,9 @@ Route::middleware(['auth', 'throttle.mutations'])->group(function () {
 
         Route::get('/display-settings', [AdminDisplaySettingController::class, 'index'])->name('display-settings.index');
         Route::put('/display-settings', [AdminDisplaySettingController::class, 'update'])->name('display-settings.update');
+
+        Route::get('/maintenance', [AdminMaintenanceController::class, 'index'])->name('maintenance.index');
+        Route::put('/maintenance', [AdminMaintenanceController::class, 'update'])->name('maintenance.update');
 
         Route::get('/jadwal-layanan', [AdminScheduleController::class, 'index'])->name('schedule.index');
         Route::put('/jadwal-layanan', [AdminScheduleController::class, 'update'])->name('schedule.update');
