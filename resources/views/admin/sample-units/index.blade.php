@@ -48,23 +48,25 @@
 @endif
 
 {{-- Tambah satuan --}}
-<form action="{{ route('admin.sample-units.store') }}" method="POST" class="mt-6">
-    @csrf
-    <label for="new-name" class="block text-sm font-semibold text-slate-700">Nama Satuan <span class="text-red-500">*</span></label>
-    <div class="mt-1.5 flex flex-wrap gap-3">
-        <input type="text" id="new-name" name="name" value="{{ old('name') }}" required placeholder="Contoh: Running Meter"
-               class="w-full max-w-xs rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-        <input type="text" name="symbol" value="{{ old('symbol') }}" placeholder="Simbol (opsional, mis. rm)"
-               class="w-full max-w-[10rem] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-        <button type="submit"
-                class="flex-none rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-700">
-            + Tambah
-        </button>
-    </div>
-    @error('name')
-        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-    @enderror
-</form>
+<div class="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form action="{{ route('admin.sample-units.store') }}" method="POST">
+        @csrf
+        <label for="new-name" class="block text-sm font-semibold text-slate-700">Nama Satuan <span class="text-red-500">*</span></label>
+        <div class="mt-1.5 flex flex-wrap gap-3">
+            <input type="text" id="new-name" name="name" value="{{ old('name') }}" required placeholder="Contoh: Running Meter"
+                   class="w-full max-w-xs rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+            <input type="text" name="symbol" value="{{ old('symbol') }}" placeholder="Simbol (opsional, mis. rm)"
+                   class="w-full max-w-[10rem] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+            <button type="submit"
+                    class="flex-none rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-700">
+                + Tambah
+            </button>
+        </div>
+        @error('name')
+            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+        @enderror
+    </form>
+</div>
 
 {{-- Daftar satuan --}}
 <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

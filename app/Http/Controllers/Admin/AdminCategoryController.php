@@ -11,7 +11,7 @@ class AdminCategoryController extends Controller
 {
     public function index()
     {
-        $categories = ToolCategory::withCount('tools')->orderBy('name')->get();
+        $categories = ToolCategory::withCount('tools')->orderBy('name')->paginate(15);
 
         return view('admin.categories.index', compact('categories'));
     }

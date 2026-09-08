@@ -24,72 +24,74 @@
     </div>
 @endif
 
-<form action="{{ route('admin.users.store') }}" method="POST" class="mt-8 max-w-2xl space-y-4">
-    @csrf
+<div class="mt-8 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4">
+        @csrf
 
-    <div>
-        <label for="name" class="block text-sm font-semibold text-slate-700">Nama Lengkap <span class="text-red-500">*</span></label>
-        <input type="text" id="name" name="name" value="{{ old('name') }}" required maxlength="255"
-               class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-    </div>
-
-    <div>
-        <label for="email" class="block text-sm font-semibold text-slate-700">Email <span class="text-xs font-normal text-slate-400">(opsional, bisa dilengkapi nanti)</span></label>
-        <input type="email" id="email" name="email" value="{{ old('email') }}" maxlength="255"
-               class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-    </div>
-
-    <div>
-        <label for="username" class="block text-sm font-semibold text-slate-700">Username <span class="text-red-500">*</span></label>
-        <input type="text" id="username" name="username" value="{{ old('username') }}" required maxlength="255"
-               class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-    </div>
-
-    <div>
-        <label for="password" class="block text-sm font-semibold text-slate-700">Kata Sandi <span class="text-red-500">*</span></label>
-        <input type="password" id="password" name="password" required
-               class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-    </div>
-
-    <div>
-        <label for="password_confirmation" class="block text-sm font-semibold text-slate-700">Konfirmasi Kata Sandi <span class="text-red-500">*</span></label>
-        <input type="password" id="password_confirmation" name="password_confirmation" required
-               class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-    </div>
-
-    <div>
-        <label for="role" class="block text-sm font-semibold text-slate-700">Role <span class="text-red-500">*</span></label>
-        <select id="role" name="role" required
-                class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
-            @foreach (\App\Models\User::roles() as $value => $label)
-                <option value="{{ $value }}" {{ old('role') === $value ? 'selected' : '' }}>{{ $label }}</option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="grid gap-4 sm:grid-cols-2">
         <div>
-            <label for="nim_nip" class="block text-sm font-semibold text-slate-700">NIM / NIP / NIDN / NIK <span class="text-xs font-normal text-slate-400">(opsional)</span></label>
-            <input type="text" id="nim_nip" name="nim_nip" value="{{ old('nim_nip') }}" maxlength="50"
+            <label for="name" class="block text-sm font-semibold text-slate-700">Nama Lengkap <span class="text-red-500">*</span></label>
+            <input type="text" id="name" name="name" value="{{ old('name') }}" required maxlength="255"
                    class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
         </div>
+
         <div>
-            <label for="institution" class="block text-sm font-semibold text-slate-700">Instansi <span class="text-xs font-normal text-slate-400">(opsional)</span></label>
-            <input type="text" id="institution" name="institution" value="{{ old('institution') }}" maxlength="255"
+            <label for="email" class="block text-sm font-semibold text-slate-700">Email <span class="text-xs font-normal text-slate-400">(opsional, bisa dilengkapi nanti)</span></label>
+            <input type="email" id="email" name="email" value="{{ old('email') }}" maxlength="255"
                    class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
         </div>
-    </div>
 
-    <div class="flex items-center justify-end gap-3 pt-2">
-        <a href="{{ route('admin.users.index') }}"
-           class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
-            Batal
-        </a>
-        <button type="submit"
-                class="rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
-            Simpan
-        </button>
-    </div>
-</form>
+        <div>
+            <label for="username" class="block text-sm font-semibold text-slate-700">Username <span class="text-red-500">*</span></label>
+            <input type="text" id="username" name="username" value="{{ old('username') }}" required maxlength="255"
+                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+        </div>
+
+        <div>
+            <label for="password" class="block text-sm font-semibold text-slate-700">Kata Sandi <span class="text-red-500">*</span></label>
+            <input type="password" id="password" name="password" required
+                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+        </div>
+
+        <div>
+            <label for="password_confirmation" class="block text-sm font-semibold text-slate-700">Konfirmasi Kata Sandi <span class="text-red-500">*</span></label>
+            <input type="password" id="password_confirmation" name="password_confirmation" required
+                   class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+        </div>
+
+        <div>
+            <label for="role" class="block text-sm font-semibold text-slate-700">Role <span class="text-red-500">*</span></label>
+            <select id="role" name="role" required
+                    class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                @foreach (\App\Models\User::roles() as $value => $label)
+                    <option value="{{ $value }}" {{ old('role') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+                <label for="nim_nip" class="block text-sm font-semibold text-slate-700">NIM / NIP / NIDN / NIK <span class="text-xs font-normal text-slate-400">(opsional)</span></label>
+                <input type="text" id="nim_nip" name="nim_nip" value="{{ old('nim_nip') }}" maxlength="50"
+                       class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+            </div>
+            <div>
+                <label for="institution" class="block text-sm font-semibold text-slate-700">Instansi <span class="text-xs font-normal text-slate-400">(opsional)</span></label>
+                <input type="text" id="institution" name="institution" value="{{ old('institution') }}" maxlength="255"
+                       class="mt-1.5 w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+            <a href="{{ route('admin.users.index') }}"
+               class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600">
+                Batal
+            </a>
+            <button type="submit"
+                    class="rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
+                Simpan
+            </button>
+        </div>
+    </form>
+</div>
 
 @endsection
