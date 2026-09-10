@@ -402,7 +402,7 @@
         </div>
 
         <div class="reveal mt-12 grid gap-5 md:grid-cols-3">
-            <a href="{{ route('tools.index') }}" class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-7 transition hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
+            <a href="{{ route('tools.index') }}" class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-7 transition hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
                 <div class="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-emerald-50 transition duration-700 group-hover:scale-150"></div>
                 <div class="relative">
                     <span class="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 transition group-hover:shadow-emerald-600/30">
@@ -423,7 +423,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('sample-tests.catalog') }}" class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-7 transition hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
+            <a href="{{ route('sample-tests.catalog') }}" class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-7 transition hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
                 <div class="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-emerald-50 transition duration-700 group-hover:scale-150"></div>
                 <div class="relative">
                     <span class="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 transition group-hover:shadow-emerald-600/30">
@@ -444,7 +444,7 @@
                 </div>
             </a>
 
-            <a href="{{ auth()->check() ? route('research.index') : route('register') }}" class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-7 transition hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
+            <a href="{{ auth()->check() ? route('research.index') : route('register') }}" class="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-7 transition hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/5 hover:-translate-y-0.5">
                 <div class="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-emerald-50 transition duration-700 group-hover:scale-150"></div>
                 <div class="relative">
                     <span class="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 transition group-hover:shadow-emerald-600/30">
