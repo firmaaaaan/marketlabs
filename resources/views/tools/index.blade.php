@@ -118,8 +118,9 @@
                     {{-- Gambar / placeholder alat --}}
                     <a href="{{ route('tools.show', $tool) }}" class="block">
                         <div class="relative flex h-32 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100">
-                            @if ($tool->image)
-                                <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
+                            @php $displayImage = $tool->images->isNotEmpty() ? $tool->images->first()->path : $tool->image; @endphp
+                            @if ($displayImage)
+                                <img src="{{ asset('storage/' . $displayImage) }}" alt="{{ $tool->name }}"
                                      class="h-full w-full object-cover">
                             @else
                                 <svg class="h-12 w-12 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor">

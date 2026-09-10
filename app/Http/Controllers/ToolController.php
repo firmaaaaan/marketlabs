@@ -10,7 +10,7 @@ class ToolController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Tool::query()->with('category')->active();
+        $query = Tool::query()->with(['category', 'images'])->active();
 
         if ($search = $request->query('search')) {
             $escaped = addcslashes($search, '%_');
