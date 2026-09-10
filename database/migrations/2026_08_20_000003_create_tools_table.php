@@ -12,10 +12,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('code')->unique();
             $table->string('name');
-            $table->string('type', 20)->default('kesehatan')->after('name');
-            $table->foreignUuid('category_id')->nullable()->after('type')->constrained('tool_categories')->nullOnDelete();
-            $table->string('brand')->nullable()->after('category_id');
-            $table->string('series')->nullable()->after('brand');
+            $table->string('type', 20)->default('kesehatan');
+            $table->foreignUuid('category_id')->nullable()->constrained('tool_categories')->nullOnDelete();
+            $table->string('brand')->nullable();
+            $table->string('series')->nullable();
             $table->text('description')->nullable();
             $table->integer('total_stock')->default(0);
             $table->integer('available_stock')->default(0);
