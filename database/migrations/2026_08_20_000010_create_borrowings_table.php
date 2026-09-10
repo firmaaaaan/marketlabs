@@ -29,6 +29,7 @@ return new class extends Migration
             $table->date('return_date');
             $table->unsignedInteger('discount')->default(0);
             $table->unsignedInteger('penalty')->default(0);
+            $table->boolean('is_free')->default(false);
             $table->text('pickup_notes')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->text('notes')->nullable();
