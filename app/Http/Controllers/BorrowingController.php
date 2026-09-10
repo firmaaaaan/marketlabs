@@ -123,7 +123,7 @@ class BorrowingController extends Controller
             'borrow_date' => ['required', 'date', 'after_or_equal:today'],
             'return_date' => ['required', 'date', 'after:borrow_date'],
             'notes' => ['nullable', 'string', 'max:2000'],
-            'document' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120'],
+            'document' => ['required', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120'],
         ]);
 
         $userName = Str::slug(auth()->user()->name);

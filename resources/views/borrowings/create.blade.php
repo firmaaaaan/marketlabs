@@ -134,11 +134,14 @@
 
                 <div class="mt-5">
                     <label for="document" class="block text-sm font-semibold text-slate-700">
-                        Dokumen Pendukung <span class="font-normal text-slate-400">(opsional)</span>
+                        Surat Permohonan Peminjaman <span class="text-red-500">*</span>
                     </label>
-                    <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required
                            class="mt-1.5 block w-full cursor-pointer rounded-lg border border-slate-300 text-sm text-slate-600 file:mr-4 file:cursor-pointer file:rounded-l-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100">
-                    <p class="mt-1.5 text-xs text-slate-400">PDF, Word, atau gambar — maksimal 5 MB. Contoh: surat permohonan resmi, proposal riset.</p>
+                    <p class="mt-1.5 text-xs text-slate-400">PDF, Word, atau gambar — maksimal 5 MB.</p>
+                    @error('document')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                     @error('document')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror

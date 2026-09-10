@@ -74,7 +74,7 @@
         @if ($borrowing->document_path)
             <div class="mt-4 flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4">
                 <div class="min-w-0">
-                    <p class="text-sm font-semibold text-slate-900">Dokumen Pendukung</p>
+                    <p class="text-sm font-semibold text-slate-900">Surat Permohonan Peminjaman</p>
                     <p class="truncate text-xs text-slate-500">{{ $borrowing->document_name }}</p>
                 </div>
                 <a href="{{ route('borrowings.document', $borrowing) }}" target="_blank"
