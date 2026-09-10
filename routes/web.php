@@ -145,6 +145,7 @@ Route::middleware(['auth', 'maintenance', 'throttle.mutations'])->group(function
         Route::get('/peminjaman/{borrowing}', [BorrowingController::class, 'show'])->name('borrowings.show');
         Route::get('/peminjaman/{borrowing}/invoice', [BorrowingController::class, 'invoice'])->name('borrowings.invoice');
         Route::delete('/peminjaman/{borrowing}', [BorrowingController::class, 'cancel'])->name('borrowings.cancel');
+        Route::post('/peminjaman/{borrowing}/unggah-ulang', [BorrowingController::class, 'reupload'])->name('borrowings.reupload');
 
         Route::get('/riset', [ResearchProposalController::class, 'index'])->name('research.index');
         Route::get('/riset/cari-anggota', [ResearchProposalController::class, 'searchMember'])->middleware('throttle:search')->name('research.search-member');

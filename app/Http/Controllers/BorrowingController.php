@@ -214,6 +214,48 @@ class BorrowingController extends Controller
         return back()->with('success', 'Peminjaman dibatalkan.');
     }
 
+    public function reupload(Request $request, Borrowing $borrowing)
+    {
+        abort_unless($borrowing->user_id === auth()->id(), 403);
+        abort_unless($borrowing->status === Borrowing::STATUS_REJECTED, 403);
+
+        $validated = $request->validate([
+            'document' => ['required', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120'],
+        ]);
+
+        // Hapus file lama jika ada.
+        if ($borrowing->document_path) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($borrowing->document_path);
+        }
+
+        $userName = Str::slug(auth()->user()->name);
+        $uniqueSuffix = time().'-'.Str::random(6);
+        $ext = strtolower($request->file('document')->getClientOriginalExtension());
+
+        $documentPath = $request->file('document')->storeAs(
+            'borrowing-documents',
+            'dokumen-peminjaman-'.$userName.'-'.$uniqueSuffix.'.'.$ext
+        );
+
+        $borrowing->update([
+            'document_path' => $documentPath,
+            'status' => Borrowing::STATUS_PENDING,
+            'rejection_reason' => null,
+        ]);
+
+        // Beri tahu admin bahwa ada peminjaman ulang.
+        foreach (User::admin()->get() as $admin) {
+            $admin->notify(new BorrowingNotification(
+                'Peminjaman Diunggah Ulang',
+                "Peminjaman {$borrowing->code} telah diunggah ulang oleh ".auth()->user()->name.' dan menunggu persetujuan.',
+                route('admin.borrowings.show', $borrowing),
+                notifyViaEmail: true,
+            ));
+        }
+
+        return back()->with('success', "Surat permohonan untuk peminjaman {$borrowing->code} berhasil diunggah ulang dan menunggu persetujuan.");
+    }
+
     public function invoice(Borrowing $borrowing)
     {
         abort_unless($borrowing->user_id === auth()->id(), 403);
