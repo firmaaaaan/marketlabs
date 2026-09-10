@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             SampleTestSeeder::class,
             EventSeeder::class,
             MitraSeeder::class,
+            BenchFeeLevelSeeder::class,
         ]);
     }
 }

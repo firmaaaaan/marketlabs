@@ -21,7 +21,7 @@ class AdminBenchFeeController extends Controller
     {
         $validated = $request->validate([
             'rates' => ['required', 'array'],
-            'rates.*.level' => ['required', Rule::in(['S1', 'S2/S3'])],
+            'rates.*.level' => ['required', Rule::in(\App\Models\BenchFeeLevel::names())],
             'rates.*.type' => ['required', Rule::in(['dalam', 'luar'])],
             'rates.*.category' => ['required', Rule::in(array_keys(ResearchProposal::benchFeeCategories()))],
             'rates.*.rate' => ['required', 'integer', 'min:0'],

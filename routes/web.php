@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminActivityLogController;
 use App\Http\Controllers\Admin\AdminAnalyticsController;
 use App\Http\Controllers\Admin\AdminBackupController;
 use App\Http\Controllers\Admin\AdminBenchFeeController;
+use App\Http\Controllers\Admin\AdminBenchFeeLevelController;
 use App\Http\Controllers\Admin\AdminBorrowingController;
 use App\Http\Controllers\Admin\AdminCalendarController;
 use App\Http\Controllers\Admin\AdminCategoryController;
@@ -233,6 +234,10 @@ Route::middleware(['auth', 'maintenance', 'throttle.mutations'])->group(function
 
         Route::get('/bench-fee', [AdminBenchFeeController::class, 'index'])->name('bench-fee.index');
         Route::put('/bench-fee', [AdminBenchFeeController::class, 'update'])->name('bench-fee.update');
+
+        Route::post('/bench-fee/levels', [AdminBenchFeeLevelController::class, 'store'])->name('bench-fee.levels.store');
+        Route::patch('/bench-fee/levels/{level}', [AdminBenchFeeLevelController::class, 'update'])->name('bench-fee.levels.update');
+        Route::delete('/bench-fee/levels/{level}', [AdminBenchFeeLevelController::class, 'destroy'])->name('bench-fee.levels.destroy');
 
         Route::get('/whatsapp', [AdminWhatsAppController::class, 'index'])->name('whatsapp.index');
         Route::put('/whatsapp', [AdminWhatsAppController::class, 'update'])->name('whatsapp.update');

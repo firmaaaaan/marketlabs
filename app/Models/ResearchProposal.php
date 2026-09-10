@@ -204,8 +204,7 @@ class ResearchProposal extends Model
     }
 
     /**
-     * Tarif bench fee per 3 bulan: jenjang (S1 / S2/S3) × jenis instansi (dalam/luar)
-     * × kategori (biomedis / non-biomedis).
+     * Tarif bench fee per 3 bulan: jenjang × jenis instansi (dalam/luar) × kategori (biomedis / non-biomedis).
      *
      * Diambil dari tabel bench_fee_rates yang bisa diperbarui admin; bila belum ada
      * data, kembali ke tarif default.
@@ -214,17 +213,21 @@ class ResearchProposal extends Model
      */
     public static function benchFeeRates(): array
     {
-        $defaults = [
-            'S1' => [
-                'dalam' => ['biomedis' => 75000, 'non-biomedis' => 75000],
-                'luar' => ['biomedis' => 100000, 'non-biomedis' => 100000],
-            ],
-            'S2/S3' => [
-                'dalam' => ['biomedis' => 150000, 'non-biomedis' => 150000],
-                'luar' => ['biomedis' => 200000, 'non-biomedis' => 200000],
-            ],
-        ];
+        // Build default structure from bench_fee_levels table.
+        $levels = \App\Models\BenchFeeLevel::pluck('name')->toArray();
+        $categories = array_keys(self::benchFeeCategories());
+        $types = ['dalam', 'luar'];
 
+        $defaults = [];
+        foreach ($levels as $level) {
+            foreach ($types as $type) {
+                foreach ($categories as $category) {
+                    $defaults[$level][$type][$category] = 0;
+                }
+            }
+        }
+
+        // Override with saved rates.
         $rates = BenchFeeRate::all();
 
         if ($rates->isEmpty()) {

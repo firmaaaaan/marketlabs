@@ -219,15 +219,15 @@
                                             <label class="block text-sm font-semibold text-slate-700">Jenjang <span
                                                     class="text-red-500">*</span></label>
                                             <div class="mt-2 flex flex-wrap gap-3">
-                                                @foreach (['S1' => 'S1', 'S2/S3' => 'S2 / S3'] as $value => $label)
+                                                @foreach (\App\Models\BenchFeeLevel::ordered()->get() as $level)
                                                     <label
                                                         class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 transition hover:border-emerald-300">
                                                         <input type="radio" name="bench_fee_level"
-                                                            value="{{ $value }}"
-                                                            {{ old('bench_fee_level') === $value ? 'checked' : '' }}
+                                                            value="{{ $level->name }}"
+                                                            {{ old('bench_fee_level') === $level->name ? 'checked' : '' }}
                                                             class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-500">
                                                         <span
-                                                            class="text-sm font-medium text-slate-700">{{ $label }}</span>
+                                                            class="text-sm font-medium text-slate-700">{{ $level->label }}</span>
                                                     </label>
                                                 @endforeach
                                             </div>
@@ -279,20 +279,20 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-slate-100">
-                                                @foreach (['S1' => 'S1', 'S2/S3' => 'S2 / S3'] as $level => $levelLabel)
+                                                @foreach (\App\Models\BenchFeeLevel::ordered()->get() as $level)
                                                     @foreach (['dalam' => 'Dalam', 'luar' => 'Luar'] as $type => $typeLabel)
                                                         @foreach (\App\Models\ResearchProposal::benchFeeCategories() as $category => $categoryLabel)
                                                             <tr>
                                                                 <td class="px-4 py-2.5 font-medium text-slate-900">
-                                                                    {{ $levelLabel }}</td>
+                                                                    {{ $level->label }}</td>
                                                                 <td class="px-4 py-2.5 text-slate-600">{{ $typeLabel }}
                                                                 </td>
                                                                 <td class="px-4 py-2.5 text-slate-600">{{ $categoryLabel }}
                                                                 </td>
-                                                                <td
+                                                                 <td
                                                                     class="px-4 py-2.5 text-right font-semibold text-slate-900">
                                                                     Rp
-                                                                    {{ number_format($rates[$level][$type][$category] ?? 0, 0, ',', '.') }}
+                                                                    {{ number_format($rates[$level->name][$type][$category] ?? 0, 0, ',', '.') }}
                                                                 </td>
                                                             </tr>
                                                         @endforeach
