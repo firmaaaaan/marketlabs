@@ -496,11 +496,11 @@
                                 @if ($footerLogo->url)
                                     <a href="{{ $footerLogo->url }}" target="_blank" rel="noopener" title="{{ $footerLogo->name }}">
                                         <img src="{{ $footerLogo->image_url }}" alt="{{ $footerLogo->name }}"
-                                             class="h-9 w-auto object-contain transition hover:opacity-75">
+                                             class="h-14 w-auto object-contain transition hover:opacity-75">
                                     </a>
                                 @else
                                     <img src="{{ $footerLogo->image_url }}" alt="{{ $footerLogo->name }}"
-                                         class="h-9 w-auto object-contain">
+                                         class="h-14 w-auto object-contain">
                                 @endif
                             @endforeach
                         </div>
