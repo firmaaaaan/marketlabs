@@ -126,8 +126,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 17l8 4m8-4l-8 4" />
                                 </svg>
                             @endif
-                            <span class="absolute top-2 left-2 rounded-md px-2 py-0.5 text-[10px] font-bold shadow-sm
-                                {{ $tool->type === 'non-kesehatan' ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' }}">
+                            <span class="absolute top-2 left-2 rounded-md px-2 py-0.5 text-[10px] font-bold
+                                {{ $tool->type === 'non-kesehatan' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700' }}">
                                 {{ $tool->type === 'non-kesehatan' ? 'Non-Kesehatan' : 'Kesehatan' }}
                             </span>
                         </div>
