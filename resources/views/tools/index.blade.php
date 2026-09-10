@@ -114,7 +114,7 @@
             <div class="min-w-0 flex-1">
                 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             @forelse ($tools as $tool)
-                <div class="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div class="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md">
                     {{-- Gambar / placeholder alat --}}
                     <a href="{{ route('tools.show', $tool) }}" class="block">
                         <div class="relative flex h-32 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100">
