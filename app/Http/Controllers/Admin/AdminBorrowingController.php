@@ -246,6 +246,21 @@ class AdminBorrowingController extends Controller
         return back()->with('success', 'Biaya & catatan pengambilan peminjaman '.$borrowing->code.' berhasil diperbarui.');
     }
 
+    public function toggleFreeCost(Borrowing $borrowing)
+    {
+        abort_unless(auth()->user()->isAdmin(), 403);
+
+        $newIsFree = ! $borrowing->is_free;
+
+        $borrowing->update([
+            'is_free' => $newIsFree,
+        ]);
+
+        $label = $newIsFree ? 'dinolkan (gratis)' : 'dikembalikan ke berbayar';
+
+        return back()->with('success', 'Biaya peminjaman '.$borrowing->code.' berhasil '.$label.'.');
+    }
+
     public function invoice(Borrowing $borrowing)
     {
         $borrowing->load(['items.tool', 'user']);

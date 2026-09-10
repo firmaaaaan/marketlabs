@@ -215,6 +215,7 @@ Route::middleware(['auth', 'maintenance', 'throttle.mutations'])->group(function
         Route::patch('/borrowings/bulk-status', [AdminBorrowingController::class, 'bulkUpdateStatus'])->name('borrowings.bulk-status');
         Route::patch('/borrowings/{borrowing}/billing', [AdminBorrowingController::class, 'updateBilling'])->name('borrowings.billing');
         Route::patch('/borrowings/{borrowing}/payment', [AdminBorrowingController::class, 'updatePayment'])->name('borrowings.payment');
+        Route::patch('/borrowings/{borrowing}/free-cost', [AdminBorrowingController::class, 'toggleFreeCost'])->name('borrowings.free-cost');
 
         Route::get('/riset', [AdminResearchProposalController::class, 'index'])->name('research.index');
         Route::get('/riset/export', [AdminResearchProposalController::class, 'export'])->middleware('throttle:admin-ops')->name('research.export');

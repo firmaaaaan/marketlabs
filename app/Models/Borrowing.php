@@ -45,6 +45,7 @@ class Borrowing extends Model
         'return_date',
         'discount',
         'penalty',
+        'is_free',
         'pickup_notes',
         'notes',
         'rejection_reason',
@@ -111,6 +112,11 @@ class Borrowing extends Model
         return self::typeLabel($this->borrower_type);
     }
 
+    public function getIsFreeLabelAttribute(): string
+    {
+        return $this->is_free ? 'Gratis' : 'Berbayar';
+    }
+
     /**
      * Nama file dokumen pendukung (tanpa path).
      */
@@ -158,6 +164,10 @@ class Borrowing extends Model
      */
     public function getTotalCostAttribute(): int
     {
+        if ($this->is_free) {
+            return (int) $this->penalty;
+        }
+
         return max(0, $this->base_cost - $this->discount_amount + (int) $this->penalty);
     }
 

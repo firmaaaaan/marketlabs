@@ -76,8 +76,8 @@
                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ditagihkan kepada</p>
                 <p class="mt-1 font-bold text-slate-900">{{ $borrowing->user->name }}</p>
                 <p class="text-sm text-slate-600">{{ $borrowing->user->email }}</p>
-                <p class="text-sm text-slate-600">NIM/NIP/NIDN/NIK: {{ $borrowing->nim_nip ?? '-' }}</p>
-                <p class="text-sm text-slate-600">Instansi: {{ $borrowing->institution ?? '-' }}</p>
+                <p class="text-sm text-slate-600">{{ $borrowing->nim_nip ?? '-' }}</p>
+                <p class="text-sm text-slate-600">{{ $borrowing->institution ?? '-' }}</p>
                 <span class="mt-2 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
                     Peminjaman {{ $borrowing->borrower_type_label }}
                 </span>
@@ -139,32 +139,23 @@
                 @endif
                 <div class="flex justify-between border-t border-slate-200 pt-2">
                     <span class="font-bold text-slate-900">Total</span>
-                    <span class="text-lg font-extrabold text-emerald-700">{{ $borrowing->formatted_total_cost }}</span>
+                    <span class="text-lg font-extrabold text-emerald-700">
+                        @if ($borrowing->is_free)
+                            <span class="mr-2 inline-block rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-bold text-emerald-700">GRATIS</span>
+                        @endif
+                        {{ $borrowing->formatted_total_cost }}
+                    </span>
                 </div>
             </div>
         </div>
 
         {{-- Catatan --}}
-        @if ($borrowing->purpose || $borrowing->pickup_notes || $borrowing->notes)
+        @if ($borrowing->notes)
             <div class="mt-8 space-y-4 border-t border-slate-100 pt-6 text-sm">
-                @if ($borrowing->purpose)
-                    <div>
-                        <p class="font-bold text-slate-900">Tujuan Peminjaman</p>
-                        <p class="mt-1 leading-relaxed text-slate-600">{{ $borrowing->purpose }}</p>
-                    </div>
-                @endif
-                @if ($borrowing->pickup_notes)
-                    <div>
-                        <p class="font-bold text-slate-900">Catatan Pengambilan Alat</p>
-                        <p class="mt-1 leading-relaxed text-slate-600">{{ $borrowing->pickup_notes }}</p>
-                    </div>
-                @endif
-                @if ($borrowing->notes)
-                    <div>
-                        <p class="font-bold text-slate-900">Catatan Peminjam</p>
-                        <p class="mt-1 leading-relaxed text-slate-600">{{ $borrowing->notes }}</p>
-                    </div>
-                @endif
+                <div>
+                    <p class="font-bold text-slate-900">Catatan Peminjam</p>
+                    <p class="mt-1 leading-relaxed text-slate-600">{{ $borrowing->notes }}</p>
+                </div>
             </div>
         @endif
 

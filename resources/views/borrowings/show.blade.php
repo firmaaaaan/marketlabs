@@ -153,7 +153,12 @@
                 @endif
                 <div class="mt-2 flex justify-between border-t border-emerald-200 pt-2 text-sm">
                     <span class="font-semibold text-slate-800">Total biaya</span>
-                    <span class="text-lg font-extrabold text-emerald-700">{{ $borrowing->formatted_total_cost }}</span>
+                    <span class="text-lg font-extrabold text-emerald-700">
+                        @if ($borrowing->is_free)
+                            <span class="mr-2 inline-block rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-bold text-emerald-700">GRATIS</span>
+                        @endif
+                        {{ $borrowing->formatted_total_cost }}
+                    </span>
                 </div>
             </div>
 

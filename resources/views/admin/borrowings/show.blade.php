@@ -133,7 +133,12 @@
             @endif
             <div class="mt-2 flex justify-between border-t border-emerald-200 pt-2 text-sm">
                 <span class="font-semibold text-slate-800">Total biaya</span>
-                <span class="text-lg font-extrabold text-emerald-700">{{ $borrowing->formatted_total_cost }}</span>
+                <span class="text-lg font-extrabold text-emerald-700">
+                    @if ($borrowing->is_free)
+                        <span class="mr-2 inline-block rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-bold text-emerald-700">GRATIS</span>
+                    @endif
+                    {{ $borrowing->formatted_total_cost }}
+                </span>
             </div>
         </div>
 
@@ -162,6 +167,13 @@
             {{-- Biaya & catatan pengambilan --}}
             <div class="mt-8 border-t border-slate-100 pt-6">
                 <h3 class="text-sm font-bold text-slate-900">Biaya & Catatan Pengambilan</h3>
+
+                @if ($borrowing->is_free)
+                    <div class="mt-3 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                        Peminjaman ini ditandai <strong>GRATIS</strong>. Biaya sewa diabaikan, namun denda keterlambatan/kerusakan tetap berlaku.
+                    </div>
+                @endif
+
                 <form action="{{ route('admin.borrowings.billing', $borrowing) }}" method="POST" class="mt-4 grid gap-4 sm:grid-cols-2">
                     @csrf
                     @method('PATCH')
@@ -203,6 +215,22 @@
                         </button>
                     </div>
                 </form>
+
+                @if (auth()->user()->isAdmin())
+                    <div class="mt-4 border-t border-slate-100 pt-4">
+                        @if ($borrowing->is_free)
+                            <button type="button" onclick="openFreeCostModal()"
+                                    class="rounded-lg border border-amber-200 px-5 py-2.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-50">
+                                Batalkan Nolkan Biaya
+                            </button>
+                        @else
+                            <button type="button" onclick="openFreeCostModal()"
+                                    class="rounded-lg border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50">
+                                Nolkan Biaya
+                            </button>
+                        @endif
+                    </div>
+                @endif
             </div>
         @endif
 
@@ -213,7 +241,12 @@
                     <h3 class="text-sm font-bold text-slate-900">Status Pembayaran</h3>
                     <p class="mt-1 text-sm text-slate-600">
                         Invoice: <span class="font-semibold text-slate-900">{{ $borrowing->invoice_number }}</span>
-                        · Total: <span class="font-semibold text-emerald-700">{{ $borrowing->formatted_total_cost }}</span>
+                        · Total: <span class="font-semibold text-emerald-700">
+                            @if ($borrowing->is_free)
+                                <span class="mr-1 inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">GRATIS</span>
+                            @endif
+                            {{ $borrowing->formatted_total_cost }}
+                        </span>
                     </p>
                     <span class="mt-2 inline-block rounded-full px-4 py-1.5 text-sm font-semibold {{ $borrowing->is_paid ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
                         {{ $borrowing->payment_status_label }}
@@ -349,22 +382,109 @@
     </div>
 </div>
 
+{{-- Modal Nolkan Biaya --}}
+<div id="freeCostModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50" style="display: none;">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-900" id="freeCostModalTitle">Nolkan Biaya</h3>
+            <button type="button" onclick="closeFreeCostModal()" class="text-slate-400 transition hover:text-slate-600">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-4">
+            <div id="freeCostModalIconSet" class="flex items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="text-sm text-slate-600" id="freeCostModalDesc">
+                    Biaya sewa peminjaman ini akan dinolkan. Denda keterlambatan/kerusakan tetap berlaku.
+                </p>
+            </div>
+            <div id="freeCostModalIconCancel" class="hidden items-center gap-3">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50">
+                    <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <p class="text-sm text-slate-600" id="freeCostModalDescCancel">
+                    Penolakan biaya dibatalkan. Biaya akan dihitung kembali sesuai tarif normal.
+                </p>
+            </div>
+        </div>
+
+        <form action="{{ route('admin.borrowings.free-cost', $borrowing) }}" method="POST" class="mt-5">
+            @csrf
+            @method('PATCH')
+
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeFreeCostModal()"
+                        class="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    Batal
+                </button>
+                <button type="submit" id="freeCostModalSubmit"
+                        class="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/30 transition hover:bg-red-700">
+                    Ya, Nolkan Biaya
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @push('scripts')
 <script>
     function openRejectModal() {
-        const modal = document.getElementById('rejectModal');
-        modal.style.display = 'flex';
+        document.getElementById('rejectModal').style.display = 'flex';
     }
 
     function closeRejectModal() {
-        const modal = document.getElementById('rejectModal');
-        modal.style.display = 'none';
+        document.getElementById('rejectModal').style.display = 'none';
     }
 
     document.getElementById('rejectModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeRejectModal();
+        if (e.target === this) closeRejectModal();
+    });
+
+    const isFree = {{ $borrowing->is_free ? 'true' : 'false' }};
+
+    function openFreeCostModal() {
+        const modal = document.getElementById('freeCostModal');
+        const title = document.getElementById('freeCostModalTitle');
+        const iconSet = document.getElementById('freeCostModalIconSet');
+        const iconCancel = document.getElementById('freeCostModalIconCancel');
+        const submit = document.getElementById('freeCostModalSubmit');
+
+        if (isFree) {
+            title.textContent = 'Batalkan Nolkan Biaya';
+            iconSet.classList.add('hidden');
+            iconSet.classList.remove('flex');
+            iconCancel.classList.remove('hidden');
+            iconCancel.classList.add('flex');
+            submit.textContent = 'Ya, Batalkan';
+            submit.className = 'rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-600/30 transition hover:bg-amber-700';
+        } else {
+            title.textContent = 'Nolkan Biaya';
+            iconCancel.classList.add('hidden');
+            iconCancel.classList.remove('flex');
+            iconSet.classList.remove('hidden');
+            iconSet.classList.add('flex');
+            submit.textContent = 'Ya, Nolkan Biaya';
+            submit.className = 'rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/30 transition hover:bg-red-700';
         }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeFreeCostModal() {
+        document.getElementById('freeCostModal').style.display = 'none';
+    }
+
+    document.getElementById('freeCostModal').addEventListener('click', function(e) {
+        if (e.target === this) closeFreeCostModal();
     });
 </script>
 @endpush
