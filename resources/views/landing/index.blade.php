@@ -190,7 +190,7 @@
 
         <div class="reveal mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             @forelse ($featuredTools as $tool)
-                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
+                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:border-emerald-300 hover:shadow-md">
                     <a href="{{ route('tools.show', $tool) }}" class="block overflow-hidden">
                         <div class="relative flex h-48 items-center justify-center bg-slate-50">
                             @if ($tool->image)
@@ -306,7 +306,7 @@
 
         <div class="reveal mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             @forelse ($featuredParameters as $parameter)
-                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
+                <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:border-emerald-300 hover:shadow-md">
                     <a href="{{ route('sample-tests.parameter', $parameter) }}" class="block overflow-hidden">
                         <div class="relative flex h-48 items-center justify-center bg-slate-50">
                             @if ($parameter->image)
