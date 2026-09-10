@@ -2,14 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\GenerateCertificatesBatchJob;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\User;
 use App\Support\FormFields;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -331,7 +329,6 @@ class EventFlowTest extends TestCase
     public function test_admin_can_generate_certificates_for_attended_only(): void
     {
         Storage::fake('public');
-        Bus::fake();
         $admin = User::factory()->create();
 
         $event = $this->makeEvent();
@@ -375,24 +372,17 @@ class EventFlowTest extends TestCase
         $this->assertEquals('lato', $event->certificate_layout[0]['font']);
         $this->assertEquals('great_vibes', $event->certificate_layout_back[0]['font']);
 
-        // Generate — dispatch batch job ke queue.
+        // Generate — proses synchronously.
         $this->actingAs($admin)
             ->post(route('admin.events.certificate.generate', $event))
             ->assertRedirect()
             ->assertSessionHas('success');
 
-        Bus::assertDispatched(GenerateCertificatesBatchJob::class, function ($job) use ($event) {
-            return $job->event->id === $event->id;
-        });
-
-        // jalankan batch job secara sync untuk verifikasi
-        $batchJob = new GenerateCertificatesBatchJob($event);
-        $batchJob->handle();
-
         $attended->refresh();
         $absent->refresh();
 
-        $this->assertEquals('pending', $attended->certificate_status);
+        $this->assertEquals('completed', $attended->certificate_status);
+        $this->assertNotNull($attended->certificate_number);
         $this->assertNull($absent->certificate_number);
     }
 

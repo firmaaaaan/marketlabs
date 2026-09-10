@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\ImportExcelJob;
+use App\Notifications\EventNotification;
+use App\Support\ImportReadFilter;
 use App\Models\User;
 use App\Support\ExcelExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -255,10 +257,73 @@ class AdminUserController extends Controller
         }
 
         $path = $file->store('imports');
+        $fullPath = storage_path('app/private/'.$path);
 
-        ImportExcelJob::dispatch(storage_path('app/private/'.$path), 'user', auth()->id());
+        set_time_limit(0);
 
-        return back()->with('success', 'Import user sedang diproses di queue. Anda akan mendapat notifikasi setelah selesai.');
+        try {
+            $reader = IOFactory::createReaderForFile($fullPath);
+            $reader->setReadDataOnly(true);
+            $reader->setReadEmptyCells(false);
+            $reader->setReadFilter(new ImportReadFilter);
+            $spreadsheet = $reader->load($fullPath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $allRows = $sheet->toArray(null, true, true, true);
+            $spreadsheet->disconnectWorksheets();
+
+            $columns = ['Nama', 'Username', 'NIM/NIK/NIP', 'Password', 'Role'];
+
+            $created = 0;
+            $skipped = 0;
+            $skipReasons = [];
+            $indexMap = [];
+
+            foreach ($allRows as $i => $row) {
+                $row = array_values($row);
+
+                if ($i === 1) {
+                    $row[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) ($row[0] ?? ''));
+                    $indexMap = $this->buildColumnMap($row, $columns);
+
+                    continue;
+                }
+
+                $values = $this->mapRow($row, $indexMap);
+
+                if (empty(implode('', $values))) {
+                    continue;
+                }
+
+                $result = $this->importRow($values);
+
+                if ($result === 'created') {
+                    $created++;
+                } else {
+                    $skipped++;
+                    if (count($skipReasons) < 5) {
+                        $skipReasons[] = $result;
+                    }
+                }
+            }
+
+            $message = "Import selesai: {$created} user berhasil ditambahkan.";
+            if ($skipped > 0) {
+                $message .= " {$skipped} baris dilewati.";
+                if (! empty($skipReasons)) {
+                    $message .= ' Alasan: '.implode('; ', $skipReasons);
+                }
+            }
+
+            auth()->user()->notify(new EventNotification('Import Selesai', $message, notifyViaEmail: false));
+
+            return back()->with('success', $message);
+        } catch (\Throwable $e) {
+            auth()->user()->notify(new EventNotification('Import Gagal', "Import user gagal: {$e->getMessage()}", notifyViaEmail: false));
+
+            return back()->with('error', 'Import gagal: '.$e->getMessage());
+        } finally {
+            @unlink($fullPath);
+        }
     }
 
     /**

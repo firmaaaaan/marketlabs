@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\ZipDocumentsJob;
 use App\Models\Borrowing;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\HealthCheckup;
 use App\Models\ResearchProposal;
 use App\Models\SampleTest;
+use App\Notifications\EventNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use ZipArchive;
 
 class AdminDocumentDownloadController extends Controller
 {
@@ -132,14 +133,81 @@ class AdminDocumentDownloadController extends Controller
             'date_to' => ['required', 'date', 'after_or_equal:date_from'],
         ]);
 
-        ZipDocumentsJob::dispatch(
-            $validated['feature'],
-            $validated['date_from'],
-            $validated['date_to'],
-            auth()->id()
-        );
+        set_time_limit(0);
 
-        return back()->with('success', 'Pembuatan ZIP dokumen sedang diproses di queue. Anda akan mendapat notifikasi setelah selesai.');
+        $feature = $validated['feature'];
+        $dateFrom = $validated['date_from'];
+        $dateTo = $validated['date_to'];
+        $userId = auth()->id();
+
+        try {
+            $meta = $this->features()[$feature];
+            $model = $meta['model'];
+            $dateColumn = $meta['date_column'];
+
+            $records = $model::query()
+                ->whereDate($dateColumn, '>=', $dateFrom)
+                ->whereDate($dateColumn, '<=', $dateTo)
+                ->latest($dateColumn)
+                ->get();
+
+            $zipFile = storage_path('app/zip-downloads/dokumen-'.$feature.'-'.now()->format('Ymd-His').'.zip');
+            $dir = dirname($zipFile);
+            if (! is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            $zip = new ZipArchive;
+            if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                throw new \RuntimeException('Gagal membuat file ZIP.');
+            }
+
+            foreach ($records as $record) {
+                $files = $this->getDocumentPaths($record, $feature);
+                if ($files->isEmpty()) {
+                    continue;
+                }
+
+                $folderName = $this->sanitizeFolderName($record->{$meta['code_column']});
+
+                foreach ($files as $label => $path) {
+                    $disk = $this->resolveDisk($path);
+                    if (! $disk || ! Storage::disk($disk)->exists($path)) {
+                        continue;
+                    }
+
+                    $content = Storage::disk($disk)->get($path);
+                    $ext = pathinfo($path, PATHINFO_EXTENSION);
+                    $fileName = "{$label}.{$ext}";
+                    $zip->addFromString("{$folderName}/{$fileName}", $content);
+                }
+            }
+
+            $zip->close();
+
+            $user = \App\Models\User::find($userId);
+            if ($user) {
+                $user->notify(new EventNotification(
+                    'ZIP Dokumen Tersedia',
+                    "File ZIP dokumen {$meta['label']} telah selesai dibuat. Silakan unduh dari halaman Download Dokumen.",
+                    url: null,
+                    notifyViaEmail: false,
+                ));
+            }
+
+            return back()->with('success', 'ZIP dokumen berhasil dibuat.');
+        } catch (\Throwable $e) {
+            $user = \App\Models\User::find($userId);
+            if ($user) {
+                $user->notify(new EventNotification(
+                    'ZIP Dokumen Gagal',
+                    "Pembuatan ZIP dokumen gagal: {$e->getMessage()}",
+                    notifyViaEmail: false,
+                ));
+            }
+
+            return back()->with('error', 'Gagal membuat ZIP: '.$e->getMessage());
+        }
     }
 
     /**

@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\BulkDeleteFilesJob;
-use App\Jobs\ImportExcelJob;
 use App\Models\Tool;
 use App\Models\ToolCategory;
 use App\Models\ToolImage;
 use App\Support\ExcelExport;
 use Illuminate\Http\Request;
+use App\Notifications\EventNotification;
+use App\Support\ImportReadFilter;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -265,10 +267,77 @@ class AdminToolController extends Controller
         }
 
         $path = $file->store('imports');
+        $fullPath = storage_path('app/private/'.$path);
 
-        ImportExcelJob::dispatch(storage_path('app/private/'.$path), 'tool', auth()->id());
+        set_time_limit(0);
 
-        return back()->with('success', 'Import alat sedang diproses di queue. Anda akan mendapat notifikasi setelah selesai.');
+        try {
+            $reader = IOFactory::createReaderForFile($fullPath);
+            $reader->setReadDataOnly(true);
+            $reader->setReadEmptyCells(false);
+            $reader->setReadFilter(new ImportReadFilter);
+            $spreadsheet = $reader->load($fullPath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $allRows = $sheet->toArray(null, true, true, true);
+            $spreadsheet->disconnectWorksheets();
+
+            $columns = ['Kode', 'Nama', 'Tipe', 'Kategori', 'Merk', 'Seri', 'Deskripsi', 'Total Stok', 'Harga Sewa/Hari', 'Status Aktif'];
+
+            $created = 0;
+            $updated = 0;
+            $skipped = 0;
+            $skipReasons = [];
+            $usedCodes = [];
+            $indexMap = [];
+
+            foreach ($allRows as $i => $row) {
+                $row = array_values($row);
+
+                if ($i === 1) {
+                    $row[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) ($row[0] ?? ''));
+                    $indexMap = $this->buildColumnMap($row, $columns);
+
+                    continue;
+                }
+
+                $values = $this->mapRow($row, $indexMap);
+
+                if (empty(implode('', $values))) {
+                    continue;
+                }
+
+                $result = $this->importRow($values, $usedCodes);
+
+                if ($result === 'created') {
+                    $created++;
+                } elseif ($result === 'updated') {
+                    $updated++;
+                } else {
+                    $skipped++;
+                    if (count($skipReasons) < 5) {
+                        $skipReasons[] = $result;
+                    }
+                }
+            }
+
+            $message = "Import selesai: {$created} alat ditambahkan, {$updated} alat diperbarui.";
+            if ($skipped > 0) {
+                $message .= " {$skipped} baris dilewati.";
+                if (! empty($skipReasons)) {
+                    $message .= ' Alasan: '.implode('; ', $skipReasons);
+                }
+            }
+
+            auth()->user()->notify(new EventNotification('Import Selesai', $message, notifyViaEmail: false));
+
+            return back()->with('success', $message);
+        } catch (\Throwable $e) {
+            auth()->user()->notify(new EventNotification('Import Gagal', "Import tool gagal: {$e->getMessage()}", notifyViaEmail: false));
+
+            return back()->with('error', 'Import gagal: '.$e->getMessage());
+        } finally {
+            @unlink($fullPath);
+        }
     }
 
     /**

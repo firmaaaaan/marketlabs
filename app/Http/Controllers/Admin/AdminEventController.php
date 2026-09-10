@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\GenerateCertificateJob;
-use App\Jobs\GenerateCertificatesBatchJob;
 use App\Models\Event;
 use App\Models\EventRegistration;
+use App\Notifications\EventNotification;
 use App\Support\CertificateRenderer;
 use App\Support\ExcelExport;
 use App\Support\FormFields;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -375,9 +375,42 @@ class AdminEventController extends Controller
             return back()->with('error', 'Tidak ada peserta hadir yang belum memiliki sertifikat.');
         }
 
-        GenerateCertificatesBatchJob::dispatch($event);
+        set_time_limit(0);
 
-        return back()->with('success', "Queue generate sertifikat telah dimulai untuk {$pendingCount} peserta. Proses berjalan di background.");
+        try {
+            $registrations = $event->registrations()
+                ->where('status', EventRegistration::STATUS_REGISTERED)
+                ->whereNotNull('attended_at')
+                ->whereNull('certificate_number')
+                ->with('user')
+                ->get();
+
+            if ($registrations->isEmpty()) {
+                $event->update([
+                    'certificate_batch_status' => 'completed',
+                    'certificate_batch_total' => 0,
+                    'certificate_batch_done' => 0,
+                ]);
+
+                return back()->with('success', 'Tidak ada sertifikat yang perlu diproses.');
+            }
+
+            $event->update([
+                'certificate_batch_status' => 'processing',
+                'certificate_batch_total' => $registrations->count(),
+                'certificate_batch_done' => 0,
+            ]);
+
+            foreach ($registrations as $registration) {
+                $this->processCertificate($event, $registration);
+            }
+
+            return back()->with('success', "{$pendingCount} sertifikat berhasil digenerate.");
+        } catch (\Throwable $e) {
+            $event->update(['certificate_batch_status' => 'failed']);
+
+            return back()->with('error', 'Gagal generate sertifikat: '.$e->getMessage());
+        }
     }
 
     public function generateSingleCertificate(Event $event, EventRegistration $registration)
@@ -394,9 +427,79 @@ class AdminEventController extends Controller
             return back()->with('error', 'Peserta sudah memiliki sertifikat.');
         }
 
-        GenerateCertificateJob::dispatch($registration);
+        set_time_limit(0);
 
-        return back()->with('success', "Sertifikat untuk {$registration->user->name} sedang diproses di queue.");
+        try {
+            $this->processCertificate($event, $registration);
+
+            return back()->with('success', "Sertifikat untuk {$registration->user->name} berhasil digenerate.");
+        } catch (\Throwable $e) {
+            $registration->update([
+                'certificate_status' => 'failed',
+                'certificate_error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Gagal generate sertifikat: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Proses satu sertifikat: render + assign nomor + simpan.
+     */
+    protected function processCertificate(Event $event, EventRegistration $registration): void
+    {
+        $registration = $registration->fresh(['event', 'user']);
+
+        if (! $registration || ! $registration->attended_at || $registration->certificate_number) {
+            return;
+        }
+
+        if (! $event->certificate_ready) {
+            return;
+        }
+
+        $registration->certificate_status = 'processing';
+        $registration->save();
+
+        $paths = CertificateRenderer::render($event, $registration);
+
+        $certificateNumber = $this->generateCertificateNumber();
+
+        $registration->certificate_number = $certificateNumber;
+        $registration->certificate_path = $paths['front'];
+        $registration->certificate_back_path = $paths['back'] ?? null;
+        $registration->certificate_generated_at = now();
+        $registration->certificate_status = 'completed';
+        $registration->certificate_error = null;
+        $registration->save();
+
+        $registration->user->notify(new EventNotification(
+            'Sertifikat Tersedia',
+            "Sertifikat untuk event '{$event->title}' telah tersedia. Silakan unduh sertifikat Anda.",
+            route('events.certificate', $registration),
+            notifyViaEmail: true,
+        ));
+
+        $event->increment('certificate_batch_done');
+
+        if ($event->certificate_batch_done >= $event->certificate_batch_total) {
+            $event->update(['certificate_batch_status' => 'completed']);
+        }
+    }
+
+    protected function generateCertificateNumber(): string
+    {
+        return DB::transaction(function () {
+            $year = date('Y');
+            $prefix = 'CERT-'.$year.'-';
+
+            $maxNumber = EventRegistration::where('certificate_number', 'like', $prefix.'%')
+                ->pluck('certificate_number')
+                ->map(fn ($num) => (int) str_replace($prefix, '', $num))
+                ->max() ?? 0;
+
+            return $prefix.str_pad((string) ($maxNumber + 1), 4, '0', STR_PAD_LEFT);
+        });
     }
 
     protected function validateEvent(Request $request): array
