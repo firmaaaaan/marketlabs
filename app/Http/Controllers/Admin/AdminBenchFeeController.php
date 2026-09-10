@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BenchFeeLevel;
 use App\Models\BenchFeeRate;
 use App\Models\ResearchProposal;
 use Illuminate\Http\Request;
@@ -13,8 +14,9 @@ class AdminBenchFeeController extends Controller
     public function index()
     {
         $rates = ResearchProposal::benchFeeRates();
+        $levels = BenchFeeLevel::orderBy('sort_order')->get();
 
-        return view('admin.bench-fee.index', compact('rates'));
+        return view('admin.bench-fee.index', compact('rates', 'levels'));
     }
 
     public function update(Request $request)

@@ -62,7 +62,7 @@ class ResearchProposalController extends Controller
             'quantities.*' => ['required', 'integer', 'min:1'],
             'days' => ['nullable', 'array'],
             'days.*' => ['required', 'integer', 'min:1'],
-            'bench_fee_level' => ['required', Rule::in(['S1', 'S2/S3'])],
+            'bench_fee_level' => ['required', Rule::in(\App\Models\BenchFeeLevel::names())],
             'bench_fee_type' => ['required', Rule::in(['dalam', 'luar'])],
             'bench_fee_category' => ['required', Rule::in(array_keys(ResearchProposal::benchFeeCategories()))],
         ]);
