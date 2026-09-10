@@ -310,6 +310,31 @@
             </div>
         @endif
 
+        {{-- Upload Ulang Surat Permohonan --}}
+        @if ($proposal->status === 'rejected' && $isOwner)
+            <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-6">
+                <h2 class="text-sm font-bold text-red-800">Permohonan Ditolak</h2>
+                <p class="mt-1 text-sm text-red-700">Anda dapat mengunggah ulang surat permohonan untuk diajukan kembali.</p>
+
+                <form action="{{ route('research.reupload-letter', $proposal) }}" method="POST" enctype="multipart/form-data" class="mt-4">
+                    @csrf
+                    <label for="reupload_letter" class="block text-sm font-semibold text-slate-700">
+                        Surat Permohonan <span class="text-red-500">*</span>
+                    </label>
+                    <input type="file" id="reupload_letter" name="letter" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required
+                           class="mt-1.5 block w-full cursor-pointer rounded-lg border border-slate-300 text-sm text-slate-600 file:mr-4 file:cursor-pointer file:rounded-l-lg file:border-0 file:bg-emerald-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100">
+                    <p class="mt-1.5 text-xs text-slate-400">PDF, Word, atau gambar — maksimal 5 MB.</p>
+                    @error('letter')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                    <button type="submit"
+                            class="mt-4 rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700">
+                        Unggah Ulang & Ajukan Kembali
+                    </button>
+                </form>
+            </div>
+        @endif
+
     </div>
 </section>
 

@@ -190,6 +190,50 @@ class ResearchProposalController extends Controller
         return back()->with('success', 'Permohonan riset dibatalkan.');
     }
 
+    public function reuploadLetter(Request $request, ResearchProposal $proposal)
+    {
+        abort_unless($proposal->user_id === auth()->id(), 403);
+        abort_unless($proposal->status === ResearchProposal::STATUS_REJECTED, 403);
+
+        $validated = $request->validate([
+            'letter' => ['required', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:5120'],
+        ]);
+
+        // Hapus file lama jika ada.
+        if ($proposal->letter_path) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($proposal->letter_path);
+        }
+
+        $userName = Str::slug(auth()->user()->name);
+        $uniqueSuffix = time().'-'.Str::random(6);
+        $ext = strtolower($request->file('letter')->getClientOriginalExtension());
+
+        $letterPath = $request->file('letter')->storeAs(
+            'research-letters',
+            'surat-permohonan-'.$userName.'-'.$uniqueSuffix.'.'.$ext
+        );
+
+        $proposal->update([
+            'letter_path' => $letterPath,
+            'status' => ResearchProposal::STATUS_PENDING,
+            'admin_notes' => null,
+            'rejected_at' => null,
+        ]);
+
+        // Beri tahu admin bahwa proposal diunggah ulang.
+        $adminNotes = 'Surat permohonan diunggah ulang oleh '.auth()->user()->name.'.';
+        foreach (User::admin()->get() as $admin) {
+            $admin->notify(new BorrowingNotification(
+                'Permohonan Riset Diunggah Ulang',
+                "Permohonan riset {$proposal->code} telah diunggah ulang dan menunggu persetujuan.",
+                route('admin.research.show', $proposal),
+                notifyViaEmail: true,
+            ));
+        }
+
+        return back()->with('success', "Surat permohonan untuk {$proposal->code} berhasil diunggah ulang dan menunggu persetujuan.");
+    }
+
     public function logbook(ResearchProposal $proposal)
     {
         abort_unless($proposal->user_id === auth()->id() || $this->isMember($proposal), 403);

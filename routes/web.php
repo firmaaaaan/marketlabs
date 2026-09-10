@@ -157,6 +157,7 @@ Route::middleware(['auth', 'maintenance', 'throttle.mutations'])->group(function
         Route::delete('/riset/{proposal}/logbook/{logbook}', [ResearchProposalController::class, 'destroyLogbook'])->name('research.logbook.destroy');
         Route::get('/riset/{proposal}', [ResearchProposalController::class, 'show'])->name('research.show');
         Route::delete('/riset/{proposal}', [ResearchProposalController::class, 'cancel'])->name('research.cancel');
+        Route::post('/riset/{proposal}/unggah-ulang-surat', [ResearchProposalController::class, 'reuploadLetter'])->name('research.reupload-letter');
 
         Route::get('/pengujian', [SampleTestController::class, 'index'])->name('sample-tests.index');
         Route::get('/pengujian/keranjang/json', [TestCartController::class, 'json'])->name('test-cart.json');
