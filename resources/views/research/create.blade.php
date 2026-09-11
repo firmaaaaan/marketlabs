@@ -96,6 +96,7 @@
                                                     <input type="radio" name="customer_type"
                                                         value="{{ $value }}"
                                                         {{ old('customer_type') === $value ? 'checked' : '' }}
+                                                        required
                                                         class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-500">
                                                     <span class="text-sm font-medium text-slate-700">{{ $label }}</span>
                                                 </label>
@@ -204,6 +205,7 @@
                                                     <input type="radio" name="bench_fee_category"
                                                         value="{{ $value }}"
                                                         {{ old('bench_fee_category') === $value ? 'checked' : '' }}
+                                                        required
                                                         class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-500">
                                                     <span
                                                         class="text-sm font-medium text-slate-700">{{ $label }}</span>
@@ -225,6 +227,7 @@
                                                         <input type="radio" name="bench_fee_level"
                                                             value="{{ $level->name }}"
                                                             {{ old('bench_fee_level') === $level->name ? 'checked' : '' }}
+                                                            required
                                                             class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-500">
                                                         <span
                                                             class="text-sm font-medium text-slate-700">{{ $level->label }}</span>
@@ -245,6 +248,7 @@
                                                         <input type="radio" name="bench_fee_type"
                                                             value="{{ $value }}"
                                                             {{ old('bench_fee_type') === $value ? 'checked' : '' }}
+                                                            required
                                                             class="h-4 w-4 border-slate-300 text-emerald-600 focus:ring-emerald-500">
                                                         <span
                                                             class="text-sm font-medium text-slate-700">{{ $label }}</span>

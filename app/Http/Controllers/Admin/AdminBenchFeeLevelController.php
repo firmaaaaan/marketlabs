@@ -26,8 +26,8 @@ class AdminBenchFeeLevelController extends Controller
         ]);
 
         // Generate name from label (slug).
-        $name = strtoupper(str_replace('/', '_', $validated['label']));
-        $name = preg_replace('/[^A-Z0-9_]/', '', $name);
+        $name = strtoupper($validated['label']);
+        $name = preg_replace('/[^A-Z0-9\/]/', '', $name);
 
         if (BenchFeeLevel::where('name', $name)->exists()) {
             return back()->with('error', 'Jenjang "'.$validated['label'].'" sudah ada.');

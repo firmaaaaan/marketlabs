@@ -234,6 +234,7 @@ Route::middleware(['auth', 'maintenance', 'throttle.mutations'])->group(function
 
         Route::get('/bench-fee', [AdminBenchFeeController::class, 'index'])->name('bench-fee.index');
         Route::put('/bench-fee', [AdminBenchFeeController::class, 'update'])->name('bench-fee.update');
+        Route::delete('/bench-fee/{rate}', [AdminBenchFeeController::class, 'destroy'])->name('bench-fee.destroy');
 
         Route::post('/bench-fee/levels', [AdminBenchFeeLevelController::class, 'store'])->name('bench-fee.levels.store');
         Route::patch('/bench-fee/levels/{level}', [AdminBenchFeeLevelController::class, 'update'])->name('bench-fee.levels.update');

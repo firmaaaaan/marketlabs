@@ -15,8 +15,9 @@ class AdminBenchFeeController extends Controller
     {
         $rates = ResearchProposal::benchFeeRates();
         $levels = BenchFeeLevel::orderBy('sort_order')->get();
+        $rateModels = BenchFeeRate::all()->keyBy(fn ($r) => $r->level.'|'.$r->type.'|'.$r->category);
 
-        return view('admin.bench-fee.index', compact('rates', 'levels'));
+        return view('admin.bench-fee.index', compact('rates', 'levels', 'rateModels'));
     }
 
     public function update(Request $request)
@@ -38,5 +39,12 @@ class AdminBenchFeeController extends Controller
 
         return redirect()->route('admin.bench-fee.index')
             ->with('success', 'Tarif bench fee berhasil diperbarui.');
+    }
+
+    public function destroy(BenchFeeRate $rate)
+    {
+        $rate->delete();
+
+        return back()->with('success', 'Tarif berhasil dihapus.');
     }
 }

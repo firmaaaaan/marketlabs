@@ -235,8 +235,12 @@ class ResearchProposal extends Model
         }
 
         $result = $defaults;
+        $validLevels = array_flip($levels);
 
         foreach ($rates as $rate) {
+            if (! isset($validLevels[$rate->level])) {
+                continue;
+            }
             $result[$rate->level][$rate->type][$rate->category] = (int) $rate->rate;
         }
 
