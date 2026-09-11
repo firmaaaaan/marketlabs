@@ -193,8 +193,9 @@
                 <div class="group flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:border-emerald-300 hover:shadow-md">
                     <a href="{{ route('tools.show', $tool) }}" class="block overflow-hidden">
                         <div class="relative flex h-48 items-center justify-center bg-slate-50">
-                            @if ($tool->image)
-                                <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
+                            @php $displayImage = $tool->primary_image?->path ?? $tool->image; @endphp
+                            @if ($displayImage)
+                                <img src="{{ asset('storage/' . $displayImage) }}" alt="{{ $tool->name }}"
                                      class="h-full w-full object-cover">
                             @else
                                 <svg class="h-16 w-16 text-slate-200" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">

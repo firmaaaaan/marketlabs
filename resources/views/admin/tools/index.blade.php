@@ -170,8 +170,9 @@
                         @endif
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                @if ($tool->image)
-                                    <img src="{{ asset('storage/' . $tool->image) }}" alt="{{ $tool->name }}"
+                                @php $displayImage = $tool->primary_image?->path ?? $tool->image; @endphp
+                                @if ($displayImage)
+                                    <img src="{{ asset('storage/' . $displayImage) }}" alt="{{ $tool->name }}"
                                          class="h-10 w-10 flex-none rounded-lg border border-slate-200 object-cover">
                                 @else
                                     <span class="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-emerald-50 text-emerald-400">
