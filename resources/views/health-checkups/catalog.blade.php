@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- Header --}}
-<section class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 pt-32 pb-20">
+<section class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-green-900 pt-32 pb-20">
     <div class="pointer-events-none absolute"></div>
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold text-emerald-100 backdrop-blur">

@@ -220,11 +220,11 @@
                 @else
                     <div class="flex items-center gap-3">
                         <a href="{{ route('login') }}"
-                           class="hidden text-sm font-semibold text-slate-600 transition-all hover:text-emerald-600 sm:block">
+                           class="text-sm font-semibold text-slate-600 transition-all hover:text-emerald-600 sm:block">
                             Masuk
                         </a>
                         <a href="{{ route('register') }}"
-                           class="btn-premium rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700">
+                           class="btn-premium hidden rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700 sm:block">
                             Daftar
                         </a>
                     </div>

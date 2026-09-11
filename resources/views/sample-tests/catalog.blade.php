@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- Header Katalog --}}
-<section class="bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800 pt-32 pb-16">
+<section class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-green-900 pt-32 pb-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-start justify-between gap-6">
             <div>
