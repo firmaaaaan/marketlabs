@@ -421,7 +421,7 @@
             });
 
             refresh();
-            setInterval(refresh, 3000);
+            setInterval(refresh, 1000);
         })();
     </script>
 
